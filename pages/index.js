@@ -5,36 +5,29 @@ export default function Home() {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#ffffff' }}>
       {/* Navigation Bar */}
-      <nav style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '1rem 2rem',
-        backgroundColor: 'white',
-        borderBottom: '1px solid #e0e0e0'
-      }}>
+      <nav className="nav">
         {/* Logo */}
-        <div style={{ color: '#4A90E2', fontSize: '1.5rem', fontWeight: 'bold' }}>
+        <div className="nav-logo">
           <img src="/logo.png" alt="logo" style={{ width: '60px', height: '60px' }} />
         </div>
         
         {/* Navigation Links */}
-        <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-          <Link href="/" style={{ textDecoration: 'none', color: '#333', fontWeight: '500' }}>
+        <div className="nav-links">
+          <Link href="/" className="nav-link active">
             Home
           </Link>
           <div style={{ position: 'relative' }}>
-            <span style={{ color: '#333', fontWeight: '500', cursor: 'pointer' }}>
-              Research & Writing ▼
-            </span>
+            <Link href="/writing" className="nav-link">
+              Research & Writing
+            </Link>
           </div>
-          <Link href="/blacksmithing" style={{ textDecoration: 'none', color: '#333', fontWeight: '500' }}>
+          <Link href="/blacksmithing" className="nav-link">
             Blacksmithing
           </Link>
-          <Link href="/fractals" style={{ textDecoration: 'none', color: '#333', fontWeight: '500' }}>
+          <Link href="/fractals" className="nav-link">
             Fractal Generator
           </Link>
-          <div style={{ color: '#333', fontSize: '1.2rem', cursor: 'pointer' }}>
+          <div className="search-icon">
             🔍
           </div>
         </div>
@@ -45,14 +38,14 @@ export default function Home() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        maxWidth: '1200px',
+        maxWidth: '1400px',
         margin: '0 auto',
-        padding: '0rem 14%'
+        padding: '0rem 10%'
       }}>
         {/* Left Content */}
         <div style={{ flex: 1, minWidth: '50%', padding: '0rem 1rem' }}>
           <h1 style={{
-            fontSize: '3.5rem',
+            fontSize: '3rem',
             color: '#2c5282',
             marginBottom: '1rem',
             fontWeight: 'bold'
@@ -61,7 +54,7 @@ export default function Home() {
           </h1>
           
           <p style={{
-            fontSize: '1.2rem',
+            fontSize: '1rem',
             color: '#4a5568',
             marginBottom: '1rem',
             lineHeight: '1.6'
@@ -70,7 +63,7 @@ export default function Home() {
           </p>
           
           <p style={{
-            fontSize: '1.1rem',
+            fontSize: '1rem',
             color: '#4a5568',
             marginBottom: '1rem',
             lineHeight: '1.6'
@@ -85,7 +78,7 @@ export default function Home() {
 
         {/* Right Content - Fractal Background */}
         <div style={{ flex: 1, padding: '0rem 1rem' }}>
-          <img src="/julia_0.2841_notext.png" alt="fractal" style={{ width: '100%', height: '100%' }} />
+          <img src="/julia_0.2841_notext.png" alt="fractal" style={{ width: '90%', height: '90%' }} />
         </div>
       </div>
     </div>
