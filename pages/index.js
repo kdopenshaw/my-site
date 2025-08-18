@@ -1,37 +1,10 @@
-// pages/index.js - Your main portfolio page with inline styles (working version)
-import Link from 'next/link'
+// pages/index.js - Your main portfolio page
+import Navigation from '../components/Navigation'
 
 export default function Home() {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#ffffff' }}>
-      {/* Navigation Bar */}
-      <nav className="nav">
-        {/* Logo */}
-        <div className="nav-logo">
-          <img src="/logo.png" alt="logo" style={{ width: '60px', height: '60px' }} />
-        </div>
-        
-        {/* Navigation Links */}
-        <div className="nav-links">
-          <Link href="/" className="nav-link active">
-            Home
-          </Link>
-          <div style={{ position: 'relative' }}>
-            <Link href="/writing" className="nav-link">
-              Research & Writing
-            </Link>
-          </div>
-          <Link href="/blacksmithing" className="nav-link">
-            Blacksmithing
-          </Link>
-          <Link href="/fractals" className="nav-link">
-            Fractal Generator
-          </Link>
-          <div className="search-icon">
-            🔍
-          </div>
-        </div>
-      </nav>
+      <Navigation />
 
       {/* Main Content */}
       <div style={{
@@ -72,7 +45,7 @@ export default function Home() {
           </p>
           
           {/* LinkedIn Button */}
-          <a href="https://linkedin.com/in/yourprofile"><img src="/linkedin.png" alt="linkedin" style={{ width: '30px', height: '30px' }} />
+          <a href="https://www.linkedin.com/in/keith-openshaw/"><img src="/linkedin.png" alt="linkedin" style={{ width: '30px', height: '30px' }} />
           </a>
         </div>
 

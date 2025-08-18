@@ -1,37 +1,10 @@
 // pages/fractals.js - Fractal Generator page
-import Link from 'next/link'
+import Navigation from '../components/Navigation'
 
 export default function Fractals() {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#ffffff' }}>
-      {/* Navigation Bar */}
-      <nav className="nav">
-        {/* Logo */}
-        <div className="nav-logo">
-          <img src="/logo.png" alt="logo" style={{ width: '60px', height: '60px' }} />
-        </div>
-        
-        {/* Navigation Links */}
-        <div className="nav-links">
-          <Link href="/" className="nav-link">
-            Home
-          </Link>
-          <div style={{ position: 'relative' }}>
-            <Link href="/writing" className="nav-link">
-              Research & Writing ▼
-            </Link>
-          </div>
-          <Link href="/blacksmithing" className="nav-link">
-            Blacksmithing
-          </Link>
-          <Link href="/fractals" className="nav-link active">
-            Fractal Generator
-          </Link>
-          <div className="search-icon">
-            🔍
-          </div>
-        </div>
-      </nav>
+      <Navigation />
 
       {/* Main Content */}
       <div style={{
