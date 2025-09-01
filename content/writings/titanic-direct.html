@@ -1,0 +1,183 @@
+---
+title: "Titanic Dataset Analysis (Direct HTML)"
+description: "Direct Quarto HTML output - no conversion needed!"
+image: "/julia_0.2841_notext.png"
+year: "2024"
+pages: "6"
+category: "Data Science"
+---
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+/* Quarto-style syntax highlighting */
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+.sourceCode .im { color: #0066cc; }
+.sourceCode .op { color: #666666; }
+.sourceCode .st { color: #cc0000; }
+.sourceCode .co { color: #006600; font-style: italic; }
+.sourceCode .cf { color: #cc00cc; }
+.sourceCode .kw { color: #cc00cc; }
+.sourceCode .dv { color: #cc6600; }
+.sourceCode .fl { color: #cc6600; }
+.sourceCode .bu { color: #cc00cc; }
+.sourceCode .va { color: #cc6600; }
+.sourceCode .ch { color: #cc0000; }
+
+/* Cell styles */
+.cell {
+  margin-bottom: 2rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.sourceCode {
+  background-color: #f7fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.cell-code {
+  padding: 1rem;
+}
+
+.cell-output {
+  background-color: #ffffff;
+  padding: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.cell-output-stdout {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 4px;
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+}
+
+.cell-output-display {
+  text-align: center;
+  padding: 1rem;
+}
+
+.figure {
+  margin: 0;
+}
+
+.figure-img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+</style>
+</head>
+<body>
+
+<div id="71728f7e" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span class="im">import</span> openml</span></code></pre></div>
+</div>
+
+<div id="9bf3c535" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python"><code class="sourceCode python">titanic <span class="op">=</span> openml.datasets.get_dataset(<span class="dv">40945</span>)</span>
+X, y, cols, cats <span class="op">=</span> titanic.get_data(</span>
+    target<span class="op">=</span>titanic.default_target_attribute,</span>
+    dataset_format<span class="op">=</span><span class="st">"dataframe"</span></span>
+)</span>
+
+<span class="bu">print</span>(<span class="st">"Shape of X:"</span>, X.shape)</span>
+<span class="bu">print</span>(<span class="st">"Length of y:"</span>, <span class="bu">len</span>(y))</span>
+<span class="bu">print</span>(<span class="st">"Target column:"</span>, titanic.default_target_attribute)</span>
+<span class="bu">print</span>(<span class="st">"First few rows:</span><span class="ch">\n</span><span class="st">"</span>, X.head())</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Shape of X: (1309, 13)
+Length of y: 1309
+Target column: survived
+First few rows:
+    pclass                                             name     sex      age  \
+0       1                    Allen, Miss. Elisabeth Walton  female  29.0000   
+1       1                   Allison, Master. Hudson Trevor    male   0.9167   
+2       1                     Allison, Miss. Helen Loraine  female   2.0000   
+3       1             Allison, Mr. Hudson Joshua Creighton    male  30.0000   
+4       1  Allison, Mrs. Hudson J C (Bessie Waldo Daniels)  female  25.0000   
+
+   sibsp  parch  ticket      fare    cabin embarked  boat   body  \
+0      0      0   24160  211.3375       B5        S     2    NaN   
+1      1      2  113781  151.5500  C22 C26        S    11    NaN   
+2      1      2  113781  151.5500  C22 C26        S  None    NaN   
+3      1      2  113781  151.5500  C22 C26        S  None  135.0   
+4      1      2  113781  151.5500  C22 C26        S  None    NaN   
+
+                         home.dest  
+0                     St Louis, MO  
+1  Montreal, PQ / Chesterville, ON  
+2  Montreal, PQ / Chesterville, ON  
+3  Montreal, PQ / Chesterville, ON  
+4  Montreal, PQ / Chesterville, ON  </code></pre>
+</div>
+</div>
+
+<div id="8cb9b384" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span class="co"># Fill missing numerics with median</span></span>
+<span class="cf">for</span> col <span class="kw">in</span> X.select_dtypes(include<span class="op">=</span><span class="st">"number"</span>):</span>
+    X[col] <span class="op">=</span> X[col].fillna(X[col].median())</span>
+
+<span class="co"># Fill missing categoricals with mode</span></span>
+<span class="cf">for</span> col <span class="kw">in</span> X.select_dtypes(include<span class="op">=</span><span class="st">"object"</span>):</span>
+    X[col] <span class="op">=</span> X[col].fillna(X[col].mode()[<span class="dv">0</span>])</span></code></pre></div>
+</div>
+
+<div id="fd6000af" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python"><code class="sourceCode python">X <span class="op">=</span> pd.get_dummies(X, drop_first<span class="op">=</span><span class="va">True</span>)</span></code></pre></div>
+</div>
+
+<div id="c85eef3a" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+
+X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(</span>
+    X, y, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span></span>
+)</span>
+
+<span class="bu">print</span>(<span class="st">"Train:"</span>, X_train.shape, <span class="st">"Test:"</span>, X_test.shape)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Train: (1047, 2822) Test: (262, 2822)</code></pre>
+</div>
+</div>
+
+<div id="0b2be802" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">from</span> sklearn.tree <span class="im">import</span> DecisionTreeClassifier</span>
+<span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score</span>
+
+clf <span class="op">=</span> DecisionTreeClassifier(max_depth<span class="op">=</span><span class="dv">3</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+clf.fit(X_train, y_train)</span>
+
+y_pred <span class="op">=</span> clf.predict(X_test)</span>
+<span class="bu">print</span>(<span class="st">"Accuracy:"</span>, accuracy_score(y_test, y_pred))</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Accuracy: 0.9541984732824428</code></pre>
+</div>
+</div>
+
+<div id="ac4e9726" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span class="im">from</span> sklearn <span class="im">import</span> tree</span>
+
+plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>,<span class="dv">6</span>))</span>
+tree.plot_tree(clf, feature_names<span class="op">=</span>X.columns, class_names<span class="op">=</span>clf.classes_.astype(<span class="bu">str</span>), filled<span class="op">=</span><span class="va">True</span>)</span>
+plt.show()</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Untitled_files/figure-html/cell-8-output-1.png" width="912" height="463" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+
+</body>
+</html>

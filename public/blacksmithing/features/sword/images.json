@@ -1,0 +1,17 @@
+{
+  "title": "Katana",
+  "images": [
+    {
+      "src": "/blacksmithing/features/sword/IMG_2687.JPEG",
+      "alt": "Sword Feature 1",
+      "heading": "Close up",
+      "description": "This hand-forged sword showcases traditional blacksmithing techniques, blending strength and elegance. The blade was shaped and tempered by hand, with a custom hilt and detailed finish. A true centerpiece of the collection."
+    },
+    {
+      "src": "/blacksmithing/features/sword/IMG_2028.JPEG", 
+      "alt": "Sword Feature 2",
+      "heading": "Close up",
+      "description": "A close-up view revealing the intricate details of the sword's craftsmanship. Notice the precise hammer marks and the beautiful grain structure that speaks to the quality of the steel and the skill of the blacksmith."
+    }
+  ]
+} 

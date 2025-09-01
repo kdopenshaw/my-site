@@ -5,7 +5,6 @@ image: "/julia_0.2841_notext.png"
 year: "2024"
 pages: "1"
 category: "Test"
-contentType: "html"
 ---
 
 # Test HTML Content
