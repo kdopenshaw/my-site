@@ -1,36 +1,20 @@
-// Minimal useGLightbox.js - safest approach
-import { useEffect, useRef } from 'react';
+// hooks/useGLightbox.js
+import { useEffect } from "react";
+import "glightbox/dist/css/glightbox.css";
 
-export function useGLightbox() {
-  const lightboxRef = useRef(null);
-
+export function useGLightbox(deps = []) {
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const loadGLightbox = async () => {
-        const GLightbox = (await import('glightbox')).default;
-        
-        if (lightboxRef.current) {
-          lightboxRef.current.destroy();
-        }
-        
-        // Minimal configuration to avoid asset injection
-        lightboxRef.current = GLightbox({
-          selector: '.glightbox',
-          loop: true,
-          autoplayVideos: false, // Disable to avoid player conflicts
-          // Minimal config - let GLightbox handle defaults
-        });
+    if (typeof window === "undefined") return;
+
+    import("glightbox").then(({ default: GLightbox }) => {
+      const lightbox = GLightbox({
+        selector: ".glightbox",
+        descPosition: "right", // ✅ force description panel on the right
+      });
+
+      return () => {
+        lightbox.destroy();
       };
-      
-      loadGLightbox();
-    }
-
-    return () => {
-      if (lightboxRef.current) {
-        lightboxRef.current.destroy();
-      }
-    };
-  }, []);
-
-  return lightboxRef.current;
+    });
+  }, deps);
 }
