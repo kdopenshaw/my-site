@@ -166,27 +166,60 @@ function GallerySection({ images }) {
     <section className="gallery-wrap">
       <div className="gallery">
         {images.map((image, index) => {
-          const caption =
-            image.caption ||
-            image.name?.replace(/\.[a-z]+$/i, "").replace(/[_-]+/g, " ");
+          const isVideo = /\.mp4$/i.test(image.url);
           return (
             <a
               key={index}
               href={image.url}
               className="glightbox"
               data-gallery="blacksmith"
+              {...(isVideo ? { "data-type": "video" } : {})}
             >
-              <img
-                src={image.url}
-                alt={caption}
-                loading="lazy"
-                decoding="async"
-                sizes="(max-width: 520px) 100vw,
-                       (max-width: 840px) 50vw,
-                       (max-width: 1100px) 33vw,
-                       25vw"
-                srcSet={`${image.url} 800w`}
-              />
+              {isVideo ? (
+                <div className="video-thumbnail">
+                  <video
+                    src={image.url}
+                    muted
+                    playsInline
+                    preload="metadata" // This enables thumbnails!
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      borderRadius: "6px",
+                    }}
+                    // Add error handling
+                    onError={(e) => {
+                      console.warn(`Video load error for ${image.url}:`, e);
+                    }}
+                    onLoadedMetadata={(e) => {
+                      console.log(`Video metadata loaded for ${image.url}`);
+                    }}
+                  />
+                  <div className="play-overlay">
+                    <svg
+                      width="32"
+                      height="32"
+                      viewBox="0 0 24 24"
+                      fill="white"
+                    >
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  </div>
+                </div>
+              ) : (
+                <img
+                  src={image.url}
+                  alt={image.name}
+                  loading="lazy"
+                  decoding="async"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                />
+              )}
             </a>
           );
         })}
@@ -211,7 +244,7 @@ export async function getStaticProps() {
         if (fs.existsSync(galleryDir)) {
           const imageFiles = fs
             .readdirSync(galleryDir)
-            .filter((file) => file.match(/\.(jpg|jpeg|png|gif)$/i))
+            .filter((file) => file.match(/\.(jpg|jpeg|png|gif|mp4)$/i))
             .sort()
             .map((filename) => ({
               name: filename,
@@ -227,7 +260,7 @@ export async function getStaticProps() {
       if (fs.existsSync(imagesDir)) {
         const imageFiles = fs
           .readdirSync(imagesDir)
-          .filter((file) => file.match(/\.(jpg|jpeg|png|gif)$/i))
+          .filter((file) => file.match(/\.(jpg|jpeg|png|gif|mp4)$/i))
           .sort()
           .map((filename) => ({
             name: filename,
