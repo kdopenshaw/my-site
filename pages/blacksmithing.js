@@ -1,6 +1,7 @@
 // pages/blacksmithing.js
 
 import { useEffect, useState } from "react";
+import Script from "next/script";
 import Head from "next/head";
 import fs from "fs";
 import path from "path";
@@ -8,7 +9,6 @@ import { useGLightbox } from "../hooks/useGLightbox";
 import Navigation from "../components/Navigation";
 
 export default function BlacksmithingPage({ initialImages, initialFeatures }) {
-  // Seed state immediately so anchors exist on first render
   const [galleries, setGalleries] = useState(initialImages);
   const [features, setFeatures] = useState(() => {
     const map = {};
@@ -18,23 +18,20 @@ export default function BlacksmithingPage({ initialImages, initialFeatures }) {
     return map;
   });
 
-  // Re-initialize GLightbox whenever anchors change
   useGLightbox([galleries, features]);
 
   const navigateFeature = (featureId, direction) => {
     const feature = features[featureId];
     if (!feature) return;
-
     const images = feature.data.images;
-    const currentIndex = feature.currentIndex;
     let newIndex;
 
     if (typeof direction === "number") {
       newIndex = direction;
     } else if (direction === "prev") {
-      newIndex = (currentIndex - 1 + images.length) % images.length;
+      newIndex = (feature.currentIndex - 1 + images.length) % images.length;
     } else {
-      newIndex = (currentIndex + 1) % images.length;
+      newIndex = (feature.currentIndex + 1) % images.length;
     }
 
     setFeatures((prev) => ({
@@ -46,7 +43,6 @@ export default function BlacksmithingPage({ initialImages, initialFeatures }) {
   return (
     <>
       <Navigation />
-
       <Head>
         <title>Blacksmith Portfolio</title>
         <meta
@@ -58,6 +54,13 @@ export default function BlacksmithingPage({ initialImages, initialFeatures }) {
       <main className="blacksmith-page">
         <h1>Blacksmith Work</h1>
 
+        {/* Instagram Profile Card */}
+        <div>
+          <InstagramCard />
+          <p>Some more text</p>
+        </div>
+
+        {/* Your galleries/features */}
         {features.sword && (
           <FeatureSection
             featureId="sword"
@@ -65,9 +68,7 @@ export default function BlacksmithingPage({ initialImages, initialFeatures }) {
             onNavigate={navigateFeature}
           />
         )}
-
         {galleries[0] && <GallerySection images={galleries[0]} />}
-
         {features.axe && (
           <FeatureSection
             featureId="axe"
@@ -75,11 +76,47 @@ export default function BlacksmithingPage({ initialImages, initialFeatures }) {
             onNavigate={navigateFeature}
           />
         )}
-
         {galleries[1] && <GallerySection images={galleries[1]} />}
         {galleries[2] && <GallerySection images={galleries[2]} />}
       </main>
     </>
+  );
+}
+
+function InstagramCard() {
+  useEffect(() => {
+    // Poll until the embed script is ready, then process
+    const interval = setInterval(() => {
+      if (window.instgrm && window.instgrm.Embeds) {
+        window.instgrm.Embeds.process();
+        clearInterval(interval);
+      }
+    }, 500);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div style={{ maxWidth: "540px", margin: "20px auto" }}>
+      <blockquote
+        className="instagram-media"
+        data-instgrm-permalink="https://www.instagram.com/cetsteel/"
+        data-instgrm-version="14"
+        style={{
+          background: "#FFF",
+          border: 0,
+          borderRadius: "3px",
+          margin: "1px",
+          maxWidth: "540px",
+          minWidth: "326px",
+          width: "calc(100% - 2px)",
+        }}
+      ></blockquote>
+
+      <Script
+        src="https://www.instagram.com/embed.js"
+        strategy="afterInteractive"
+      />
+    </div>
   );
 }
 
