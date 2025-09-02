@@ -5,28 +5,6 @@
   min-height: 100vh;
 }
 
-.blacksmith-container h1 {
-  font-family: "Playfair Display", serif;
-  font-size: 2.7rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  color: #2c3e50;
-  text-align: center;
-  margin-bottom: 1.2rem;
-  text-shadow: 0 2px 12px rgba(44, 62, 80, 0.08);
-}
-
-.blacksmith-container h2 {
-  font-family: "Playfair Display", serif;
-  font-size: 1.7rem;
-  font-weight: 600;
-  letter-spacing: 0.03em;
-  color: #34495e;
-  margin-bottom: 0.5rem;
-  text-shadow: 0 1px 6px rgba(52, 73, 94, 0.08);
-}
-/* Add this to your global CSS or in a <style> tag in Head */
-
 /* Ensure GLightbox is properly layered and scrollable */
 .glightbox-container {
   z-index: 9999999 !important;
@@ -89,18 +67,6 @@
   background: #fafafa; /* Light gray background */
   margin: 0;
   padding: 1.5rem 0rem; /* 16px padding on all sides */
-}
-
-/* Main page title */
-.blacksmith-page h1 {
-  font-family: "Playfair Display", serif; /* Fancy serif font */
-  font-size: 2.7rem; /* Large text */
-  font-weight: 700; /* Bold */
-  letter-spacing: 0.04em; /* Slightly spread out letters */
-  color: #2c3e50; /* Dark blue-gray */
-  text-align: center; /* Center the text */
-  margin-bottom: 1.2rem;
-  text-shadow: 0 2px 12px rgba(44, 62, 80, 0.08); /* Subtle shadow */
 }
 
 /* ==================== FEATURED SECTIONS ==================== */

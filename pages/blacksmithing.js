@@ -52,12 +52,26 @@ export default function BlacksmithingPage({ initialImages, initialFeatures }) {
       </Head>
 
       <main className="blacksmith-page">
-        <h1>Blacksmith Work</h1>
+        <h1 className="page-title">Blacksmith Work</h1>
 
         {/* Instagram Profile Card */}
-        <div>
-          <InstagramCard />
-          <p>Some more text</p>
+        <div className="split-container">
+          <div className="text-section">
+            <h2>Forging Since 2018</h2>
+            <p>
+              I am a hobbyist blacksmith and woodworker, and have been designing
+              and selling custom pieces since 2018. I have made everything from
+              rings out of skateboard ply to wine racks and a katana. <br />{" "}
+              <br />A lot of my work can be found on my Instagram @cetsteel,
+              follow along to check out what projects I am currently working on!
+            </p>
+            <a href="https://instagram.com/cetsteel" className="cta">
+              @cetsteel
+            </a>
+          </div>
+          <div className="card-section">
+            <InstagramCard />
+          </div>
         </div>
 
         {/* Your galleries/features */}
@@ -96,7 +110,7 @@ function InstagramCard() {
   }, []);
 
   return (
-    <div style={{ maxWidth: "540px", margin: "20px auto" }}>
+    <div className="instagram-wrapper">
       <blockquote
         className="instagram-media"
         data-instgrm-permalink="https://www.instagram.com/cetsteel/"
@@ -105,10 +119,11 @@ function InstagramCard() {
           background: "#FFF",
           border: 0,
           borderRadius: "3px",
-          margin: "1px",
-          maxWidth: "540px",
+          maxWidth: "90%",
           minWidth: "326px",
-          width: "calc(100% - 2px)",
+          width: "100%",
+          padding: "0rem",
+          margin: "0 auto",
         }}
       ></blockquote>
 
