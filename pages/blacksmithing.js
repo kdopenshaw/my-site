@@ -121,6 +121,7 @@ function InstagramCard() {
           borderRadius: "3px",
           maxWidth: "90%",
           minWidth: "326px",
+          maxHeight: "400px",
           width: "100%",
           padding: "0rem",
           margin: "0 auto",

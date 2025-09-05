@@ -300,15 +300,16 @@ p {
 }
 
 .split-container {
-  display: flex;
-  align-items: center; /* vertical centering for both halves */
+  display: flex; /* row by default */
+  align-items: center;
   justify-content: center;
-  gap: 2rem; /* space between text + card */
-  padding: 0rem 10%;
+  gap: 2rem;
+  padding: 0 10%;
+  flex-wrap: wrap; /* allow wrapping if it runs out of space */
 }
 
 .text-section {
-  flex: 1 1 50%;
+  flex: 1 1 65%; /* half width on large screens */
   max-width: 600px;
 }
 
@@ -334,21 +335,15 @@ p {
   text-decoration: none;
   transition: background 0.2s ease;
 }
-
 .text-section .cta:hover {
   background: #333;
 }
 
 .card-section {
-  flex: 1 1 50%;
+  flex: 1 1 35%; /* a little smaller than half width */
   display: flex;
   justify-content: center;
-  max-width: 700px;
+  max-width: 500px; /* reduced from 700px */
+  max-height: 500px; /* cap total card height */
   padding: 1rem;
-}
-
-.instagram-wrapper {
-  width: 100%;
-  display: flex;
-  justify-content: center; /* centers if parent is wider than embed */
 }

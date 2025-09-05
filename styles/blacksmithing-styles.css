@@ -5,6 +5,12 @@
   min-height: 100vh;
 }
 
+.instagram-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center; /* centers if parent is wider than embed */
+}
+
 /* Ensure GLightbox is properly layered and scrollable */
 .glightbox-container {
   z-index: 9999999 !important;
