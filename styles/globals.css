@@ -4,17 +4,22 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&display=swap");
 
-/* Global Variables - Easy to change colors/spacing */
+/* Global Variables - Palette + Scale */
 :root {
-  --primary-blue: #1a202c;
-  --secondary-blue: #2d3748;
-  --light-blue: #87ceeb;
-  --text-dark: #1a202c;
-  --text-gray: #4a5568;
-  --text-light: #718096;
-  --background: #ffffff;
+  /* Core Blues */
+  --blue-dark: #0d1b2a;
+  --blue-primary: #1b263b;
+  --blue-light: #415a77;
+  --blue-pale: #778da9;
+
+  /* Neutrals */
+  --neutral-light: #f8f9fa;
+  --neutral-gray: #e5e5e5;
+  --neutral-dark: #2e2e2e;
   --white: #ffffff;
-  --border: #7bb4fd;
+
+  /* Accent */
+  --accent-copper: #e76f51;
 
   /* Spacing */
   --spacing-xs: 0.5rem;
@@ -25,14 +30,11 @@
   --spacing-2xl: 4rem;
 
   /* Font sizes */
-  --text-xs: 0.875rem;
-  --text-sm: 1rem;
-  --text-md: 1.125rem;
-  --text-lg: 1.25rem;
-  --text-xl: 1.5rem;
-  --text-2xl: 2rem;
-  --text-3xl: 2.5rem;
-  --text-4xl: 3.5rem;
+  --fs-body: 1rem;
+  --fs-small: 0.95rem;
+  --fs-h1: 3rem;
+  --fs-h2: 2.25rem;
+  --fs-h3: 1.5rem;
 }
 
 /* Reset and base styles */
@@ -44,41 +46,44 @@
 
 body {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-  background-color: var(--background);
-  color: var(--text-dark);
-  line-height: 1.6;
+  background-color: var(--neutral-light);
+  color: var(--blue-primary);
+  line-height: 1.7;
+  font-size: var(--fs-body);
 }
 
 /* Typography */
 h1 {
-  font-size: var(--text-4xl);
+  font-size: var(--fs-h1);
   font-weight: 700;
-  color: var(--primary-blue);
+  color: var(--blue-dark);
   margin-bottom: var(--spacing-md);
   line-height: 1.1;
   font-family: "Lora", serif;
   letter-spacing: -0.02em;
+  border-bottom: 2px solid var(--blue-light);
+  padding-bottom: 0.25rem;
 }
 
 h2 {
-  font-size: var(--text-2xl);
+  font-size: var(--fs-h2);
   font-weight: 600;
-  color: var(--primary-blue);
+  color: var(--blue-dark);
   margin-bottom: var(--spacing-sm);
   font-family: "Lora", serif;
 }
 
 h3 {
-  font-size: var(--text-xl);
+  font-size: var(--fs-h3);
   font-weight: 600;
-  color: var(--primary-blue);
+  color: var(--blue-primary);
   margin-bottom: var(--spacing-xs);
   font-family: "Lora", serif;
 }
 
 p {
-  font-size: var(--text-sm);
-  color: var(--text-dark);
+  font-size: var(--fs-body);
+  color: var(--blue-primary);
   margin-bottom: var(--spacing-sm);
   font-family: "Inter", sans-serif;
   font-weight: 400;
@@ -86,11 +91,12 @@ p {
 
 .page-title {
   font-size: 3rem;
-  color: #2c5282;
+  color: var(--blue-dark);
   margin-bottom: 1rem;
   font-weight: bold;
   justify-content: center;
   text-align: center;
+  font-family: "Lora", serif;
 }
 
 /* Navigation styles */
@@ -100,14 +106,14 @@ p {
   justify-content: space-between;
   padding: var(--spacing-sm) var(--spacing-sm);
   background-color: var(--white);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--neutral-gray);
   max-width: 1400px;
   margin: 0 auto;
 }
 
 .nav-logo {
-  color: var(--light-blue);
-  font-size: var(--text-2xl);
+  color: var(--blue-light);
+  font-size: var(--fs-h2);
   font-weight: 700;
   width: 40px;
   height: 40px;
@@ -124,48 +130,61 @@ p {
 
 .nav-link {
   text-decoration: none;
-  color: var(--text-dark);
+  color: var(--blue-pale);
   font-weight: 500;
-  font-size: 1rem;
+  font-size: var(--fs-small);
   transition: color 0.2s ease;
   font-family: "Lora", serif;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  letter-spacing: 0.01em;
+  position: relative;
 }
 
 .nav-link:hover {
-  color: var(--secondary-blue);
+  color: var(--accent-copper);
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0%;
+  height: 2px;
+  background: var(--accent-copper);
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+  width: 100%;
 }
 
 .nav-link.active {
-  color: var(--primary-blue);
+  color: var(--blue-dark);
   font-weight: 700;
 }
 
 .search-icon {
-  font-size: var(--text-lg);
+  font-size: var(--fs-h3);
   cursor: pointer;
-  color: var(--text-dark);
+  color: var(--blue-primary);
   font-weight: 700;
 }
 
 /* Button styles */
 .btn-primary {
-  background-color: var(--secondary-blue);
+  background-color: var(--accent-copper);
   color: var(--white);
   padding: 12px 24px;
   border: none;
-  border-radius: 8px;
-  font-size: var(--text-sm);
-  font-weight: 500;
+  border-radius: 9999px;
+  font-size: var(--fs-small);
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, transform 0.15s ease;
 }
 
 .btn-primary:hover {
-  background-color: var(--primary-blue);
+  background-color: #d65c3f;
+  transform: translateY(-2px);
 }
 
 .btn-primary:disabled {
@@ -178,8 +197,8 @@ p {
   background-color: var(--white);
   padding: var(--spacing-lg);
   border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  border: 1px solid var(--border);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--neutral-gray);
 }
 
 /* Container styles */
@@ -201,15 +220,14 @@ p {
   background-color: #0077b5;
   color: var(--white);
   padding: 12px 20px;
-  border-radius: 50px;
+  border-radius: 50%;
   text-decoration: none;
-  font-size: var(--text-sm);
+  font-size: var(--fs-small);
   font-weight: 500;
   transition: background-color 0.2s ease;
   font-family: "Inter", sans-serif;
   min-width: 60px;
   height: 60px;
-  border-radius: 50%;
 }
 
 .linkedin-btn:hover {
@@ -245,7 +263,6 @@ p {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 0;
 }
 
 /* Responsive design */
@@ -278,7 +295,7 @@ p {
   }
 
   h1 {
-    font-size: var(--text-3xl);
+    font-size: 2.25rem;
   }
 
   .main-content {
@@ -300,23 +317,23 @@ p {
 }
 
 .split-container {
-  display: flex; /* row by default */
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 2rem;
   padding: 0 10%;
-  flex-wrap: wrap; /* allow wrapping if it runs out of space */
+  flex-wrap: nowrap; /* no wrapping by default */
 }
 
 .text-section {
-  flex: 1 1 65%; /* half width on large screens */
+  flex: 1 1 65%;
   max-width: 600px;
 }
 
 .text-section h2 {
   font-size: 2.5rem;
   margin-bottom: 1.5rem;
-  color: var(--primary-blue);
+  color: var(--blue-dark);
 }
 
 .text-section p {
@@ -328,22 +345,28 @@ p {
 .text-section .cta {
   display: inline-block;
   padding: 0.75rem 1.5rem;
-  background: #000;
+  background: var(--accent-copper);
   color: #fff;
-  border-radius: 50px;
+  border-radius: 9999px;
   font-weight: 600;
   text-decoration: none;
   transition: background 0.2s ease;
 }
 .text-section .cta:hover {
-  background: #333;
+  background: #d65c3f;
 }
 
 .card-section {
-  flex: 1 1 35%; /* a little smaller than half width */
+  flex: 1 1 35%;
   display: flex;
   justify-content: center;
-  max-width: 500px; /* reduced from 700px */
-  max-height: 500px; /* cap total card height */
+  max-width: 500px;
+  max-height: 500px;
   padding: 1rem;
+}
+
+@media (max-width: 900px) {
+  .split-container {
+    flex-wrap: wrap; /* only wrap below breakpoint */
+  }
 }
