@@ -98,7 +98,7 @@ p {
 .page-title h1 {
   font-size: 3rem;
   color: var(--blue-primary);
-  font-weight: bold;
+  font-weight: 700;
   font-family: "Lora", serif;
   max-width: 1400px; /* same as container */
   text-align: center; /* center the text inside */
