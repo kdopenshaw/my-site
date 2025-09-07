@@ -69,10 +69,10 @@
 
 /* Main page container */
 .blacksmith-page {
-  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   background: #fafafa; /* Light gray background */
   margin: 0;
-  padding: 1.5rem 0rem; /* 16px padding on all sides */
+  padding: 0rem 0rem;
+  justify-content: center;
 }
 
 /* ==================== FEATURED SECTIONS ==================== */

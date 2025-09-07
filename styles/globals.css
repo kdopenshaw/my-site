@@ -8,8 +8,8 @@
 :root {
   /* Core Blues */
   --blue-dark: #0d1b2a;
-  --blue-primary: #1b263b;
-  --blue-light: #415a77;
+  --blue-primary: #2c5282;
+  --blue-light: #3b6ba1;
   --blue-pale: #778da9;
 
   /* Neutrals */
@@ -56,12 +56,11 @@ body {
 h1 {
   font-size: var(--fs-h1);
   font-weight: 700;
-  color: var(--blue-dark);
+  color: var(--blue-primary);
   margin-bottom: var(--spacing-md);
   line-height: 1.1;
   font-family: "Lora", serif;
   letter-spacing: -0.02em;
-  border-bottom: 2px solid var(--blue-light);
   padding-bottom: 0.25rem;
 }
 
@@ -90,13 +89,20 @@ p {
 }
 
 .page-title {
+  text-align: center; /* centers the child inline-block */
+  margin: 2rem auto 0.5rem;
+  max-width: 1400px;
+  padding: 0rem 10%;
+}
+
+.page-title h1 {
   font-size: 3rem;
-  color: var(--blue-dark);
-  margin-bottom: 1rem;
+  color: var(--blue-primary);
   font-weight: bold;
-  justify-content: center;
-  text-align: center;
   font-family: "Lora", serif;
+  max-width: 1400px; /* same as container */
+  text-align: center; /* center the text inside */
+  border-bottom: 2px solid var(--blue-light);
 }
 
 /* Navigation styles */

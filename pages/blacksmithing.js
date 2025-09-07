@@ -52,7 +52,9 @@ export default function BlacksmithingPage({ initialImages, initialFeatures }) {
       </Head>
 
       <main className="blacksmith-page">
-        <h1 className="page-title">Blacksmith Work</h1>
+        <div class="page-title">
+          <h1>Blacksmithing</h1>
+        </div>
 
         {/* Instagram Profile Card */}
         <div className="split-container">
