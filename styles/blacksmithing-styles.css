@@ -1,17 +1,94 @@
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap");
 
-/* Blacksmith Gallery Specific Styles */
+/* ==================== PAGE CONTAINER ==================== */
 .blacksmith-container {
   min-height: 100vh;
 }
 
-.instagram-wrapper {
-  width: 100%;
-  display: flex;
-  justify-content: center; /* centers if parent is wider than embed */
+.blacksmith-page {
+  background: #fafafa;
+  margin: 0;
+  padding: 0;
+  justify-content: center;
 }
 
-/* Ensure GLightbox is properly layered and scrollable */
+/* ==================== INSTAGRAM EMBED ==================== */
+/* Instagram skeleton fills the card-section */
+.instagram-wrapper {
+  width: 326px;
+  height: 393px; /* take all available height */
+  background: #f0f0f0; /* skeleton bg */
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0rem;
+  margin: 0rem;
+}
+
+.instagram-wrapper iframe.instagram-media {
+  margin-bottom: 0 !important;
+  display: block;
+}
+
+.split-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 0 10%;
+  flex-wrap: nowrap; /* no wrapping by default */
+  margin: 0rem;
+}
+
+.text-section {
+  flex: 1 1 65%;
+  max-width: 600px;
+}
+
+.text-section h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  color: var(--blue-dark);
+}
+
+.text-section p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.text-section .cta {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background: var(--accent-copper);
+  color: #fff;
+  border-radius: 9999px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+.text-section .cta:hover {
+  background: #d65c3f;
+}
+
+.card-section {
+  flex: 1 1 35%;
+  display: flex;
+  justify-content: center;
+  max-width: 500px;
+  max-height: 500px;
+  padding: 0rem 1rem;
+}
+
+@media (max-width: 900px) {
+  .split-container {
+    flex-wrap: wrap; /* only wrap below breakpoint */
+  }
+}
+
+/* ==================== GLIGHTBOX FIXES ==================== */
 .glightbox-container {
   z-index: 9999999 !important;
   position: fixed !important;
@@ -32,14 +109,12 @@
   position: relative !important;
 }
 
-/* Ensure images are properly sized and scrollable */
 .gslide-image img {
   max-height: 90vh !important;
   max-width: 90vw !important;
   object-fit: contain !important;
 }
 
-/* Make sure close button is accessible */
 .gclose {
   z-index: 99999999 !important;
   position: fixed !important;
@@ -47,13 +122,11 @@
   right: 20px !important;
 }
 
-/* Ensure navigation buttons work */
 .gprev,
 .gnext {
   z-index: 99999999 !important;
 }
 
-/* Fix for mobile scrolling */
 @media (max-width: 768px) {
   .glightbox-container {
     -webkit-overflow-scrolling: touch !important;
@@ -65,92 +138,13 @@
   }
 }
 
-/* ==================== BLACKSMITH PAGE STYLES ==================== */
-
-/* Main page container */
-.blacksmith-page {
-  background: #fafafa; /* Light gray background */
-  margin: 0;
-  padding: 0rem 0rem;
-  justify-content: center;
-}
-
 /* ==================== FEATURED SECTIONS ==================== */
-
-/* Gallery wrapper - 80% of page width */
-.gallery-wrap {
-  width: 80%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 16px;
-  box-sizing: border-box;
-}
-
-/* Simple masonry layout using CSS columns */
-.gallery {
-  column-count: 4;
-  column-gap: 16px;
-  width: 100%;
-}
-
-/* Responsive column adjustments */
-@media (max-width: 1200px) {
-  .gallery {
-    column-count: 3;
-  }
-}
-
-@media (max-width: 768px) {
-  .gallery {
-    column-count: 2;
-    column-gap: 12px;
-  }
-}
-
-@media (max-width: 480px) {
-  .gallery {
-    column-count: 1;
-  }
-}
-
-/* Gallery links */
-.gallery a {
-  display: block;
-  margin-bottom: 16px;
-  break-inside: avoid;
-  text-decoration: none;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-.gallery a:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-}
-
-/* Gallery images - natural masonry sizing */
-.gallery img {
-  width: 100%;
-  height: auto;
-  display: block;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-
 .featured-section {
   max-width: 1300px;
   margin: auto;
   display: flex;
   align-items: center;
-  /* background: linear-gradient(135deg, 
-    rgba(71, 85, 105, 0.16) 0%, 
-    rgba(82, 85, 90, 0.18) 30%,
-    rgba(71, 85, 105, 0.16) 60%,
-    rgba(82, 85, 90, 0.18) 100%
-  ); */
-  padding: 0rem;
+  padding: 0;
   border: 2px solid rgba(57, 77, 103, 0.08);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(71, 85, 105, 0.06),
@@ -169,159 +163,135 @@
   position: relative;
 }
 
-/* Container for the feature image and navigation */
 .feature-box {
-  width: 700px; /* Fixed width */
-  height: 400px; /* Fixed height */
-  position: relative; /* So we can position arrows absolutely inside it */
-  max-width: 100vw; /* Never wider than screen */
-  max-height: 70vw; /* Never taller than 70% of screen height */
+  width: 700px;
+  height: 400px;
+  position: relative;
+  max-width: 100vw;
+  max-height: 70vw;
 }
 
-/* The main feature image */
 .feature-box img {
-  width: 100%; /* Fill container width */
-  height: 100%; /* Fill container height */
-  object-fit: contain; /* Scale image to fit without cropping */
-  transition: transform 0.2s ease; /* Smooth transform animations */
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.2s ease;
 }
 
-/* Text content next to the image */
 .feature-text {
-  flex: 1 1 200px; /* Flexible width, minimum 200px */
-  min-width: 150px; /* Never smaller than 150px */
+  flex: 1 1 200px;
+  min-width: 150px;
   font-size: 1.1rem;
-  line-height: 1.7; /* Space between lines */
-  color: #4a5568; /* Medium gray text */
-  font-family: "Georgia", "Times New Roman", serif; /* Serif font for readability */
+  line-height: 1.7;
+  color: #4a5568;
+  font-family: "Georgia", serif;
   letter-spacing: 0.015em;
-  align-self: flex-start; /* overrides parent’s align-items */
-  overflow-y: auto; /* Adds scroll if text gets too long */
+  align-self: flex-start;
+  overflow-y: auto;
 }
 
-/* Feature titles (h2) */
 .feature-text h2 {
   font-family: "Playfair Display", serif;
   font-size: 1.8rem;
-  font-weight: 600; /* Semi-bold */
+  font-weight: 600;
   letter-spacing: 0.02em;
-  color: #2d3748; /* Darker gray */
-  margin: 0 0 1rem 0; /* Space below title */
-  line-height: 1.3; /* Tighter line spacing for titles */
+  color: #2d3748;
+  margin: 0 0 1rem 0;
+  line-height: 1.3;
 }
 
-/* Feature descriptions */
 .feature-text p {
   margin: 0;
-  font-style: italic; /* Italic text */
-  color: #718096; /* Lighter gray */
+  font-style: italic;
+  color: #718096;
   font-size: 1.05rem;
   line-height: 1.6;
 }
 
 .feature-title {
-  /* background: #f7fafc;        light neutral background */
-  color: #1a202c; /* dark text */
+  color: #1a202c;
   text-align: center;
   font-family: "Lora", serif;
   font-size: 1.6rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  padding: 0.75rem 0; /* breathing room */
-  margin-bottom: 1.5rem; /* space before image+text row */
-  border-bottom: 1px solid #9bb0cc; /* thin divider line */
+  padding: 0.75rem 0;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #9bb0cc;
 }
 
 /* ==================== NAVIGATION ARROWS ==================== */
-
-/* Base styles for left/right arrow buttons */
 .nav-arrow {
-  position: absolute; /* Position relative to .feature-box */
-  top: 50%; /* Halfway down */
-  transform: translateY(-50%); /* Move up by half its height to truly center */
-  background: #ffffff; /* White background */
-  border: 1px solid #e9ecef; /* Light gray border */
-  border-radius: 50%; /* Make it circular */
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 50%;
   width: 44px;
   height: 44px;
-  display: flex; /* Center the arrow character */
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.7rem; /* Big arrow character */
-  color: #34495e; /* Dark gray */
-  cursor: pointer; /* Hand cursor on hover */
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12); /* Drop shadow */
-  transition: all 0.2s; /* Smooth hover effects */
-  opacity: 0.7; /* Slightly transparent */
-  z-index: 2; /* Above the image */
+  font-size: 1.7rem;
+  color: #34495e;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+  transition: all 0.2s;
+  opacity: 0.7;
+  z-index: 2;
 }
 
-/* Hover effect for arrows */
 .nav-arrow:hover {
-  background: #f8f9fa; /* Slightly darker background */
-  color: #2c3e50; /* Darker text */
-  opacity: 1; /* Full opacity */
+  background: #f8f9fa;
+  color: #2c3e50;
+  opacity: 1;
 }
 
-/* Position the previous arrow on the left */
 .nav-arrow.prev {
   left: 10px;
 }
-
-/* Position the next arrow on the right */
 .nav-arrow.next {
   right: 10px;
 }
 
-/* ==================== DOTS NAVIGATION ==================== */
-
-/* Container for the dots at bottom of feature images */
+/* ==================== DOTS ==================== */
 .feature-dots {
-  position: absolute; /* Position relative to .feature-box */
-  left: 50%; /* Center horizontally */
-  bottom: 18px; /* 18px from bottom */
-  transform: translateX(-50%); /* Move left by half width to truly center */
-  display: flex; /* Horizontal layout */
-  gap: 0.5rem; /* Space between dots */
-  background: rgba(
-    255,
-    255,
-    255,
-    0.071
-  ); /* Semi-transparent white background */
-  border-radius: 12px; /* Rounded background */
-  padding: 0.2rem 0.6rem; /* Padding inside background */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Drop shadow */
-  z-index: 10; /* Above everything else */
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.071);
+  border-radius: 12px;
+  padding: 0.2rem 0.6rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
 }
 
-/* Individual dot buttons */
 .dot {
   width: 10px;
   height: 10px;
-  border-radius: 50%; /* Circular */
-  border: 1.5px solid #bdc3c7; /* Light gray border */
-  background: #ffffff; /* White fill */
+  border-radius: 50%;
+  border: 1.5px solid #bdc3c7;
+  background: #fff;
   cursor: pointer;
-  transition: all 0.2s; /* Smooth hover/active effects */
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Small shadow */
+  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-/* Active dot (currently selected image) */
 .dot.active {
-  background: #34495e; /* Dark fill */
-  border-color: #34495e; /* Dark border */
+  background: #34495e;
+  border-color: #34495e;
 }
 
-/* Hover effect for dots */
 .dot:hover {
   opacity: 0.8;
 }
 
-/* ==================== GALLERY STYLES ==================== */
-
-/* Gallery wrapper - 80% of page width */
+/* ==================== GALLERY ==================== */
 .gallery-wrap {
   width: 80%;
   max-width: 1400px;
@@ -330,14 +300,12 @@
   box-sizing: border-box;
 }
 
-/* Simple masonry layout using CSS columns */
 .gallery {
   column-count: 4;
   column-gap: 8px;
   width: 100%;
 }
 
-/* Gallery links */
 .gallery a {
   display: block;
   margin-bottom: 8px;
@@ -355,33 +323,34 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
-/* Gallery images - natural masonry sizing */
 .gallery img {
   width: 100%;
   height: 100%;
   display: block;
   object-fit: cover;
   object-position: center;
-
   cursor: pointer;
+  transition: transform 0.3s ease;
 }
 
 .gallery img:hover {
   transform: scale(1.02);
 }
 
-/* ==================== RESPONSIVE DESIGN ==================== */
+/* Responsive tweaks */
+@media (max-width: 1200px) {
+  .gallery {
+    column-count: 3;
+  }
+}
 
-/* Tablet and smaller screens */
 @media (max-width: 900px) {
   .feature-box {
-    width: 98vw; /* Almost full screen width */
-    height: 54vw; /* Proportional height */
-    min-height: 220px; /* Minimum height */
-    max-height: 70vw; /* Maximum height */
+    width: 98vw;
+    height: 54vw;
+    min-height: 220px;
+    max-height: 70vw;
   }
-
-  /* Smaller arrows on mobile */
   .nav-arrow {
     width: 32px;
     height: 32px;
@@ -389,21 +358,19 @@
   }
 }
 
-/* Smaller tablets */
 @media (max-width: 800px) {
   .gallery {
-    column-count: 2; /* Only 2 columns */
+    column-count: 2;
   }
 }
 
-/* Mobile phones */
 @media (max-width: 500px) {
   .gallery {
-    column-count: 1; /* Single column */
+    column-count: 1;
   }
 }
 
-/* Enhanced Video thumbnail styling */
+/* ==================== VIDEO THUMBNAILS ==================== */
 .video-thumbnail {
   position: relative;
   width: 100%;
@@ -411,7 +378,7 @@
   cursor: pointer;
   overflow: hidden;
   border-radius: 6px;
-  background: #f0f0f0; /* Fallback background */
+  background: #f0f0f0;
 }
 
 .video-thumbnail video {
@@ -419,11 +386,9 @@
   height: 100%;
   object-fit: cover;
   display: block;
-  /* Ensure the video shows its first frame as thumbnail */
   -webkit-playsinline: true;
 }
 
-/* Enhanced play overlay */
 .play-overlay {
   position: absolute;
   top: 50%;
@@ -446,13 +411,11 @@
   transform: translate(-50%, -50%) scale(1.1);
 }
 
-/* Ensure gallery video items work with masonry layout */
 .gallery .video-thumbnail {
   break-inside: avoid;
   margin-bottom: 8px;
 }
 
-/* Loading state for videos */
 .video-thumbnail video:not([poster]) {
   background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%),
     linear-gradient(-45deg, #f0f0f0 25%, transparent 25%),
@@ -472,7 +435,6 @@
   }
 }
 
-/* Stop animation once video loads */
 .video-thumbnail video:not([poster])[readyState="4"] {
   animation: none;
   background: none;

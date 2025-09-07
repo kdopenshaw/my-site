@@ -90,7 +90,7 @@ p {
 
 .page-title {
   text-align: center; /* centers the child inline-block */
-  margin: 2rem auto 0.5rem;
+  margin: 2rem auto 0rem;
   max-width: 1400px;
   padding: 0rem 10%;
 }
@@ -319,60 +319,5 @@ p {
   .content-right {
     height: 400px;
     max-width: 100%;
-  }
-}
-
-.split-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  padding: 0 10%;
-  flex-wrap: nowrap; /* no wrapping by default */
-}
-
-.text-section {
-  flex: 1 1 65%;
-  max-width: 600px;
-}
-
-.text-section h2 {
-  font-size: 2.5rem;
-  margin-bottom: 1.5rem;
-  color: var(--blue-dark);
-}
-
-.text-section p {
-  font-size: 1.1rem;
-  line-height: 1.6;
-  margin-bottom: 2rem;
-}
-
-.text-section .cta {
-  display: inline-block;
-  padding: 0.75rem 1.5rem;
-  background: var(--accent-copper);
-  color: #fff;
-  border-radius: 9999px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: background 0.2s ease;
-}
-.text-section .cta:hover {
-  background: #d65c3f;
-}
-
-.card-section {
-  flex: 1 1 35%;
-  display: flex;
-  justify-content: center;
-  max-width: 500px;
-  max-height: 500px;
-  padding: 1rem;
-}
-
-@media (max-width: 900px) {
-  .split-container {
-    flex-wrap: wrap; /* only wrap below breakpoint */
   }
 }

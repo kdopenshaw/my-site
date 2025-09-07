@@ -100,34 +100,25 @@ export default function BlacksmithingPage({ initialImages, initialFeatures }) {
 }
 
 function InstagramCard() {
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    // Poll until the embed script is ready, then process
     const interval = setInterval(() => {
       if (window.instgrm && window.instgrm.Embeds) {
         window.instgrm.Embeds.process();
         clearInterval(interval);
+        setLoading(false);
       }
     }, 500);
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <div className="instagram-wrapper">
+    <div className={`instagram-wrapper ${loading ? "loading" : ""}`}>
       <blockquote
         className="instagram-media"
         data-instgrm-permalink="https://www.instagram.com/cetsteel/"
         data-instgrm-version="14"
-        style={{
-          background: "#FFF",
-          border: 0,
-          borderRadius: "3px",
-          maxWidth: "90%",
-          minWidth: "326px",
-          maxHeight: "400px",
-          width: "100%",
-          padding: "0rem",
-          margin: "0 auto",
-        }}
       ></blockquote>
 
       <Script
