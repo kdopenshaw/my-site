@@ -1,4 +1,5 @@
 import "../styles/globals.css";
+import "../styles/blacksmithing-styles.css";
 import { Inter, Lora, IBM_Plex_Mono } from "next/font/google";
 
 export const inter = Inter({

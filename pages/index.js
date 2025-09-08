@@ -65,7 +65,7 @@ export default function Home() {
         {/* Right Content - Fractal Background */}
         <div style={{ flex: 1, padding: "0rem 1rem" }}>
           <img
-            src="/julia_0.2841_notext.png"
+            src="/fractals/julia_0.2841_notext.png"
             alt="fractal"
             style={{ width: "90%", height: "90%" }}
           />

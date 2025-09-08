@@ -61,7 +61,7 @@
   font-weight: 600;
   font-size: 2.2rem;
   color: var(--text);
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.5em;
   padding-bottom: 0;
 }
 
@@ -99,6 +99,18 @@
   display: flex;
   flex-direction: column;
   gap: 2.5rem;
+}
+
+.landingHero {
+  text-align: "center";
+  align-items: "center";
+  max-width: "500px";
+  margin: "0 auto";
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .landingButtons {
@@ -410,4 +422,20 @@
   .fractalCanvas {
     height: 200px;
   }
+}
+
+.galleryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  padding: 2rem 0;
+}
+
+.galleryItem {
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background: #fff;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease-in-out;
 }
