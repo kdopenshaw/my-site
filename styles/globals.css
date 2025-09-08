@@ -1,9 +1,5 @@
 /* styles/globals.css - Control all your site's styling */
 
-/* Import Google Fonts */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&display=swap");
-
 /* Global Variables - Palette + Scale */
 :root {
   /* Core Blues */
@@ -46,7 +42,7 @@
 
 body {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-  background-color: var(--neutral-light);
+  background-color: var(--white);
   color: var(--blue-primary);
   line-height: 1.7;
   font-size: var(--fs-body);
@@ -57,7 +53,7 @@ h1 {
   font-size: var(--fs-h1);
   font-weight: 700;
   color: var(--blue-primary);
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
   line-height: 1.1;
   font-family: "Lora", serif;
   letter-spacing: -0.02em;
@@ -90,9 +86,9 @@ p {
 
 .page-title {
   text-align: center; /* centers the child inline-block */
-  margin: 2rem auto 0rem;
+  margin: 0 auto;
   max-width: 1400px;
-  padding: 0rem 10%;
+  padding: 2rem 10% 0rem;
 }
 
 .page-title h1 {

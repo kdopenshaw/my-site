@@ -1,0 +1,413 @@
+/* Page wrapper */
+.page {
+  --bg: #fafbfc;
+  --bg-alt: #f3f4f6;
+  --panel: #fff;
+  --border: #e5e7eb;
+  --text: #222;
+  --text-light: #555;
+  --accent: #2563eb;
+  --accent-light: #dbeafe;
+  --danger: #e11d48;
+  --radius: 10px;
+  --shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  --font-main: "IBM Plex Mono", "Fira Mono", "Menlo", "Consolas", monospace;
+  --font-ui: "Inter", "Segoe UI", Arial, sans-serif;
+
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 16px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header + nav */
+.mainHeader {
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 1.5rem 0 1rem 0;
+  text-align: center;
+}
+
+.nav {
+  display: flex;
+  justify-content: center;
+  gap: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.navLink {
+  color: var(--text-light);
+  text-decoration: none;
+  font-family: var(--font-main);
+  font-size: 1.1rem;
+  letter-spacing: 0.01em;
+  padding: 0rem 0.5em;
+  border-radius: var(--radius);
+  transition: background 0.2s, color 0.2s;
+}
+
+.navLinkActive,
+.navLink:hover {
+  color: var(--accent);
+  background: var(--accent-light);
+}
+
+/* Headings */
+.heading1 {
+  font-family: var(--font-main);
+  font-weight: 600;
+  font-size: 2.2rem;
+  color: var(--text);
+  margin-bottom: 0.25rem;
+  padding-bottom: 0;
+}
+
+.heading2 {
+  font-family: var(--font-main);
+  font-weight: 600;
+  font-size: 1.5rem;
+  margin: 0rem;
+  color: var(--text);
+}
+
+.heading3 {
+  font-family: var(--font-main);
+  font-weight: 600;
+  font-size: 1.15rem;
+  margin: 0rem;
+  color: var(--text);
+}
+
+.heading4 {
+  font-family: var(--font-main);
+  font-weight: 600;
+  font-size: 1rem;
+  margin: 0rem;
+  color: var(--text);
+}
+
+/* Main container */
+.main {
+  flex: 1;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.landingButtons {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.landingButton {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--accent);
+  font-family: var(--font-main);
+  font-size: 1.1rem;
+  padding: 0.8em 2em;
+  border-radius: var(--radius);
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+}
+
+.landingButton:hover {
+  background: var(--accent-light);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Generator layout */
+.fractalLayout {
+  display: flex;
+  gap: 2.5rem;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.fractalControls {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem 1.2rem;
+  min-width: 220px;
+  max-width: 260px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.fractalControlsLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  font-family: var(--font-main);
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.fractalControlsNumber,
+.fractalControlsSelect {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.3em 0.7em;
+  font-size: 1rem;
+  background: var(--bg-alt);
+  color: var(--text);
+  width: 5em;
+}
+
+.fractalControlsRange {
+  width: 100%;
+}
+
+.fractalActions {
+  display: flex;
+  gap: 0.7em;
+  margin-top: 0.5em;
+}
+
+.fractalButton {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.5em 1.2em;
+  font-family: var(--font-main);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.fractalButton:disabled {
+  background: #b6cdfd;
+  cursor: not-allowed;
+}
+
+.fractalButton:hover:not(:disabled) {
+  background: #1746a2;
+}
+
+.presetRow {
+  display: flex;
+  gap: 0.5em;
+  flex-wrap: wrap;
+}
+
+.presetBtn {
+  background: var(--bg-alt);
+  color: var(--accent);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.2em 0.8em;
+  font-size: 0.95em;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.presetBtnActive,
+.presetBtn:hover {
+  background: var(--accent-light);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.fractalCanvasPanel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.fractalCanvas {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  max-width: 100%;
+  width: 600px;
+  height: 400px;
+  display: block;
+}
+
+.canvasInfo {
+  color: var(--text-light);
+  font-size: 0.98em;
+  text-align: center;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 0.5em;
+  margin-bottom: 1em;
+}
+
+.tabBtn {
+  background: var(--bg-alt);
+  color: var(--text-light);
+  border: 1px solid var(--border);
+  border-radius: var(--radius) var(--radius) 0 0;
+  padding: 0.5em 1.2em;
+  font-family: var(--font-main);
+  font-size: 1em;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.tabBtnActive,
+.tabBtn:hover {
+  background: var(--panel);
+  color: var(--accent);
+  border-bottom: 1px solid var(--panel);
+}
+
+.tabContent {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 0 0 var(--radius) var(--radius);
+  padding: 1.5em 1.2em;
+  font-size: 1.05em;
+  color: var(--text-light);
+  box-shadow: var(--shadow);
+}
+
+/* Gallery */
+.galleryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  padding: 2rem 0;
+}
+
+.galleryItem {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: #fff;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease-in-out;
+}
+
+.galleryItem:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.galleryItemImg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.galleryItemTitle {
+  padding: 1rem;
+  font-family: var(--font-main);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.gallerySection {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 2rem;
+}
+
+.gallerySectionHeading {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+}
+
+.galleryPlaceholder,
+.galleryLoading {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #888;
+  font-family: var(--font-main);
+}
+
+/* Learn section */
+.learnSection {
+  font-family: var(--font-main);
+  color: var(--text-light);
+  font-size: 1.05em;
+  line-height: 1.7;
+}
+
+.math {
+  font-family: var(--font-main);
+  background: var(--bg-alt);
+  padding: 0.1em 0.4em;
+  border-radius: 5px;
+  font-size: 1em;
+  color: var(--accent);
+}
+
+.exampleImg {
+  display: block;
+  margin: 1.2em auto;
+  max-width: 320px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.caption {
+  text-align: center;
+  color: var(--text-light);
+  font-size: 0.95em;
+  margin-bottom: 1.2em;
+}
+
+/* Footer */
+.footer {
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  color: var(--text-light);
+  text-align: center;
+  padding: 2em 0 1em 0;
+  font-size: 1em;
+  margin-top: 2em;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .fractalLayout {
+    flex-direction: column;
+    gap: 2rem;
+    align-items: stretch;
+  }
+  .fractalCanvas {
+    width: 100%;
+    height: 320px;
+  }
+}
+
+@media (max-width: 600px) {
+  .main {
+    padding: 1rem 0.2rem;
+  }
+  .fractalControls {
+    min-width: 0;
+    max-width: 100%;
+    padding: 1em 0.5em;
+  }
+  .fractalCanvas {
+    height: 200px;
+  }
+}
