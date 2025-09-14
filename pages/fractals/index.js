@@ -1,22 +1,7 @@
-// pages/fractals.js - Fractal Generator page
+// pages/fractals.js
 import Navigation from "../../components/Navigation";
+import FractalNav from "../../components/FractalNav";
 import s from "../../styles/fractals.module.css";
-import Link from "next/link";
-import { useRouter } from "next/router";
-
-function NavLink({ href, children }) {
-  const router = useRouter();
-  const isActive = router.pathname === href;
-
-  return (
-    <Link
-      href={href}
-      className={`${s.navLink} ${isActive ? s.navLinkActive : ""}`}
-    >
-      {children}
-    </Link>
-  );
-}
 
 export default function Fractals() {
   return (
@@ -26,13 +11,9 @@ export default function Fractals() {
       <div className={s.page}>
         <header className={s.mainHeader}>
           <h1 className={s.heading1}>Fractal Explorer</h1>
-          <nav className={s.nav}>
-            <NavLink href="/fractals">Home</NavLink>
-            <NavLink href="/fractals/mandelbrot">Mandelbrot</NavLink>
-            <NavLink href="/fractals/julia">Julia</NavLink>
-            <NavLink href="/fractals/gallery">Gallery</NavLink>
-          </nav>
+          <FractalNav />
         </header>
+
         <main className={s.main}>
           <section id="landing" className={s.landingHero}>
             <h2 className={s.heading2}>Explore the Beauty of Fractals</h2>
@@ -42,14 +23,15 @@ export default function Fractals() {
               the gallery and learning resources below.
             </p>
             <div className={s.landingButtons}>
-              <a href="mandelbrot.html" className={s.landingButton}>
+              <a href="/fractals/mandelbrot" className={s.landingButton}>
                 Explore Mandelbrot
               </a>
-              <a href="julia.html" className={s.landingButton}>
+              <a href="/fractals/julia" className={s.landingButton}>
                 Explore Julia
               </a>
             </div>
           </section>
+
           <section id="gallery">
             <h2 className={s.heading2}>Gallery</h2>
             <Gallery />
@@ -60,7 +42,6 @@ export default function Fractals() {
   );
 }
 
-// Gallery function
 function Gallery() {
   const images = ["/fractals/julia_-0.8_0.156.png", "/fractals/fractal1.png"];
   return (
