@@ -32,6 +32,18 @@ export default function Mandelbrot() {
     setActivePreset(index);
   };
 
+  // Get canvas dimensions based on quality setting
+  const getCanvasDimensions = (quality) => {
+    switch (quality) {
+      case "high":
+        return { width: 750, height: 500 };
+      case "4k":
+        return { width: 900, height: 600 };
+      default: // 'normal'
+        return { width: 600, height: 400 };
+    }
+  };
+
   // Calculate if a point is in the Mandelbrot set
   const mandelbrotPoint = (cx, cy, maxIterations) => {
     // z starts at 0 + 0i (the origin)
@@ -106,6 +118,12 @@ export default function Mandelbrot() {
   };
 
   useEffect(() => {
+    if (canvasRef.current) {
+      const canvas = canvasRef.current;
+      canvas.width = 1200; // Default size
+      canvas.height = 800;
+    }
+
     // Just run the initial render when component loads
     handleRender();
   }, []); // Still empty - only run once
@@ -116,8 +134,23 @@ export default function Mandelbrot() {
     if (canvasRef.current) {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext("2d");
+
+      // Get dimensions based on quality setting
+      const dimensions = getCanvasDimensions(quality);
+      // Set canvas resolution
+      canvas.width = dimensions.width;
+      canvas.height = dimensions.height;
+
+      // Set display size (keep reasonable for screen viewing)
+      const displayWidth = dimensions.width;
+      const displayHeight = dimensions.height;
+      canvas.style.width = displayWidth + "px";
+      canvas.style.height = displayHeight + "px";
+
       const width = canvas.width;
       const height = canvas.height;
+
+      console.log(`Rendering at ${width}x${height} (${quality} quality)`);
 
       // Create an ImageData object (empty pixel grid in memory)
       const imageData = ctx.createImageData(width, height);
@@ -155,7 +188,31 @@ export default function Mandelbrot() {
   };
 
   const handleDownload = () => {
-    console.log("Download clicked!");
+    // Check if canvas exists and has been rendered
+    if (!canvasRef.current) {
+      alert("Please render a fractal first!");
+      return;
+    }
+
+    const canvas = canvasRef.current;
+
+    // Convert canvas to PNG data URL
+    const dataURL = canvas.toDataURL("image/png", 1.0);
+
+    // Create a temporary download link
+    const downloadLink = document.createElement("a");
+
+    // Create filename with timestamp to avoid overwrites
+    const timestamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
+    downloadLink.download = `mandelbrot-${timestamp}.png`;
+
+    // Set the image data as the link target
+    downloadLink.href = dataURL;
+
+    // Programmatically click the link to trigger download
+    downloadLink.click();
+
+    console.log("Fractal downloaded!");
   };
 
   return (
@@ -217,7 +274,7 @@ export default function Mandelbrot() {
 
             {/* RIGHT SIDE: Canvas */}
             <div className={s.canvasContainer}>
-              <canvas ref={canvasRef} className={s.fractalCanvas} width={600} height={400} />
+              <canvas ref={canvasRef} className={s.fractalCanvas} />
             </div>
           </div>
         </main>
