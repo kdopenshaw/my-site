@@ -3,6 +3,7 @@ import Navigation from "../../components/Navigation";
 import FractalNav from "../../components/FractalNav";
 import s from "../../styles/fractals.module.css";
 import { useState, useEffect, useRef } from "react";
+import chroma from "chroma-js";
 
 export default function Mandelbrot() {
   const [colors, setColors] = useState({
@@ -12,213 +13,163 @@ export default function Mandelbrot() {
     color4: "#ffd700",
   });
 
-  // prettier-ignore
   const presets = [
-  { name: '🌫️ Dark Mist', colors: { color1: '#111111', color2: '#2a4d69', color3: '#b0c4de', color4: '#ffd700' } },
-  { name: '🌅 Sunset', colors: { color1: '#200000', color2: '#ff4500', color3: '#ffd700', color4: '#ffffff' } },
-  { name: '🌊 Ocean', colors: { color1: '#000000', color2: '#006666', color3: '#66ffff', color4: '#ffffff' } },
-  { name: '🌲 Forest', colors: { color1: '#000000', color2: '#004d00', color3: '#66ff66', color4: '#ffffff' } },
-  { name: '🔥 Fire', colors: { color1: '#000000', color2: '#8B0000', color3: '#FF4500', color4: '#FFD700' } }
-  ]
+    { name: "🌫️ Dark Mist", colors: { color1: "#111111", color2: "#2a4d69", color3: "#b0c4de", color4: "#ffd700" } },
+    { name: "🌅 Sunset", colors: { color1: "#200000", color2: "#ff4500", color3: "#ffd700", color4: "#ffffff" } },
+    { name: "🌊 Ocean", colors: { color1: "#000000", color2: "#006666", color3: "#66ffff", color4: "#ffffff" } },
+    { name: "🌲 Forest", colors: { color1: "#000000", color2: "#004d00", color3: "#66ff66", color4: "#ffffff" } },
+    { name: "🔥 Fire", colors: { color1: "#000000", color2: "#8B0000", color3: "#FF4500", color4: "#FFD700" } },
+  ];
   const [activePreset, setActivePreset] = useState(0);
 
   const [quality, setQuality] = useState("normal");
   const [maxIterations, setMaxIterations] = useState(500);
-
   const canvasRef = useRef(null);
+  const [isRendering, setIsRendering] = useState(false);
 
   const handlePresetClick = (preset, index) => {
     setColors(preset.colors);
     setActivePreset(index);
   };
 
-  // Get canvas dimensions based on quality setting
-  const getCanvasDimensions = (quality) => {
+  const getCanvasDimensions = (quality, userMaxIter) => {
     switch (quality) {
       case "high":
-        return { width: 750, height: 500 };
+        return { width: 1800, height: 1200, displayWidth: 750, displayHeight: 500, maxIter: userMaxIter };
       case "4k":
-        return { width: 900, height: 600 };
-      default: // 'normal'
-        return { width: 600, height: 400 };
+        return { width: 3000, height: 2000, displayWidth: 900, displayHeight: 600, maxIter: userMaxIter };
+      default: // normal
+        return { width: 600, height: 400, displayWidth: 600, displayHeight: 400, maxIter: userMaxIter };
     }
   };
 
-  // Calculate if a point is in the Mandelbrot set
-  const mandelbrotPoint = (cx, cy, maxIterations) => {
-    // z starts at 0 + 0i (the origin)
+  // Smooth Mandelbrot escape calculation
+  const mandelbrotPoint = (cx, cy, maxIterations, bailout = 4.0) => {
     let x = 0,
       y = 0;
+    let x2 = 0,
+      y2 = 0;
     let iteration = 0;
 
-    // Keep iterating until we escape or hit max iterations
-    while (iteration < maxIterations && x * x + y * y <= 4) {
-      // Apply the Mandelbrot formula: z = z² + c
-      // z² = (x + yi)² = x² - y² + 2xyi
-      let xTemp = x * x - y * y + cx; // Real part
-      y = 2 * x * y + cy; // Imaginary part
-      x = xTemp;
-
+    while (iteration < maxIterations && x2 + y2 <= bailout) {
+      y = 2 * x * y + cy;
+      x = x2 - y2 + cx;
+      x2 = x * x;
+      y2 = y * y;
       iteration++;
     }
 
-    // Return number of iterations (higher = closer to the set)
-    return iteration;
+    if (iteration === maxIterations) {
+      return 0; // inside set
+    }
+
+    const magnitude = Math.sqrt(x2 + y2);
+    const logMag = Math.log(magnitude);
+    return iteration + 1 - Math.log(logMag / Math.log(2)) / Math.log(2);
   };
 
-  // Convert pixel coordinates to complex plane coordinates
+  // Normalize with 98th percentile + gamma
+  const normalizeData = (divTime, gamma = 0.85) => {
+    const sorted = divTime.filter((v) => v > 0).sort((a, b) => a - b);
+    if (sorted.length === 0) return divTime.map(() => 0);
+
+    const q98 = sorted[Math.floor(sorted.length * 0.98)];
+    const range = q98;
+
+    return divTime.map((val) => {
+      if (val === 0) return 0;
+      return Math.pow(Math.min(1, val / range), gamma);
+    });
+  };
+
+  const createColorScale = (colors, steps = 2048) => {
+    return chroma.scale([colors.color1, colors.color2, colors.color3, colors.color4]).mode("lch").correctLightness(true).colors(steps);
+  };
+
   const pixelToComplex = (px, py, width, height) => {
-    // Map canvas pixels to complex plane (centered on interesting area)
-    const cx = -2.5 + (px / width) * 3.5; // Real axis: -2.5 to 1
-    const cy = -1.25 + (py / height) * 2.5; // Imaginary axis: -1.25 to 1.25
+    const cx = -2.5 + (px / width) * 3.5;
+    const cy = -1.25 + (py / height) * 2.5;
     return { cx, cy };
   };
 
-  // Convert iteration count to RGB color using our 4-color gradient
-  const iterationsToColor = (iterations, maxIterations, colors) => {
-    if (iterations === maxIterations) {
-      // Point is in the set - use first color (usually black)
-      return hexToRgb(colors.color1);
-    }
-
-    // Normalize iterations to 0-1 range
-    const normalized = iterations / maxIterations;
-
-    // Map to color stops: 0-0.33-0.66-1.0
-    if (normalized < 0.33) {
-      // Blend between color1 and color2
-      const t = normalized / 0.33;
-      return blendColors(hexToRgb(colors.color1), hexToRgb(colors.color2), t);
-    } else if (normalized < 0.66) {
-      // Blend between color2 and color3
-      const t = (normalized - 0.33) / 0.33;
-      return blendColors(hexToRgb(colors.color2), hexToRgb(colors.color3), t);
-    } else {
-      // Blend between color3 and color4
-      const t = (normalized - 0.66) / 0.34;
-      return blendColors(hexToRgb(colors.color3), hexToRgb(colors.color4), t);
-    }
-  };
-
-  // Convert hex color to RGB object
-  const hexToRgb = (hex) => {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    return { r, g, b };
-  };
-
-  // Blend between two RGB colors
-  const blendColors = (color1, color2, t) => {
-    return {
-      r: Math.round(color1.r + (color2.r - color1.r) * t),
-      g: Math.round(color1.g + (color2.g - color1.g) * t),
-      b: Math.round(color1.b + (color2.b - color1.b) * t),
-    };
-  };
-
-  useEffect(() => {
-    if (canvasRef.current) {
-      const canvas = canvasRef.current;
-      canvas.width = 1200; // Default size
-      canvas.height = 800;
-    }
-
-    // Just run the initial render when component loads
-    handleRender();
-  }, []); // Still empty - only run once
-
   const handleRender = () => {
-    console.log("Rendering fractal with:", { colors, quality, maxIterations });
+    setIsRendering(true);
 
-    if (canvasRef.current) {
+    // Let React update the button/spinner first
+    setTimeout(() => {
+      if (!canvasRef.current) return;
       const canvas = canvasRef.current;
       const ctx = canvas.getContext("2d");
 
-      // Get dimensions based on quality setting
-      const dimensions = getCanvasDimensions(quality);
-      // Set canvas resolution
-      canvas.width = dimensions.width;
-      canvas.height = dimensions.height;
+      const { width, height, displayWidth, displayHeight, maxIter } = getCanvasDimensions(quality, maxIterations);
 
-      // Set display size (keep reasonable for screen viewing)
-      const displayWidth = dimensions.width;
-      const displayHeight = dimensions.height;
+      // Internal resolution (high pixel density)
+      canvas.width = width;
+      canvas.height = height;
+
+      // Display size (small on screen)
       canvas.style.width = displayWidth + "px";
       canvas.style.height = displayHeight + "px";
 
-      const width = canvas.width;
-      const height = canvas.height;
-
-      console.log(`Rendering at ${width}x${height} (${quality} quality)`);
-
-      // Create an ImageData object (empty pixel grid in memory)
       const imageData = ctx.createImageData(width, height);
-      const data = imageData.data; // This is a flat array of RGBA values to edit
+      const data = imageData.data;
 
-      // Loop through every pixel on the canvas
+      // Compute escape values
+      const divTime = new Float64Array(width * height);
       for (let py = 0; py < height; py++) {
-        // rows
         for (let px = 0; px < width; px++) {
-          // columns
-          // Convert pixel coordinates to complex plane coordinates
           const { cx, cy } = pixelToComplex(px, py, width, height);
-
-          // Calculate Mandelbrot iterations for this point
-          const iterations = mandelbrotPoint(cx, cy, maxIterations);
-
-          // Convert iterations to a color (black and white for now)
-          const rgbColor = iterationsToColor(iterations, maxIterations, colors);
-
-          // Calculate position in the flat data array
-          // Each pixel has 4 values: Red, Green, Blue, Alpha
-          const pixelIndex = (py * width + px) * 4;
-
-          // Set RGBA values
-          data[pixelIndex] = rgbColor.r; // Red
-          data[pixelIndex + 1] = rgbColor.g; // Green
-          data[pixelIndex + 2] = rgbColor.b; // Blue
-          data[pixelIndex + 3] = 255; // Alpha (fully opaque)
+          divTime[py * width + px] = mandelbrotPoint(cx, cy, maxIterations);
         }
       }
 
-      // Draw the completed image data to the canvas
+      // Normalize + build color scale
+      const normalized = normalizeData(Array.from(divTime));
+      const colorScale = createColorScale(colors);
+
+      // Write pixels
+      for (let i = 0; i < normalized.length; i++) {
+        const colorIndex = Math.floor(normalized[i] * (colorScale.length - 1));
+        const rgb = chroma(colorScale[colorIndex]).rgb();
+        const pixelIndex = i * 4;
+        data[pixelIndex] = rgb[0];
+        data[pixelIndex + 1] = rgb[1];
+        data[pixelIndex + 2] = rgb[2];
+        data[pixelIndex + 3] = 255;
+      }
+
       ctx.putImageData(imageData, 0, 0);
-    }
+
+      // Overlay info
+      const overlay = document.getElementById("infoOverlay");
+      if (overlay) {
+        overlay.textContent = `Mandelbrot | ${width}×${height} | ${maxIterations} iter`;
+      }
+      setIsRendering(false);
+    }, 0); // yield to event loop
   };
 
   const handleDownload = () => {
-    // Check if canvas exists and has been rendered
     if (!canvasRef.current) {
       alert("Please render a fractal first!");
       return;
     }
-
     const canvas = canvasRef.current;
-
-    // Convert canvas to PNG data URL
     const dataURL = canvas.toDataURL("image/png", 1.0);
-
-    // Create a temporary download link
     const downloadLink = document.createElement("a");
-
-    // Create filename with timestamp to avoid overwrites
     const timestamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
     downloadLink.download = `mandelbrot-${timestamp}.png`;
-
-    // Set the image data as the link target
     downloadLink.href = dataURL;
-
-    // Programmatically click the link to trigger download
     downloadLink.click();
-
-    console.log("Fractal downloaded!");
   };
+
+  useEffect(() => {
+    handleRender();
+  }, []); // render once on mount
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#ffffff" }}>
       <Navigation />
-
       <div className={s.page}>
         <header className={s.mainHeader}>
           <h1 className={s.heading1}>Fractal Explorer</h1>
@@ -227,15 +178,16 @@ export default function Mandelbrot() {
         <main className={s.main}>
           <div className={s.fractalLayout}>
             {/* LEFT SIDE: Controls */}
-            <div>
-              <h3 className={s.heading3}>Colors</h3>
-              <div className={s.colorRow}>
-                <input type="color" className={s.colorInput} value={colors.color1} onChange={(e) => setColors({ ...colors, color1: e.target.value })} title="Inner Color" />
-                <input type="color" className={s.colorInput} value={colors.color2} onChange={(e) => setColors({ ...colors, color2: e.target.value })} title="Color 2" />
-                <input type="color" className={s.colorInput} value={colors.color3} onChange={(e) => setColors({ ...colors, color3: e.target.value })} title="Color 3" />
-                <input type="color" className={s.colorInput} value={colors.color4} onChange={(e) => setColors({ ...colors, color4: e.target.value })} title="Color 4" />
-              </div>
+            <div className={s.fractalControls}>
+              {/* Colors */}
               <div>
+                <h3 className={s.heading3}>Colors</h3>
+                <div className={s.colorRow}>
+                  <input type="color" className={s.colorInput} value={colors.color1} onChange={(e) => setColors({ ...colors, color1: e.target.value })} title="Inner Color" />
+                  <input type="color" className={s.colorInput} value={colors.color2} onChange={(e) => setColors({ ...colors, color2: e.target.value })} title="Color 2" />
+                  <input type="color" className={s.colorInput} value={colors.color3} onChange={(e) => setColors({ ...colors, color3: e.target.value })} title="Color 3" />
+                  <input type="color" className={s.colorInput} value={colors.color4} onChange={(e) => setColors({ ...colors, color4: e.target.value })} title="Color 4" />
+                </div>
                 <div className={s.presetRow}>
                   {presets.map((preset, index) => (
                     <button key={index} className={activePreset === index ? s.presetBtnActive : s.presetBtn} onClick={() => handlePresetClick(preset, index)}>
@@ -244,15 +196,27 @@ export default function Mandelbrot() {
                   ))}
                 </div>
               </div>
+
+              {/* Parameters */}
               <div>
                 <h3 className={s.heading3}>Parameters</h3>
-
                 <label className={s.fractalControlsLabel}>
                   Quality
-                  <select value={quality} onChange={(e) => setQuality(e.target.value)} className={s.fractalControlsSelect}>
-                    <option value="normal">Normal (1200×800)</option>
-                    <option value="high">High (1920x1280)</option>
-                    <option value="4k">4K (3840x2160)</option>
+                  <select
+                    value={quality}
+                    onChange={(e) => {
+                      const q = e.target.value;
+                      setQuality(q);
+
+                      if (q === "high") setMaxIterations(800);
+                      else if (q === "4k") setMaxIterations(2500);
+                      else setMaxIterations(500); // normal
+                    }}
+                    className={s.fractalControlsSelect}
+                  >
+                    <option value="normal">Normal (600×400)</option>
+                    <option value="high">High (1800×1200)</option>
+                    <option value="4k">4K (3000×2000)</option>
                   </select>
                 </label>
 
@@ -261,11 +225,13 @@ export default function Mandelbrot() {
                   <input type="number" value={maxIterations} onChange={(e) => setMaxIterations(parseInt(e.target.value))} min="100" max="5000" className={s.fractalControlsNumber} />
                 </label>
               </div>
-              <div className={s.fractalActions}>
-                <button onClick={handleRender} className={s.fractalButton}>
-                  Render
-                </button>
 
+              {/* Actions */}
+              <div className={s.fractalActions}>
+                <button onClick={handleRender} className={s.fractalButton} disabled={isRendering}>
+                  {isRendering && <span className={s.spinner}></span>}
+                  {isRendering ? "" : "Render"}
+                </button>
                 <button onClick={handleDownload} className={s.fractalButton}>
                   Download
                 </button>
@@ -273,8 +239,9 @@ export default function Mandelbrot() {
             </div>
 
             {/* RIGHT SIDE: Canvas */}
-            <div className={s.canvasContainer}>
+            <div className={s.canvasContainer} style={{ position: "relative" }}>
               <canvas ref={canvasRef} className={s.fractalCanvas} />
+              <div id="infoOverlay" className={s.infoOverlay}></div>
             </div>
           </div>
         </main>
