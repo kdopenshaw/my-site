@@ -4,8 +4,11 @@ import FractalNav from "../../components/FractalNav";
 import s from "../../styles/fractals.module.css";
 import { useState, useEffect, useRef } from "react";
 import chroma from "chroma-js";
+import fs from "fs";
+import path from "path";
+import { marked } from "marked";
 
-export default function Mandelbrot() {
+export default function Mandelbrot({ htmlContent }) {
   const [colors, setColors] = useState({
     color1: "#000000",
     color2: "#2a4d69",
@@ -244,8 +247,23 @@ export default function Mandelbrot() {
               <div id="infoOverlay" className={s.infoOverlay}></div>
             </div>
           </div>
+          <div className="prose">
+            <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
+          </div>
         </main>
       </div>
     </div>
   );
+}
+
+export async function getStaticProps() {
+  const filePath = path.join(process.cwd(), "public", "test.md");
+  const fileContent = fs.readFileSync(filePath, "utf8");
+  const htmlContent = marked.parse(fileContent);
+
+  return {
+    props: {
+      htmlContent,
+    },
+  };
 }
