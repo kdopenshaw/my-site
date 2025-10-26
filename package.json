@@ -10,7 +10,7 @@
   "dependencies": {
     "@mdx-js/loader": "^3.1.1",
     "@mdx-js/react": "^3.1.1",
-    "@next/mdx": "^15.5.3",
+    "@next/mdx": "^15.5.6",
     "@types/mdx": "^2.0.13",
     "chroma-js": "^3.1.2",
     "glightbox": "^3.3.1",
