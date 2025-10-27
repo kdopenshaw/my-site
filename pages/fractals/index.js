@@ -1,6 +1,7 @@
 // pages/fractals.js
 import Navigation from "../../components/Navigation";
 import FractalNav from "../../components/FractalNav";
+import whatAreFractls from "../.
 import s from "../../styles/fractals.module.css";
 
 export default function Fractals() {
@@ -33,9 +34,10 @@ export default function Fractals() {
           </section>
 
           <section id="gallery">
-            <h2 className={s.heading2}>Gallery</h2>
+            {/* <h2 className={s.heading2}>Gallery</h2> */}
             <Gallery />
           </section>
+
         </main>
       </div>
     </div>
