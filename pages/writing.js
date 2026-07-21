@@ -1,116 +1,81 @@
 // pages/writing.js - Writing and Works page
 import Navigation from "../components/Navigation";
-import WritingCard from "../components/WritingCard";
-import { getAllWritings } from "../lib/writings";
+import Link from "next/link";
 
-export default function Writing({ writings = [] }) {
+const writings = [
+  {
+    id: "sample-research-paper",
+    title: "Sample Research Paper",
+    description: "A comprehensive analysis of emerging technologies in computational science, exploring novel approaches to data processing and algorithm optimization.",
+    year: "2024",
+    category: "Research",
+  },
+  {
+    id: "technical-report",
+    title: "Technical Report on AI Applications",
+    description: "Analysis of emerging artificial intelligence technologies and their practical applications in modern software development.",
+    year: "2023",
+    category: "Technical",
+  },
+  {
+    id: "advanced-html-demo",
+    title: "Advanced HTML Demo",
+    description: "A comprehensive demonstration of HTML content with multiple interactive elements.",
+    year: "2024",
+    category: "Demo",
+  },
+  {
+    id: "html-example",
+    title: "HTML Example with PDF Lightbox",
+    description: "A demonstration of how to embed HTML content with PDF lightboxes in the writing system.",
+    year: "2024",
+    category: "Demo",
+  },
+  {
+    id: "titanic-ml-analysis",
+    title: "Titanic Dataset Machine Learning Analysis",
+    description: "A comprehensive machine learning analysis of the Titanic dataset using Python, pandas, and scikit-learn.",
+    year: "2024",
+    category: "Data Science",
+  },
+  {
+    id: "titanic-direct",
+    title: "Titanic Dataset Analysis (Direct HTML)",
+    description: "Direct Quarto HTML output - no conversion needed!",
+    year: "2024",
+    category: "Data Science",
+  }
+];
+
+export default function Writing() {
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#ffffff" }}>
       <Navigation />
 
-      {/* Main Content */}
-      <div
-        style={{
-          maxWidth: "1400px",
-          margin: "0 auto",
-          padding: "2rem 10%",
-        }}
-      >
-        <div style={{ textAlign: "center", marginBottom: "3rem" }}>
-          <h1
-            style={{
-              fontSize: "3rem",
-              color: "#2c5282",
-              marginBottom: "1rem",
-              fontWeight: "bold",
-            }}
-          >
-            Research & Writing
-          </h1>
-          <p
-            style={{
-              fontSize: "1.2rem",
-              color: "#4a5568",
-              marginBottom: "2rem",
-            }}
-          >
-            A collection of my academic and professional writings
-          </p>
-        </div>
+      <div style={{ maxWidth: "768px", margin: "0 auto", padding: "6rem 2rem" }}>
+        <h1 style={{ fontSize: "2.75rem", color: "#0d1b2a", marginBottom: "1rem", fontFamily: "Lora, serif", fontWeight: 500, letterSpacing: "-0.02em" }}>
+          Research & Writing
+        </h1>
+        <p style={{ fontSize: "1.1rem", color: "#475569", marginBottom: "4rem", lineHeight: 1.8 }}>
+          A collection of my academic and professional writings.
+        </p>
 
-        {/* Writing Grid - Masonry Style */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-            gridAutoRows: "auto",
-            gap: "1.5rem",
-            marginTop: "2rem",
-          }}
-        >
-          {writings && writings.length > 0 ? (
-            writings.map((writing, index) => (
-              <div
-                key={writing.id}
-                style={{
-                  gridRow: `span ${index % 3 === 0 ? 2 : 1}`,
-                  transform: `rotate(${((index % 5) - 2) * 0.5}deg)`,
-                  transition: "transform 0.3s ease",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = `rotate(0deg) scale(1.02)`;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = `rotate(${
-                    ((index % 5) - 2) * 0.5
-                  }deg) scale(1)`;
-                }}
-              >
-                <WritingCard
-                  id={writing.id}
-                  title={writing.title}
-                  description={writing.description}
-                  image={writing.image}
-                  year={writing.year}
-                  pages={writing.pages}
-                  category={writing.category}
-                />
-              </div>
-            ))
-          ) : (
-            <div
-              style={{
-                gridColumn: "1 / -1",
-                textAlign: "center",
-                padding: "3rem",
-                color: "#4a5568",
-              }}
-            >
-              <p>Loading writings...</p>
-            </div>
-          )}
+        <div style={{ display: "flex", flexDirection: "column", gap: "4rem" }}>
+          {writings.map((writing) => (
+            <article key={writing.id} style={{ display: "flex", flexDirection: "column" }}>
+              <span style={{ color: "#94a3b8", fontSize: "0.85rem", letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: "0.5rem" }}>
+                {writing.year} — {writing.category}
+              </span>
+              <h2 style={{ fontSize: "1.75rem", margin: "0 0 1rem 0", fontFamily: "Lora, serif", fontWeight: 500, lineHeight: 1.3 }}>
+                <Link href={`/writing/${writing.id}`} style={{ color: "#2c5282", textDecoration: "none" }}>
+                  {writing.title}
+                </Link>
+              </h2>
+              <p style={{ color: "#475569", margin: 0, lineHeight: 1.8 }}>{writing.description}</p>
+            </article>
+          ))}
         </div>
       </div>
     </div>
   );
 }
-
-export async function getStaticProps() {
-  try {
-    const writings = getAllWritings();
-    return {
-      props: {
-        writings,
-      },
-    };
-  } catch (error) {
-    console.error("Error loading writings:", error);
-    return {
-      props: {
-        writings: [],
-      },
-    };
-  }
-}
-
-// ?? Why does the async function run first if it is defined below? Shouldn't the main function not run until the async one is done because then writings in defined

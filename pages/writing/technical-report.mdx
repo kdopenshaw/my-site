@@ -1,11 +1,16 @@
----
-title: "Technical Report on AI Applications"
-description: "Analysis of emerging artificial intelligence technologies and their practical applications in modern software development."
-image: "/julia_0.2841_notext.png"
-year: "2023"
-pages: "8"
-category: "Technical"
----
+import Navigation from '../../components/Navigation';
+
+export default function Layout({ children }) {
+  return (
+    <div style={{ minHeight: '100vh', backgroundColor: '#ffffff' }}>
+      <Navigation />
+      <div style={{ maxWidth: '800px', margin: '0 auto', padding: '4rem 2rem', fontSize: '1.1rem', lineHeight: '1.8', color: '#2d3748' }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
 
 # Technical Report on AI Applications
 

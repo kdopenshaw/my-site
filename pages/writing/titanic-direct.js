@@ -1,12 +1,10 @@
----
-title: "Titanic Dataset Analysis (Direct HTML)"
-description: "Direct Quarto HTML output - no conversion needed!"
-image: "/julia_0.2841_notext.png"
-year: "2024"
-pages: "6"
-category: "Data Science"
----
+import Navigation from '../../components/Navigation';
 
+export default function HtmlPage() {
+  return (
+    <div style={{ minHeight: '100vh', backgroundColor: '#ffffff' }}>
+      <Navigation />
+      <div style={{ maxWidth: '800px', margin: '0 auto', padding: '4rem 2rem' }} dangerouslySetInnerHTML={{ __html: `
 <!DOCTYPE html>
 <html>
 <head>
@@ -181,3 +179,7 @@ plt.show()</span></code></pre></div>
 
 </body>
 </html>
+` }} />
+    </div>
+  );
+}

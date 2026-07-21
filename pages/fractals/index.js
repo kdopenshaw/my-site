@@ -1,7 +1,6 @@
 // pages/fractals.js
 import Navigation from "../../components/Navigation";
 import FractalNav from "../../components/FractalNav";
-import whatAreFractls from "../.
 import s from "../../styles/fractals.module.css";
 
 export default function Fractals() {

@@ -1,11 +1,16 @@
----
-title: "Sample Research Paper"
-description: "A comprehensive analysis of emerging technologies in computational science, exploring novel approaches to data processing and algorithm optimization."
-image: "/julia_0.2841_notext.png"
-year: "2024"
-pages: "15"
-category: "Research"
----
+import Navigation from '../../components/Navigation';
+
+export default function Layout({ children }) {
+  return (
+    <div style={{ minHeight: '100vh', backgroundColor: '#ffffff' }}>
+      <Navigation />
+      <div style={{ maxWidth: '800px', margin: '0 auto', padding: '4rem 2rem', fontSize: '1.1rem', lineHeight: '1.8', color: '#2d3748' }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
 
 # Sample Research Paper
 

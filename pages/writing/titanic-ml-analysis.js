@@ -1,12 +1,14 @@
----
-title: "Titanic Dataset Machine Learning Analysis"
-description: "A comprehensive machine learning analysis of the Titanic dataset using Python, pandas, and scikit-learn, including data preprocessing, model training, and visualization."
-image: "/julia_0.2841_notext.png"
-year: "2024"
-pages: "6"
-category: "Data Science"
-contentType: "html"
----
+// titanic-ml-analysis.js
+import Navigation from "../../components/Navigation";
+
+export default function TitanicAnalysis() {
+  return (
+    <div style={{ minHeight: "100vh", backgroundColor: "#ffffff" }}>
+      <Navigation />
+      <div style={{ maxWidth: "800px", margin: "0 auto", padding: "4rem 2rem" }}
+        dangerouslySetInnerHTML={{ __html: `
+
+
 
 <div id="71728f7e" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -260,3 +262,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 </script>
+` }} />
+    </div>
+  );
+}

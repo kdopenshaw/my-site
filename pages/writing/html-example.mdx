@@ -1,12 +1,16 @@
----
-title: "HTML Example with PDF Lightbox"
-description: "A demonstration of how to embed HTML content with PDF lightboxes in the writing system."
-image: "/julia_0.2841_notext.png"
-year: "2024"
-pages: "5"
-category: "Demo"
-contentType: "html"
----
+import Navigation from '../../components/Navigation';
+
+export default function Layout({ children }) {
+  return (
+    <div style={{ minHeight: '100vh', backgroundColor: '#ffffff' }}>
+      <Navigation />
+      <div style={{ maxWidth: '800px', margin: '0 auto', padding: '4rem 2rem', fontSize: '1.1rem', lineHeight: '1.8', color: '#2d3748' }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
 
 # HTML Example with PDF Lightbox
 
