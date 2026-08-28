@@ -1,7 +1,7 @@
-const { PHASE_DEVELOPMENT_SERVER } = require("next/constants");
+import { PHASE_DEVELOPMENT_SERVER } from "next/constants";
+import type { NextConfig } from "next";
 
-/** @type {import('next').NextConfig} */
-module.exports = (phase) => ({
+const nextConfig = (phase: string): NextConfig => ({
   // Keep `next build` from replacing files used by the running dev server.
   distDir: phase === PHASE_DEVELOPMENT_SERVER ? ".next-dev" : ".next",
   async headers() {
@@ -23,3 +23,5 @@ module.exports = (phase) => ({
     ];
   },
 });
+
+export default nextConfig;

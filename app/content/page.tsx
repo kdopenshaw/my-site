@@ -1,8 +1,9 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 
 import { formatDate, getContentPosts } from "./utils";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Content | Keith Openshaw",
   description: "Writing, projects, and other work by Keith Openshaw.",
 };
@@ -10,7 +11,8 @@ export const metadata = {
 export default function ContentPage() {
   const posts = getContentPosts().sort(
     (a, b) =>
-      new Date(b.metadata.publishedAt) - new Date(a.metadata.publishedAt),
+      new Date(b.metadata.publishedAt).getTime() -
+      new Date(a.metadata.publishedAt).getTime(),
   );
 
   return (

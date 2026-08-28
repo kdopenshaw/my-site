@@ -1,14 +1,30 @@
 import fs from "node:fs";
 import path from "node:path";
 
-function parseFrontmatter(fileContent) {
+export interface ContentMetadata {
+  title: string;
+  summary?: string;
+  publishedAt: string;
+  [key: string]: string | undefined;
+}
+
+export interface ContentPost {
+  metadata: ContentMetadata;
+  slug: string;
+  content: string;
+}
+
+function parseFrontmatter(fileContent: string): {
+  metadata: ContentMetadata;
+  content: string;
+} {
   const frontmatterMatch = fileContent.match(/---\s*([\s\S]*?)\s*---/);
 
   if (!frontmatterMatch) {
     throw new Error("Content files must begin with frontmatter.");
   }
 
-  const metadata = {};
+  const metadata: Record<string, string> = {};
 
   frontmatterMatch[1]
     .trim()
@@ -27,21 +43,27 @@ function parseFrontmatter(fileContent) {
       metadata[key] = value;
     });
 
+  if (!metadata.title || !metadata.publishedAt) {
+    throw new Error(
+      "Content frontmatter must include title and publishedAt.",
+    );
+  }
+
   return {
-    metadata,
+    metadata: metadata as ContentMetadata,
     content: fileContent.replace(frontmatterMatch[0], "").trim(),
   };
 }
 
-function getMdxFiles(directory) {
+function getMdxFiles(directory: string) {
   return fs.readdirSync(directory).filter((file) => path.extname(file) === ".mdx");
 }
 
-function readMdxFile(filePath) {
+function readMdxFile(filePath: string) {
   return parseFrontmatter(fs.readFileSync(filePath, "utf-8"));
 }
 
-function getMdxData(directory) {
+function getMdxData(directory: string): ContentPost[] {
   return getMdxFiles(directory).map((file) => {
     const { metadata, content } = readMdxFile(path.join(directory, file));
     const slug = path.basename(file, path.extname(file));
@@ -54,7 +76,7 @@ export function getContentPosts() {
   return getMdxData(path.join(process.cwd(), "app", "content", "posts"));
 }
 
-export function formatDate(date, includeRelative = false) {
+export function formatDate(date: string, includeRelative = false) {
   const currentDate = new Date();
   const targetDate = new Date(`${date}T00:00:00`);
   const yearsAgo = currentDate.getFullYear() - targetDate.getFullYear();

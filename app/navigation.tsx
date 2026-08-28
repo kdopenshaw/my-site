@@ -13,7 +13,7 @@ const links = [
 export default function Navigation() {
   const pathname = usePathname();
 
-  const isActive = (href) =>
+  const isActive = (href: string) =>
     href === "/" ? pathname === href : pathname.startsWith(href);
 
   return (

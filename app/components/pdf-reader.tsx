@@ -3,13 +3,18 @@
 import { useEffect, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 
+export interface PdfReaderProps {
+  href: string;
+  title: string;
+}
+
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
   import.meta.url,
 ).toString();
 
-export default function PdfReader({ href, title }) {
-  const containerRef = useRef(null);
+export default function PdfReader({ href, title }: PdfReaderProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const [pageCount, setPageCount] = useState(0);
   const [pageWidth, setPageWidth] = useState(0);
 
@@ -40,7 +45,7 @@ export default function PdfReader({ href, title }) {
         className="pdf-document__pages"
         role="region"
         aria-label={`${title} document preview`}
-        tabIndex="0"
+        tabIndex={0}
       >
         <Document
           file={href}

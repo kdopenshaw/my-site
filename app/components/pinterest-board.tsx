@@ -4,9 +4,23 @@ import { useEffect, useRef, useState } from "react";
 
 const PINS_PER_PAGE = 10;
 
-export default function PinterestBoard({ pins, boardUrl }) {
+export interface PinterestPin {
+  title: string;
+  link: string;
+  image: string;
+}
+
+interface PinterestBoardProps {
+  pins: PinterestPin[];
+  boardUrl: string;
+}
+
+export default function PinterestBoard({
+  pins,
+  boardUrl,
+}: PinterestBoardProps) {
   const [visibleCount, setVisibleCount] = useState(PINS_PER_PAGE);
-  const loadMoreRef = useRef(null);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
   const hasMore = visibleCount < pins.length;
 
   useEffect(() => {

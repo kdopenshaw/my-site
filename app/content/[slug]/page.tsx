@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 
 import CustomMdx from "../../components/mdx";
 import { formatDate, getContentPosts } from "../utils";
@@ -7,7 +8,13 @@ export function generateStaticParams() {
   return getContentPosts().map((post) => ({ slug: post.slug }));
 }
 
-export async function generateMetadata({ params }) {
+interface ContentPostPageProps {
+  params: Promise<{ slug: string }>;
+}
+
+export async function generateMetadata({
+  params,
+}: ContentPostPageProps): Promise<Metadata> {
   const { slug } = await params;
   const post = getContentPosts().find((item) => item.slug === slug);
 
@@ -25,7 +32,7 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default async function ContentPost({ params }) {
+export default async function ContentPost({ params }: ContentPostPageProps) {
   const { slug } = await params;
   const post = getContentPosts().find((item) => item.slug === slug);
 

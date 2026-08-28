@@ -1,5 +1,8 @@
 import Image from "next/image";
-import PinterestBoard from "../components/pinterest-board";
+import type { Metadata } from "next";
+import PinterestBoard, {
+  type PinterestPin,
+} from "../components/pinterest-board";
 
 const PINTEREST_BOARD_URL =
   "https://www.pinterest.com/kopenshaw0014/keith-blacksmithing/";
@@ -13,16 +16,16 @@ function decodeXml(value = "") {
     .replaceAll("&amp;", "&");
 }
 
-function readTag(item, tag) {
+function readTag(item: string, tag: string) {
   const match = item.match(new RegExp(`<${tag}>([\\s\\S]*?)<\\/${tag}>`));
   return decodeXml(match?.[1]?.trim());
 }
 
-function getHighResolutionImage(url) {
+function getHighResolutionImage(url: string) {
   return url.replace("/236x/", "/736x/");
 }
 
-async function getPinterestPins() {
+async function getPinterestPins(): Promise<PinterestPin[]> {
   try {
     const response = await fetch(`${PINTEREST_BOARD_URL.slice(0, -1)}.rss`, {
       next: { revalidate: 3600 },
@@ -50,7 +53,7 @@ async function getPinterestPins() {
   }
 }
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Blacksmithing | Keith Openshaw",
   description:
     "Custom blacksmithing and woodworking projects by Keith Openshaw.",

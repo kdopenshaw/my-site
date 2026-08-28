@@ -1,4 +1,6 @@
 import { Hanken_Grotesk } from "next/font/google";
+import type { Metadata } from "next";
+import type { ReactNode } from "react";
 
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
@@ -11,12 +13,12 @@ const hankenGrotesk = Hanken_Grotesk({
   variable: "--font-hanken-grotesk",
 });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Keith Openshaw",
   description: "Keith Openshaw's personal portfolio.",
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html
       lang="en"

@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import type { PdfReaderProps } from "./pdf-reader";
 
 const PdfReader = dynamic(() => import("./pdf-reader"), {
   ssr: false,
@@ -11,6 +12,6 @@ const PdfReader = dynamic(() => import("./pdf-reader"), {
   ),
 });
 
-export default function PdfDocument(props) {
+export default function PdfDocument(props: PdfReaderProps) {
   return <PdfReader {...props} />;
 }

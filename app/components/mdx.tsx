@@ -1,12 +1,23 @@
 import Image from "next/image";
+import type { ImageProps } from "next/image";
 import Link from "next/link";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { highlight } from "sugar-high";
 import React from "react";
+import type {
+  AnchorHTMLAttributes,
+  HTMLAttributes,
+  ReactNode,
+} from "react";
 
 import PdfDocument from "./pdf-document";
 
-function Table({ data }) {
+interface TableData {
+  headers: string[];
+  rows: ReactNode[][];
+}
+
+function Table({ data }: { data: TableData }) {
   return (
     <table>
       <thead>
@@ -29,7 +40,10 @@ function Table({ data }) {
   );
 }
 
-function CustomLink({ href = "", ...props }) {
+function CustomLink({
+  href = "",
+  ...props
+}: AnchorHTMLAttributes<HTMLAnchorElement>) {
   if (href.startsWith("/")) return <Link href={href} {...props} />;
   if (href.startsWith("#")) return <a href={href} {...props} />;
 
@@ -43,19 +57,21 @@ function CustomLink({ href = "", ...props }) {
   );
 }
 
-function Code({ children, ...props }) {
+function Code({
+  children,
+  ...props
+}: HTMLAttributes<HTMLElement>) {
   const codeHtml = highlight(String(children));
 
   return <code dangerouslySetInnerHTML={{ __html: codeHtml }} {...props} />;
 }
 
-function RoundedImage(props) {
+function RoundedImage(props: ImageProps) {
   return <Image className="prose-image" {...props} />;
 }
 
-function slugify(value) {
-  return value
-    .toString()
+function slugify(value: ReactNode) {
+  return String(value)
     .toLowerCase()
     .trim()
     .replace(/\s+/g, "-")
@@ -64,8 +80,8 @@ function slugify(value) {
     .replace(/--+/g, "-");
 }
 
-function createHeading(level) {
-  const Heading = ({ children }) => {
+function createHeading(level: 1 | 2 | 3 | 4 | 5 | 6) {
+  const Heading = ({ children }: { children?: ReactNode }) => {
     const slug = slugify(children);
 
     return React.createElement(
@@ -94,6 +110,6 @@ const components = {
   Table,
 };
 
-export default function CustomMdx({ source }) {
+export default function CustomMdx({ source }: { source: string }) {
   return <MDXRemote source={source} components={components} />;
 }
