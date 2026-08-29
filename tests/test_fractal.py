@@ -24,8 +24,26 @@ class FractalFunctionTests(unittest.TestCase):
         self.assertEqual(parameters.center_x, 0.0)
 
     def test_rejects_excessive_work(self):
-        with self.assertRaisesRegex(ParameterError, "must not exceed"):
+        with self.assertRaisesRegex(ParameterError, "200,000,000"):
             parse_parameters("/api/fractal?width=1200&height=1200&iterations=1000")
+
+    def test_accepts_work_above_fast_preview_budget(self):
+        parameters = parse_parameters(
+            "/api/fractal?width=720&height=440&iterations=160"
+        )
+
+        self.assertEqual(parameters.iterations, 160)
+
+    def test_enforces_hard_work_budget_boundary(self):
+        accepted = parse_parameters(
+            "/api/fractal?width=1200&height=1200&iterations=138"
+        )
+        self.assertEqual(accepted.iterations, 138)
+
+        with self.assertRaises(ParameterError):
+            parse_parameters(
+                "/api/fractal?width=1200&height=1200&iterations=139"
+            )
 
     def test_rejects_unknown_family(self):
         with self.assertRaisesRegex(ParameterError, "family must be"):

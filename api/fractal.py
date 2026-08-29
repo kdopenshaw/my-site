@@ -15,7 +15,7 @@ from urllib.parse import parse_qs, urlparse
 MAX_WIDTH = 1_200
 MAX_HEIGHT = 1_200
 MAX_ITERATIONS = 1_000
-MAX_WORK = 50_000_000
+MAX_WORK = 200_000_000
 
 
 PALETTES = {

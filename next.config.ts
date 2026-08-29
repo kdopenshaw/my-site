@@ -15,7 +15,7 @@ const nextConfig = (phase: string): NextConfig => ({
               default-src 'self';
               script-src 'self' 'unsafe-inline' 'unsafe-eval' https://assets.pinterest.com https://widgets.pinterest.com;
               style-src 'self' 'unsafe-inline';
-              img-src 'self' data: https://i.pinimg.com;
+              img-src 'self' data: https://i.pinimg.com https://*.supabase.co;
             `.replace(/\n/g, " "),
           },
         ],
