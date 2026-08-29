@@ -16,6 +16,7 @@ MAX_WIDTH = 1_200
 MAX_HEIGHT = 1_200
 MAX_ITERATIONS = 1_000
 MAX_WORK = 200_000_000
+FAMILIES = ("mandelbrot", "julia", "burning_ship", "tricorn", "newton")
 
 
 PALETTES = {
@@ -107,8 +108,8 @@ def _colors(query: dict[str, list[str]], palette: str) -> tuple[tuple[int, int, 
 def parse_parameters(path: str) -> FractalParameters:
     query = parse_qs(urlparse(path).query)
     family = _single(query, "family", _single(query, "type", "mandelbrot")).lower()
-    if family not in {"mandelbrot", "julia"}:
-        raise ParameterError("family must be mandelbrot or julia")
+    if family not in FAMILIES:
+        raise ParameterError(f"family must be one of: {', '.join(FAMILIES)}")
 
     width = _integer(query, "width", 480, 64, MAX_WIDTH)
     height = _integer(query, "height", 320, 64, MAX_HEIGHT)
@@ -118,7 +119,8 @@ def parse_parameters(path: str) -> FractalParameters:
             f"width × height × iterations must not exceed {MAX_WORK:,}"
         )
 
-    default_center_x = -0.5 if family == "mandelbrot" else 0.0
+    default_center_x = -0.5 if family in {"mandelbrot", "burning_ship"} else 0.0
+    default_center_y = -0.5 if family == "burning_ship" else 0.0
     palette = _single(query, "palette", "ocean_reef").lower()
     if palette not in PALETTES:
         raise ParameterError(f"palette must be one of: {', '.join(PALETTES)}")
@@ -130,7 +132,7 @@ def parse_parameters(path: str) -> FractalParameters:
         height=height,
         iterations=iterations,
         center_x=_number(query, "center_x", default_center_x, -10.0, 10.0),
-        center_y=_number(query, "center_y", 0.0, -10.0, 10.0),
+        center_y=_number(query, "center_y", default_center_y, -10.0, 10.0),
         scale=_number(query, "scale", 3.2, 0.000001, 20.0),
         c_real=_number(query, "c_real", -0.8, -2.0, 2.0),
         c_imag=_number(query, "c_imag", 0.156, -2.0, 2.0),
@@ -153,13 +155,45 @@ def _interpolate_palette(value: float, palette: tuple[tuple[int, int, int], ...]
 def _escape_value(z: complex, c: complex, parameters: FractalParameters) -> float | None:
     radius_squared = parameters.escape_radius * parameters.escape_radius
     for iteration in range(parameters.iterations):
-        z = z**parameters.power + c
+        if parameters.family == "burning_ship":
+            z = complex(abs(z.real), abs(z.imag)) ** parameters.power + c
+        elif parameters.family == "tricorn":
+            z = z.conjugate() ** parameters.power + c
+        else:
+            z = z**parameters.power + c
         magnitude_squared = z.real * z.real + z.imag * z.imag
         if magnitude_squared > radius_squared:
             magnitude = math.sqrt(magnitude_squared)
             smooth = iteration + 1 - math.log(math.log(magnitude)) / math.log(parameters.power)
             return max(0.0, smooth / parameters.iterations)
     return None
+
+
+def _newton_color(
+    z: complex,
+    parameters: FractalParameters,
+    palette: tuple[tuple[int, int, int], ...],
+) -> tuple[int, int, int]:
+    tolerance = 1e-6
+    power = parameters.power
+
+    for iteration in range(parameters.iterations):
+        polynomial = z**power - 1
+        if abs(polynomial) < tolerance:
+            angle = math.atan2(z.imag, z.real) % math.tau
+            root_index = round(angle * power / math.tau) % power
+            root_position = root_index / max(1, power - 1)
+            base_color = _interpolate_palette(root_position, palette)
+            convergence = 1 - iteration / parameters.iterations
+            brightness = 0.2 + 0.8 * convergence**parameters.gamma
+            return tuple(round(channel * brightness) for channel in base_color)
+
+        derivative = power * z ** (power - 1)
+        if abs(derivative) < 1e-12:
+            break
+        z -= polynomial / derivative
+
+    return (4, 8, 20)
 
 
 def render_rgb(parameters: FractalParameters) -> bytes:
@@ -176,7 +210,10 @@ def render_rgb(parameters: FractalParameters) -> bytes:
         imaginary = y_max - pixel_y * y_step
         for pixel_x in range(parameters.width):
             point = complex(x_min + pixel_x * x_step, imaginary)
-            if parameters.family == "mandelbrot":
+            if parameters.family == "newton":
+                pixels.extend(_newton_color(point, parameters, palette))
+                continue
+            if parameters.family in {"mandelbrot", "burning_ship", "tricorn"}:
                 value = _escape_value(0j, point, parameters)
             else:
                 value = _escape_value(point, fixed_c, parameters)

@@ -9,7 +9,7 @@ type GalleryFractal = {
   imageUrl: string;
   width: number;
   height: number;
-  family: "mandelbrot" | "julia";
+  family: "mandelbrot" | "julia" | "burning_ship" | "tricorn" | "newton";
   power: number;
   palette: string;
   createdAt: string;
@@ -21,7 +21,13 @@ type GalleryResponse = {
 };
 
 function fractalAlt(fractal: GalleryFractal) {
-  const family = fractal.family === "julia" ? "Julia set" : "Mandelbrot set";
+  const family = {
+    mandelbrot: "Mandelbrot set",
+    julia: "Julia set",
+    burning_ship: "Burning Ship set",
+    tricorn: "Tricorn set",
+    newton: "Newton fractal",
+  }[fractal.family];
   return `${family} fractal using a power of ${fractal.power}`;
 }
 
@@ -105,10 +111,7 @@ export default function FractalGallery({ refreshKey }: { refreshKey: number }) {
   return (
     <section className="fractal-gallery" aria-labelledby="fractal-gallery-title">
       <header className="fractal-gallery__header">
-        <div>
-          <p>Community collection</p>
-          <h2 id="fractal-gallery-title">Fractal gallery</h2>
-        </div>
+        <h2 id="fractal-gallery-title">Fractal gallery</h2>
         {fractals.length > 0 && <span>{fractals.length} shown</span>}
       </header>
 
@@ -116,15 +119,22 @@ export default function FractalGallery({ refreshKey }: { refreshKey: number }) {
         <div className="fractal-gallery__grid">
           {fractals.map((fractal, index) => (
             <figure className="fractal-gallery__item" key={fractal.id}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={fractal.imageUrl}
-                alt={fractalAlt(fractal)}
-                width={fractal.width}
-                height={fractal.height}
-                loading={index < FRACTALS_PER_PAGE ? "eager" : "lazy"}
-                decoding="async"
-              />
+              <a
+                href={fractal.imageUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Open ${fractalAlt(fractal)} full size in a new tab`}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={fractal.imageUrl}
+                  alt={fractalAlt(fractal)}
+                  width={fractal.width}
+                  height={fractal.height}
+                  loading={index < FRACTALS_PER_PAGE ? "eager" : "lazy"}
+                  decoding="async"
+                />
+              </a>
             </figure>
           ))}
         </div>

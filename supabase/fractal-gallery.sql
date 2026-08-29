@@ -5,13 +5,21 @@ create table if not exists public.fractal_gallery (
   storage_path text not null unique check (storage_path ~ '^images/[0-9a-f-]+\.png$'),
   width integer not null check (width between 64 and 1200),
   height integer not null check (height between 64 and 1200),
-  family text not null check (family in ('mandelbrot', 'julia')),
+  family text not null constraint fractal_gallery_family_check
+    check (family in ('mandelbrot', 'julia', 'burning_ship', 'tricorn', 'newton')),
   power smallint not null check (power between 2 and 8),
   palette text not null check (char_length(palette) between 1 and 64),
   parameters jsonb not null check (jsonb_typeof(parameters) = 'object'),
   status text not null default 'published' check (status in ('published', 'hidden')),
   created_at timestamptz not null default now()
 );
+
+-- Keep existing gallery projects in sync when this setup script is rerun.
+alter table public.fractal_gallery
+  drop constraint if exists fractal_gallery_family_check;
+alter table public.fractal_gallery
+  add constraint fractal_gallery_family_check
+  check (family in ('mandelbrot', 'julia', 'burning_ship', 'tricorn', 'newton'));
 
 create index if not exists fractal_gallery_published_idx
   on public.fractal_gallery (created_at desc)

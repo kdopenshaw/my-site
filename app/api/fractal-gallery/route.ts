@@ -8,8 +8,18 @@ const DEFAULT_BUCKET = "fractal-gallery";
 const MAX_IMAGE_BYTES = 6_000_000;
 const MAX_PAGE_SIZE = 10;
 
+type FractalFamily = "mandelbrot" | "julia" | "burning_ship" | "tricorn" | "newton";
+
+const FRACTAL_FAMILIES: readonly FractalFamily[] = [
+  "mandelbrot",
+  "julia",
+  "burning_ship",
+  "tricorn",
+  "newton",
+];
+
 type FractalMetadata = {
-  family: "mandelbrot" | "julia";
+  family: FractalFamily;
   power: number;
   cReal: number;
   cImag: number;
@@ -30,7 +40,7 @@ type GalleryRow = {
   storage_path: string;
   width: number;
   height: number;
-  family: "mandelbrot" | "julia";
+  family: FractalFamily;
   power: number;
   palette: string;
   created_at: string;
@@ -85,11 +95,15 @@ function finiteNumber(value: unknown, minimum: number, maximum: number) {
   return typeof value === "number" && Number.isFinite(value) && value >= minimum && value <= maximum;
 }
 
+function fractalFamily(value: unknown): value is FractalFamily {
+  return typeof value === "string" && FRACTAL_FAMILIES.includes(value as FractalFamily);
+}
+
 function validMetadata(value: unknown): value is FractalMetadata {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
   const metadata = value as Record<string, unknown>;
 
-  return (metadata.family === "mandelbrot" || metadata.family === "julia")
+  return fractalFamily(metadata.family)
     && integer(metadata.power, 2, 8)
     && finiteNumber(metadata.cReal, -2, 2)
     && finiteNumber(metadata.cImag, -2, 2)

@@ -1,7 +1,7 @@
 import struct
 import unittest
 
-from api.fractal import PALETTES, ParameterError, generate_png, parse_parameters
+from api.fractal import FAMILIES, PALETTES, ParameterError, generate_png, parse_parameters
 
 
 class FractalFunctionTests(unittest.TestCase):
@@ -22,6 +22,26 @@ class FractalFunctionTests(unittest.TestCase):
         self.assertEqual(parameters.c_imag, 0.01)
         self.assertEqual(parameters.power, 3)
         self.assertEqual(parameters.center_x, 0.0)
+
+    def test_every_family_generates_a_distinct_png(self):
+        images = []
+
+        for family in FAMILIES:
+            with self.subTest(family=family):
+                parameters = parse_parameters(
+                    f"/api/fractal?family={family}&width=64&height=64&iterations=20"
+                )
+                image = generate_png(parameters)
+                self.assertEqual(image[:8], b"\x89PNG\r\n\x1a\n")
+                images.append(image)
+
+        self.assertEqual(len(set(images)), len(FAMILIES))
+
+    def test_burning_ship_uses_its_standard_default_center(self):
+        parameters = parse_parameters("/api/fractal?family=burning_ship")
+
+        self.assertEqual(parameters.center_x, -0.5)
+        self.assertEqual(parameters.center_y, -0.5)
 
     def test_rejects_excessive_work(self):
         with self.assertRaisesRegex(ParameterError, "200,000,000"):

@@ -21,6 +21,8 @@ Storage for PNG files. To connect it:
 
 1. Create a Supabase project and run `supabase/fractal-gallery.sql` in its SQL
    Editor.
+   Rerun this idempotent setup file after pulling gallery schema updates, such
+   as support for additional fractal families.
 2. Add these server-side environment variables to Vercel (Preview and
    Production), then redeploy:
 

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import FractalGallery from "./fractal-gallery";
 
-type Family = "mandelbrot" | "julia";
+type Family = "mandelbrot" | "julia" | "burning_ship" | "tricorn" | "newton";
 
 type FractalState = {
   family: Family;
@@ -52,7 +52,6 @@ const PALETTES: Record<string, { label: string; colors: string[] }> = {
 };
 
 const RESOLUTION_PRESETS = {
-  draft: { label: "Draft · 360 × 220", width: 360, height: 220 },
   preview: { label: "Preview · 480 × 293", width: 480, height: 293 },
   standard: { label: "Standard · 720 × 440", width: 720, height: 440 },
   square: { label: "Square · 560 × 560", width: 560, height: 560 },
@@ -95,6 +94,24 @@ const PRESETS = {
     detail: "c = i",
     thumbnail: "/fractals/dendrite-julia.svg",
     parameters: { family: "julia", power: 2, cReal: 0, cImag: 1, centerX: 0, centerY: 0, scale: 3.2, iterations: 150, escapeRadius: 2, gamma: 0.9, width: 720, height: 440, palette: "arctic", colors: [...PALETTES.arctic.colors] },
+  },
+  burningShip: {
+    label: "Burning Ship",
+    detail: "(|Re z| + i|Im z|)² + c",
+    thumbnail: "/fractals/burning-ship.png",
+    parameters: { family: "burning_ship", power: 2, cReal: 0, cImag: 0, centerX: -0.5, centerY: -0.5, scale: 3.2, iterations: 120, escapeRadius: 2, gamma: 0.85, width: 720, height: 440, palette: "inferno", colors: [...PALETTES.inferno.colors] },
+  },
+  tricorn: {
+    label: "Tricorn",
+    detail: "z̄² + c",
+    thumbnail: "/fractals/tricorn.png",
+    parameters: { family: "tricorn", power: 2, cReal: 0, cImag: 0, centerX: 0, centerY: 0, scale: 3.2, iterations: 140, escapeRadius: 2, gamma: 0.9, width: 720, height: 440, palette: "cosmic_dust", colors: [...PALETTES.cosmic_dust.colors] },
+  },
+  newton: {
+    label: "Newton fractal",
+    detail: "Newton iteration for z³ − 1",
+    thumbnail: "/fractals/newton.png",
+    parameters: { family: "newton", power: 3, cReal: 0, cImag: 0, centerX: 0, centerY: 0, scale: 3.2, iterations: 40, escapeRadius: 2, gamma: 0.75, width: 720, height: 440, palette: "gist_ncar", colors: [...PALETTES.gist_ncar.colors] },
   },
 } satisfies Record<string, Preset>;
 
@@ -194,19 +211,20 @@ function NumberField({ label, value, step, min, max, onChange }: {
   );
 }
 
-function RangeField({ label, value, step, min, max, digits = 0, onChange }: {
+function RangeField({ label, value, step, min, max, digits = 0, disabled = false, onChange }: {
   label: ReactNode;
   value: number;
   step: number;
   min: number;
   max: number;
   digits?: number;
+  disabled?: boolean;
   onChange: (value: number) => void;
 }) {
   return (
-    <label className="fractal-range-field">
+    <label className={`fractal-range-field${disabled ? " is-disabled" : ""}`}>
       <span>{label}<output>{value.toFixed(digits).replace("-", "−")}</output></span>
-      <input type="range" value={value} step={step} min={min} max={max} onChange={(event) => onChange(Number(event.target.value))} />
+      <input type="range" value={value} step={step} min={min} max={max} disabled={disabled} onChange={(event) => onChange(Number(event.target.value))} />
     </label>
   );
 }
@@ -248,6 +266,38 @@ function ConfigHeading({ index, title, help, diagram, diagrams }: {
   );
 }
 
+function FractalEquation({ family, power }: { family: Family; power: number }) {
+  if (family === "newton") {
+    return (
+      <div className="fractal-equation fractal-equation--newton" aria-label={`z sub n plus 1 equals z sub n minus the quantity z sub n to the power ${power} minus 1 divided by ${power} z sub n to the power ${power - 1}`}>
+        <i>z</i><sub>n+1</sub><b>=</b><i>z</i><sub>n</sub><b>−</b>
+        <span className="fractal-equation-fraction">
+          <span><i>z</i><sub>n</sub><sup>{power}</sup><b>−</b>1</span>
+          <span><b>{power}</b><i>z</i><sub>n</sub><sup>{power - 1}</sup></span>
+        </span>
+      </div>
+    );
+  }
+
+  if (family === "burning_ship") {
+    return (
+      <div className="fractal-equation fractal-equation--long" aria-label={`z sub n plus 1 equals the quantity absolute real z sub n plus i absolute imaginary z sub n to the power ${power} plus c`}>
+        <i>z</i><sub>n+1</sub><b>=</b>
+        <span>(|Re(<i>z</i><sub>n</sub>)| + <i>i</i>|Im(<i>z</i><sub>n</sub>)|)</span>
+        <sup>{power}</sup><b>+</b><i className="fractal-equation-constant">c</i>
+      </div>
+    );
+  }
+
+  return (
+    <div className="fractal-equation" aria-label={`z sub n plus 1 equals ${family === "tricorn" ? "the conjugate of " : ""}z sub n to the power ${power} plus c`}>
+      <i>z</i><sub>n+1</sub><b>=</b>
+      {family === "tricorn" ? <span className="fractal-equation-conjugate"><i>z</i></span> : <i>z</i>}
+      <sub>n</sub><sup>{power}</sup><b>+</b><i className="fractal-equation-constant">c</i>
+    </div>
+  );
+}
+
 export default function FractalStudio() {
   const [parameters, setParameters] = useState<FractalState>(() => ({
     ...PRESETS.mandelbrot.parameters,
@@ -276,6 +326,8 @@ export default function FractalStudio() {
   const estimatedWork = pixelCount * parameters.iterations;
   const isWithinWorkLimit = estimatedWork <= MAX_RENDER_WORK;
   const isSlowRender = estimatedWork > FAST_RENDER_WORK && isWithinWorkLimit;
+  const usesFixedConstant = parameters.family === "julia";
+  const usesEscapeRadius = parameters.family !== "newton";
 
   const update = <K extends keyof FractalState>(key: K, value: FractalState[K]) => {
     setParameters((current) => ({ ...current, [key]: value }));
@@ -488,17 +540,13 @@ export default function FractalStudio() {
       <aside className="fractal-control-panel" aria-label="Fractal configuration">
         <div className="fractal-equation-wrap">
           <div className="fractal-equation-bar">
-            <div className="fractal-equation" aria-label={`z sub n plus 1 equals z sub n to the power ${parameters.power} plus c`}>
-              <i>z</i><sub>n+1</sub><b>=</b><i>z</i><sub>n</sub>
-              <sup>{parameters.power}</sup>
-              <b>+</b><i className="fractal-equation-constant">c</i>
-            </div>
+            <FractalEquation family={parameters.family} power={parameters.power} />
           </div>
         </div>
 
         <div className="fractal-config-sheet" aria-label="Fractal variables">
         <section className="fractal-config-group fractal-family-section">
-          <ConfigHeading index="I" title="Family" diagram="/fractals/help/family.svg" help="Chooses a known definition and replaces every control with its matching exponent, constant, viewport, orbit, raster, and palette values." />
+          <ConfigHeading index="I" title="Family" diagram="/fractals/help/family.svg" help="Chooses a known definition and replaces every control with its matching exponent, constant, viewport, orbit, resolution, and palette values." />
           <div className={`fractal-family-picker${isPresetPickerOpen ? " is-open" : ""}`} onKeyDown={(event) => {
             if (event.key === "Escape") setIsPresetPickerOpen(false);
           }}>
@@ -541,16 +589,16 @@ export default function FractalStudio() {
 
           <section className="fractal-config-group fractal-raster">
             <div className="fractal-raster-heading-row">
-              <ConfigHeading index="III" title="Raster" diagram="/fractals/help/raster.svg" help="Sets the output dimensions. More pixels reveal finer detail, but increase render time and file size." />
+              <ConfigHeading index="III" title="Resolution" diagram="/fractals/help/raster.svg" help="Sets the width and height of the output image in pixels. More pixels reveal finer detail, but increase render time and file size." />
               <button
                 className="fractal-aspect-lock"
                 type="button"
                 aria-pressed={isAspectLocked}
-                aria-label={`${isAspectLocked ? "Unlock" : "Lock"} raster proportions`}
-                title={`${isAspectLocked ? "Unlock" : "Lock"} raster proportions`}
+                aria-label={`${isAspectLocked ? "Unlock" : "Lock"} aspect ratio`}
+                title="Lock aspect ratio"
                 onClick={toggleAspectLock}
               >
-                <span aria-hidden="true"><i>w</i>:<i>h</i></span>
+                <span className="fractal-aspect-icon" aria-hidden="true" />
               </button>
             </div>
             <div className="fractal-number-row fractal-number-row--two">
@@ -576,9 +624,13 @@ export default function FractalStudio() {
             <ConfigHeading index="IV" title={<>Constant <i>c</i></>} diagrams={[
               { src: "/fractals/help/constant-real.svg", label: "Real part — horizontal change" },
               { src: "/fractals/help/constant-imaginary.svg", label: "Imaginary part — vertical change" },
-            ]} help="Changing either coordinate of c can transform a Julia set's topology, not merely move it. Mandelbrot assigns c from each pixel instead." />
-            <RangeField label={<>Re(<i>c</i>)</>} value={parameters.cReal} min={-2} max={2} step={0.001} digits={3} onChange={(value) => update("cReal", value)} />
-            <RangeField label={<>Im(<i>c</i>)</>} value={parameters.cImag} min={-2} max={2} step={0.001} digits={3} onChange={(value) => update("cImag", value)} />
+            ]} help={usesFixedConstant
+              ? "Changing either coordinate of c transforms the Julia set's topology, not merely its position."
+              : parameters.family === "newton"
+                ? "Newton's method solves z raised to p minus one, so this family does not use the constant c."
+                : "This family assigns c from each point in the complex plane, so a separate fixed constant is not used."} />
+            <RangeField label={<>Re(<i>c</i>)</>} value={parameters.cReal} min={-2} max={2} step={0.001} digits={3} disabled={!usesFixedConstant} onChange={(value) => update("cReal", value)} />
+            <RangeField label={<>Im(<i>c</i>)</>} value={parameters.cImag} min={-2} max={2} step={0.001} digits={3} disabled={!usesFixedConstant} onChange={(value) => update("cImag", value)} />
           </section>
 
           <section className="fractal-config-group fractal-orbit">
@@ -586,9 +638,11 @@ export default function FractalStudio() {
               { src: "/fractals/help/orbit-iterations.svg", label: "Iterations — boundary detail" },
               { src: "/fractals/help/orbit-escape.svg", label: "Escape radius — orbit threshold" },
               { src: "/fractals/help/orbit-gamma.svg", label: "Gamma — tonal distribution" },
-            ]} help="These values change how the same orbit is classified and shaded: test duration, escape threshold, and the curve applied to its color value." />
+            ]} help={parameters.family === "newton"
+              ? "Iterations set the convergence budget and gamma shapes basin brightness. Newton fractals converge to roots instead of escaping a radius."
+              : "These values change how the same orbit is classified and shaded: test duration, escape threshold, and the curve applied to its color value."} />
             <RangeField label="iterations" value={parameters.iterations} min={10} max={1000} step={1} onChange={(value) => update("iterations", value)} />
-            <RangeField label={<>escape |<i>z</i>|</>} value={parameters.escapeRadius} min={2} max={100} step={0.1} digits={1} onChange={(value) => update("escapeRadius", value)} />
+            <RangeField label={<>escape |<i>z</i>|</>} value={parameters.escapeRadius} min={2} max={100} step={0.1} digits={1} disabled={!usesEscapeRadius} onChange={(value) => update("escapeRadius", value)} />
             <RangeField label={<>gamma <i>γ</i></>} value={parameters.gamma} min={0.1} max={5} step={0.1} digits={1} onChange={(value) => update("gamma", value)} />
           </section>
         </div>
@@ -607,7 +661,9 @@ export default function FractalStudio() {
         </section>
 
         <section className="fractal-config-group fractal-color">
-          <ConfigHeading index="VII" title="Color function" diagram="/fractals/help/color.svg" help="Maps normalized escape time to color. Choose a preset or edit the stops to create a continuous palette." />
+          <ConfigHeading index="VII" title="Color function" diagram="/fractals/help/color.svg" help={parameters.family === "newton"
+            ? "Assigns palette colors to the roots and uses convergence speed for brightness. Choose a preset or edit the stops."
+            : "Maps normalized escape time to color. Choose a preset or edit the stops to create a continuous palette."} />
           <label className="fractal-palette-select">
             <span>Palette preset</span>
             <select
