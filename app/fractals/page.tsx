@@ -1,7 +1,16 @@
+import FractalStudio from "./fractal-studio";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Fractal Generator | Keith Openshaw",
+  description: "Explore and render escape-time fractals from their mathematical parameters.",
+};
+
 export default function FractalsPage() {
-    return (
-        <div>
-            <h1>Fractals</h1>
-        </div>
-    )
+  return (
+    <main className="fractal-page">
+      <h1>Fractal Generator</h1>
+      <FractalStudio />
+    </main>
+  );
 }

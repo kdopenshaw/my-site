@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 104">
+  <rect width="240" height="104" rx="8" fill="#f4f7f9"/>
+  <g transform="translate(49 50)" fill="#174a7c"><circle r="13"/><circle cy="-20" r="12"/><circle cx="-18" cy="10" r="12"/><circle cx="18" cy="10" r="12"/></g>
+  <path d="M88 50h40" stroke="#b66a3c" stroke-width="3"/><path d="m121 43 8 7-8 7" fill="none" stroke="#b66a3c" stroke-width="3"/>
+  <g transform="translate(178 50)" fill="#174a7c"><circle r="11"/><circle cy="-23" r="10"/><circle cx="22" cy="-7" r="10"/><circle cx="14" cy="19" r="10"/><circle cx="-14" cy="19" r="10"/><circle cx="-22" cy="-7" r="10"/></g>
+  <text x="43" y="91" fill="#174a7c" font-family="serif" font-size="13">p = 2</text><text x="169" y="91" fill="#174a7c" font-family="serif" font-size="13">p = 4</text>
+</svg>
