@@ -14,23 +14,11 @@
 .prose h1,
 .prose h2,
 .prose h3,
-.prose h4 {
+.prose h4,
+.prose h5,
+.prose h6 {
   margin-top: var(--spacing-md);
   margin-bottom: var(--spacing-xs);
-  font-weight: 500;
-  letter-spacing: -0.025em;
-}
-
-.prose h1 {
-  font-size: var(--fs-h2);
-}
-
-.prose h2 {
-  font-size: var(--fs-h3);
-}
-
-.prose h3 {
-  font-size: var(--fs-h4);
 }
 
 .prose p {

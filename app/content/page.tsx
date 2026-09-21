@@ -18,20 +18,20 @@ export default function ContentPage() {
 
   return (
     <section className="page-shell" aria-labelledby="content-heading">
-      <h1 className="section-title section-title--accent" id="content-heading">Content</h1>
+      <h1 className="heading-accent" id="content-heading">Content</h1>
 
-      <div className={styles.list} aria-label="Content">
+      <ul className={styles.list} aria-label="Content" role="list">
         {posts.map((post) => (
-          <article className={styles.entry} key={post.slug}>
+          <li className={styles.entry} key={post.slug}>
             <p className={styles.entryDate}>
               {formatDate(post.metadata.publishedAt, false)}
             </p>
-            <h2>
-              <Link href={`/content/${post.slug}`}>{post.metadata.title}</Link>
-            </h2>
-          </article>
+            <Link className={styles.entryLink} href={`/content/${post.slug}`}>
+              {post.metadata.title}
+            </Link>
+          </li>
         ))}
-      </div>
+      </ul>
     </section>
   );
 }

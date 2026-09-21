@@ -239,7 +239,7 @@ function stopLabel(index: number, count: number) {
 
 type HelpDiagram = { src: string; label?: string };
 
-function ConfigHeading({ index, title, help, diagram, diagrams }: {
+function ConfigLabel({ index, title, help, diagram, diagrams }: {
   index: string;
   title: ReactNode;
   help: string;
@@ -249,9 +249,9 @@ function ConfigHeading({ index, title, help, diagram, diagrams }: {
   const helpId = `fractal-help-${index.toLowerCase()}`;
   const helpDiagrams = diagrams ?? (diagram ? [{ src: diagram }] : []);
   return (
-    <div className={styles.configHeading} tabIndex={0} aria-describedby={helpId}>
-      <span>{index}</span>
-      <h2>{title}</h2>
+    <div className={styles.configLabel} tabIndex={0} aria-describedby={helpId}>
+      <span className={styles.configIndex}>{index}</span>
+      <span className={styles.configTitle} id={`fractal-label-${index.toLowerCase()}`}>{title}</span>
       <div className={styles.configHelp} id={helpId} role="tooltip">
         <div className={`${styles.configHelpVisuals} ${helpDiagrams.length > 1 ? styles.isGrid : ""}`}>
           {helpDiagrams.map(({ src, label }) => (
@@ -546,8 +546,8 @@ export default function FractalStudio() {
         </div>
 
         <div className={styles.configSheet} aria-label="Fractal variables">
-        <section className={`${styles.configGroup} ${styles.familySection}`}>
-          <ConfigHeading index="I" title="Family" diagram="/fractals/help/family.svg" help="Chooses a known definition and replaces every control with its matching exponent, constant, viewport, orbit, resolution, and palette values." />
+        <div role="group" aria-labelledby="fractal-label-i" className={`${styles.configGroup} ${styles.familySection}`}>
+          <ConfigLabel index="I" title="Family" diagram="/fractals/help/family.svg" help="Chooses a known definition and replaces every control with its matching exponent, constant, viewport, orbit, resolution, and palette values." />
           <div className={styles.familyPicker} onKeyDown={(event) => {
             if (event.key === "Escape") setIsPresetPickerOpen(false);
           }}>
@@ -580,17 +580,17 @@ export default function FractalStudio() {
               </div>
             )}
           </div>
-        </section>
+        </div>
 
         <div className={`${styles.configPair} ${styles.configPairNumbers}`}>
-          <section className={styles.configGroup}>
-            <ConfigHeading index="II" title={<>Exponent <i>p</i></>} diagram="/fractals/help/exponent.svg" help="Sets the exponent in the recurrence. Larger powers change the rotational symmetry and number of major lobes." />
+          <div role="group" aria-labelledby="fractal-label-ii" className={styles.configGroup}>
+            <ConfigLabel index="II" title={<>Exponent <i>p</i></>} diagram="/fractals/help/exponent.svg" help="Sets the exponent in the recurrence. Larger powers change the rotational symmetry and number of major lobes." />
             <NumberField label={<>Power <i>p</i></>} value={parameters.power} min={2} max={8} step={1} onChange={(value) => update("power", value)} />
-          </section>
+          </div>
 
-          <section className={styles.configGroup}>
+          <div role="group" aria-labelledby="fractal-label-iii" className={styles.configGroup}>
             <div className={styles.rasterHeadingRow}>
-              <ConfigHeading index="III" title="Resolution" diagram="/fractals/help/raster.svg" help="Sets the width and height of the output image in pixels. More pixels reveal finer detail, but increase render time and file size." />
+              <ConfigLabel index="III" title="Resolution" diagram="/fractals/help/raster.svg" help="Sets the width and height of the output image in pixels. More pixels reveal finer detail, but increase render time and file size." />
               <button
                 className={styles.aspectLock}
                 type="button"
@@ -617,12 +617,12 @@ export default function FractalStudio() {
                 {(pixelCount / 1_000_000).toFixed(2)} MP · {(estimatedWork / 1_000_000).toFixed(1)}M tests
               </output>
             </div>
-          </section>
+          </div>
         </div>
 
         <div className={styles.configPair}>
-          <section className={styles.configGroup}>
-            <ConfigHeading index="IV" title={<>Constant <i>c</i></>} diagrams={[
+          <div role="group" aria-labelledby="fractal-label-iv" className={styles.configGroup}>
+            <ConfigLabel index="IV" title={<>Constant <i>c</i></>} diagrams={[
               { src: "/fractals/help/constant-real.svg", label: "Real part — horizontal change" },
               { src: "/fractals/help/constant-imaginary.svg", label: "Imaginary part — vertical change" },
             ]} help={usesFixedConstant
@@ -632,10 +632,10 @@ export default function FractalStudio() {
                 : "This family assigns c from each point in the complex plane, so a separate fixed constant is not used."} />
             <RangeField label={<>Re(<i>c</i>)</>} value={parameters.cReal} min={-2} max={2} step={0.001} digits={3} disabled={!usesFixedConstant} onChange={(value) => update("cReal", value)} />
             <RangeField label={<>Im(<i>c</i>)</>} value={parameters.cImag} min={-2} max={2} step={0.001} digits={3} disabled={!usesFixedConstant} onChange={(value) => update("cImag", value)} />
-          </section>
+          </div>
 
-          <section className={styles.configGroup}>
-            <ConfigHeading index="V" title="Orbit" diagrams={[
+          <div role="group" aria-labelledby="fractal-label-v" className={styles.configGroup}>
+            <ConfigLabel index="V" title="Orbit" diagrams={[
               { src: "/fractals/help/orbit-iterations.svg", label: "Iterations — boundary detail" },
               { src: "/fractals/help/orbit-escape.svg", label: "Escape radius — orbit threshold" },
               { src: "/fractals/help/orbit-gamma.svg", label: "Gamma — tonal distribution" },
@@ -645,11 +645,11 @@ export default function FractalStudio() {
             <RangeField label="iterations" value={parameters.iterations} min={10} max={1000} step={1} onChange={(value) => update("iterations", value)} />
             <RangeField label={<>escape |<i>z</i>|</>} value={parameters.escapeRadius} min={2} max={100} step={0.1} digits={1} disabled={!usesEscapeRadius} onChange={(value) => update("escapeRadius", value)} />
             <RangeField label={<>gamma <i>γ</i></>} value={parameters.gamma} min={0.1} max={5} step={0.1} digits={1} onChange={(value) => update("gamma", value)} />
-          </section>
+          </div>
         </div>
 
-        <section className={`${styles.configGroup} ${styles.plane}`}>
-          <ConfigHeading index="VI" title="Complex plane" diagrams={[
+        <div role="group" aria-labelledby="fractal-label-vi" className={`${styles.configGroup} ${styles.plane}`}>
+          <ConfigLabel index="VI" title="Complex plane" diagrams={[
             { src: "/fractals/help/plane-x.svg", label: "Center x — pan horizontally" },
             { src: "/fractals/help/plane-y.svg", label: "Center y — pan vertically" },
             { src: "/fractals/help/plane-scale.svg", label: "Scale — zoom the viewport" },
@@ -659,10 +659,10 @@ export default function FractalStudio() {
             <NumberField label={<><i>y</i><sub>0</sub></>} value={parameters.centerY} min={-10} max={10} step="any" onChange={(value) => update("centerY", value)} />
             <NumberField label="scale" value={parameters.scale} min={0.000001} max={20} step="any" onChange={(value) => update("scale", value)} />
           </div>
-        </section>
+        </div>
 
-        <section className={`${styles.configGroup} ${styles.color}`}>
-          <ConfigHeading index="VII" title="Color function" diagram="/fractals/help/color.svg" help={parameters.family === "newton"
+        <div role="group" aria-labelledby="fractal-label-vii" className={`${styles.configGroup} ${styles.color}`}>
+          <ConfigLabel index="VII" title="Color function" diagram="/fractals/help/color.svg" help={parameters.family === "newton"
             ? "Assigns palette colors to the roots and uses convergence speed for brightness. Choose a preset or edit the stops."
             : "Maps normalized escape time to color. Choose a preset or edit the stops to create a continuous palette."} />
           <label className={styles.paletteSelect}>
@@ -700,7 +700,7 @@ export default function FractalStudio() {
               ))}
             </div>
           </div>
-        </section>
+        </div>
         </div>
 
         <div className={styles.controlFooter}>

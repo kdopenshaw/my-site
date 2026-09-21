@@ -43,7 +43,7 @@
   padding-inline: var(--spacing-xs);
   color: var(--color-heading);
   font-family: var(--font-math);
-  font-size: var(--fs-h2);
+  font-size: var(--fs-equation);
   font-weight: 400;
   letter-spacing: -0.025em;
   line-height: 1;
@@ -81,7 +81,7 @@
 
 .equationNewton {
   gap: 0.22em;
-  font-size: var(--fs-h4);
+  font-size: var(--fs-body);
 }
 
 .equationConjugate {
@@ -323,8 +323,8 @@
   padding-inline: 0.1875rem;
 }
 
-.configHeading:hover .configHelp,
-.configHeading:focus-visible .configHelp {
+.configLabel:hover .configHelp,
+.configLabel:focus-visible .configHelp {
   opacity: 1;
   translate: 0;
   transition-delay: 450ms;
@@ -338,9 +338,9 @@
   border-top: 0;
 }
 
-.familySection .configHeading,
-.plane .configHeading,
-.color .configHeading {
+.familySection .configLabel,
+.plane .configLabel,
+.color .configLabel {
   margin-bottom: 0;
 }
 
@@ -451,7 +451,7 @@
   grid-column: 1 / -1;
 }
 
-.configHeading {
+.configLabel {
   position: relative;
   display: flex;
   align-items: baseline;
@@ -460,24 +460,26 @@
   cursor: help;
 }
 
-.configHeading:focus-visible > h2 {
+.configLabel:focus-visible > .configTitle {
   color: var(--color-heading-accent);
 }
 
-.configHeading > span {
+.configIndex {
   color: var(--color-technical);
   font-family: var(--font-code);
   font-size: var(--fs-caption);
   font-weight: 500;
 }
 
-.configHeading h2 {
-  margin: 0;
-  font-size: var(--fs-small);
-  letter-spacing: 0;
+.configTitle {
+  color: var(--color-heading);
+  font-family: var(--font-display);
+  font-size: var(--fs-caption);
+  font-weight: 500;
+  line-height: var(--leading-tight);
 }
 
-.configHeading i,
+.configLabel i,
 .rangeField i,
 .numberField i {
   font-family: var(--font-math);
@@ -727,7 +729,7 @@
 
 .generate b,
 .download b {
-  font-size: var(--fs-h4);
+  font-size: var(--fs-body);
   font-weight: 400;
   line-height: 1;
 }
@@ -786,9 +788,9 @@
     border-top: 1px solid var(--color-border);
     border-left: 0;
   }
-  .familySection .configHeading,
-  .plane .configHeading,
-  .color .configHeading {
+  .familySection .configLabel,
+  .plane .configLabel,
+  .color .configLabel {
     margin-bottom: var(--spacing-2xs);
   }
   .colorStops {

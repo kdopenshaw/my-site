@@ -20,16 +20,21 @@
   /* Typography */
   --font-primary: var(--font-hanken-grotesk), -apple-system, BlinkMacSystemFont,
     "Segoe UI", sans-serif;
-  --font-code: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --font-display: var(--font-geologica), var(--font-primary);
+  --font-code: var(--font-space-mono), "SFMono-Regular", Consolas,
+    "Liberation Mono", monospace;
   --font-math: "Cambria Math", "STIX Two Math", "Times New Roman", serif;
   --fs-caption: 0.75rem;
   --fs-small: 0.875rem;
   --fs-body: 1rem;
-  --fs-h4: 1.125rem;
-  --fs-h3: clamp(1.375rem, 1.2rem + 0.8vw, 1.625rem);
-  --fs-h2: clamp(1.875rem, 1.55rem + 1.4vw, 2.375rem);
-  --fs-h1: clamp(2.5rem, 2rem + 2.2vw, 3.25rem);
-  --fs-title: clamp(1.375rem, 1.2rem + 0.8vw, 1.5rem);
+
+  /* Each heading uses its matching size. Page titles are h1. 1rem = 16px by default. */
+  --fs-h1: 2.25rem;
+  --fs-h2: 1.5rem;
+  --fs-h3: 1.25rem;
+  --fs-h4: 1rem;
+  --fs-equation: 2.25rem;
+
   --leading-tight: 1.15;
   --leading-body: 1.7;
   --leading-code: 1.6;
@@ -44,6 +49,16 @@
   --spacing-xl: 3rem;
   --spacing-2xl: 4rem;
   --content-width: 1400px;
+}
+
+/* Smaller headings on mobile and tablet. All other tokens keep their values above. */
+@media (max-width: 48rem) {
+  :root {
+    --fs-h1: 1.75rem;
+    --fs-h2: 1.25rem;
+    --fs-h3: 1.125rem;
+    --fs-equation: 1.75rem;
+  }
 }
 
 * {
@@ -70,18 +85,21 @@ body {
 h1,
 h2,
 h3,
-h4 {
+h4,
+h5,
+h6 {
   color: var(--color-heading);
+  font-family: var(--font-display);
   font-weight: 500;
   line-height: var(--leading-tight);
   text-wrap: balance;
 }
 
 h1 {
-  margin-bottom: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
   color: var(--color-heading-accent);
   font-size: var(--fs-h1);
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: -0.03em;
 }
 
@@ -100,6 +118,16 @@ h3 {
 h4 {
   margin-bottom: var(--spacing-xs);
   font-size: var(--fs-h4);
+}
+
+h5 {
+  margin-bottom: var(--spacing-xs);
+  font-size: var(--fs-small);
+}
+
+h6 {
+  margin-bottom: var(--spacing-xs);
+  font-size: var(--fs-caption);
 }
 
 p {
@@ -162,22 +190,15 @@ img {
   max-width: 100%;
 }
 
-/* Shared composition: page shells, compact titles, buttons, and image grids. */
+/* Shared composition: page shells, heading accents, buttons, and image grids. */
 .page-shell {
   width: min(calc(100% - 2 * var(--spacing-sm)), var(--page-width, 36rem));
   margin: var(--spacing-lg) auto 0;
   padding-bottom: var(--spacing-2xl);
 }
 
-.section-title {
-  margin-bottom: var(--spacing-lg);
-  font-size: var(--fs-title);
-  font-weight: 600;
-  letter-spacing: -0.05em;
-  line-height: 1.333;
-}
-
-.section-title--accent::after {
+/* Decoration only; heading sizes are defined in the h1–h6 rules above. */
+.heading-accent::after {
   display: block;
   width: 2.5rem;
   height: 3px;

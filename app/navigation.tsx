@@ -20,9 +20,6 @@ export default function Navigation() {
 
   return (
     <header className={styles.siteHeader}>
-      {/* <Link href="/" aria-label="Keith Openshaw — home">
-        <Image src="/logo.png" alt="" width={60} height={60} priority />
-      </Link> */}
 
       <nav aria-label="Primary navigation">
         {links.map((link) => (

@@ -18,15 +18,19 @@
 
 ## Typography
 
-- Hanken Grotesk is the single primary typeface for prose and interface text, including headings, navigation, labels, metadata, and controls.
-- Use the system monospace stack only for code, technical values, machine output, or content whose structure benefits from fixed-width characters.
+- Hanken Grotesk is the primary typeface for prose and interface text, including labels, metadata, and controls.
+- Geologica is the display typeface for headings, titles, and navigation links. Use the shared `--font-display` token.
+- Use Space Mono via the shared `--font-code` token for code, technical values, machine output, or content whose structure benefits from fixed-width characters.
 - Do not introduce another branded font without an explicit design decision from the user.
 - Create hierarchy primarily with weight, size, line height, spacing, and color:
   - Body prose: 400.
-  - Navigation, labels, metadata, and content titles: 500.
-  - Section headings: 500–600.
-  - Major page headings: 700.
-- Use the fluid font-size tokens in `app/globals.css`. Do not add arbitrary page-specific font sizes when an existing token or semantic element is suitable.
+  - Navigation: 400.
+  - Labels, metadata, and content titles: 500.
+  - Section headings: 500.
+  - Page headings: 600.
+- Use the fixed `rem` font-size tokens in `app/globals.css`, with larger headings adjusted in the shared `48rem` mobile/tablet breakpoint. Do not add heading-size clamps or arbitrary page-specific font sizes when an existing token or semantic element is suitable.
+- Page titles are `h1` and use `--fs-h1`. The `h2`, `h3`, and `h4` elements use their matching size tokens everywhere, including article prose. Do not add title-size aliases or override heading typography in component styles; component styles may adjust heading margins for layout.
+- The Content index is a list of links, and fractal controls are named form groups. Style their links and labels directly with the body, small, and caption tokens rather than using heading elements for their appearance.
 - Keep large headings tightly led and slightly tracked; keep body copy open and comfortable. Preserve `--leading-tight`, `--leading-body`, and the `--measure` reading width.
 - Use semantic HTML headings in order. Do not choose heading tags for their visual size.
 
@@ -48,7 +52,7 @@
 
 ## Components and interaction
 
-- Keep navigation simple and text-led. The current page is communicated through color and `aria-current`, not decoration.
+- Keep navigation centered, simple, and text-led. The current page is communicated through color and `aria-current`, not decoration.
 - Links and controls must have a visible `:focus-visible` state and a clear hover state.
 - Preserve reduced-motion behavior. Any new animation should be subtle, purposeful, and disabled when `prefers-reduced-motion` is active.
 - Use real text and semantic controls instead of decorative substitutes. Add accessible labels when the visible content does not describe an element's purpose.
