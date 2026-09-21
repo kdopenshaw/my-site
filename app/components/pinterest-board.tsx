@@ -1,5 +1,6 @@
 "use client";
 
+import styles from "./pinterest-board.module.css";
 import { useEffect, useRef, useState } from "react";
 
 const PINS_PER_PAGE = 10;
@@ -44,12 +45,12 @@ export default function PinterestBoard({
   }, [hasMore, pins.length]);
 
   return (
-    <section className="pinterest-board" aria-labelledby="pinterest-board-title">
-      <header className="pinterest-board__header">
-        <div className="pinterest-board__identity">
+    <section aria-labelledby="pinterest-board-title">
+      <header className={styles.header}>
+        <div className={styles.identity}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            className="pinterest-board__avatar"
+            className={styles.avatar}
             src="https://i.pinimg.com/140x140_RS/91/ce/62/91ce6252a44d3bb6c04e43f8d36d36ae.jpg"
             alt=""
             width="48"
@@ -68,10 +69,10 @@ export default function PinterestBoard({
 
       {pins.length ? (
         <>
-          <div className="pinterest-board__grid">
+          <div className="image-grid">
             {pins.slice(0, visibleCount).map((pin, index) => (
               <a
-                className="pinterest-board__pin"
+                className="image-tile"
                 href={pin.link || boardUrl}
                 key={pin.link || pin.image}
                 target="_blank"
@@ -90,7 +91,7 @@ export default function PinterestBoard({
           </div>
 
           {hasMore ? (
-            <div ref={loadMoreRef} className="pinterest-board__load-more">
+            <div ref={loadMoreRef} className={styles.loadMore}>
               <button
                 type="button"
                 onClick={() =>

@@ -1,5 +1,6 @@
 "use client";
 
+import styles from "./fractal-gallery.module.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const FRACTALS_PER_PAGE = 10;
@@ -109,16 +110,16 @@ export default function FractalGallery({ refreshKey }: { refreshKey: number }) {
   }, [hasMore, loadMore]);
 
   return (
-    <section className="fractal-gallery" aria-labelledby="fractal-gallery-title">
-      <header className="fractal-gallery__header">
-        <h2 id="fractal-gallery-title">Fractal gallery</h2>
+    <section className={styles.gallery} aria-labelledby="fractal-gallery-title">
+      <header className={styles.galleryHeader}>
+        <h2 className="section-title section-title--accent" id="fractal-gallery-title">Fractal gallery</h2>
         {fractals.length > 0 && <span>{fractals.length} shown</span>}
       </header>
 
       {fractals.length > 0 && (
-        <div className="fractal-gallery__grid">
+        <div className={`image-grid ${styles.galleryGrid}`}>
           {fractals.map((fractal, index) => (
-            <figure className="fractal-gallery__item" key={fractal.id}>
+            <figure className="image-tile" key={fractal.id}>
               <a
                 href={fractal.imageUrl}
                 target="_blank"
@@ -140,14 +141,14 @@ export default function FractalGallery({ refreshKey }: { refreshKey: number }) {
         </div>
       )}
 
-      <div ref={loadMoreRef} className="fractal-gallery__load-more" aria-live="polite">
+      <div ref={loadMoreRef} className={styles.galleryLoadMore} aria-live="polite">
         {isLoading && <span>Loading fractals…</span>}
         {!isLoading && message && <p>{message}</p>}
         {!isLoading && !message && fractals.length === 0 && !hasMore && (
           <p>The gallery is waiting for its first fractal.</p>
         )}
         {!isLoading && hasMore && fractals.length > 0 && (
-          <button type="button" onClick={() => void loadMore()}>Load 10 more</button>
+          <button className="button" type="button" onClick={() => void loadMore()}>Load 10 more</button>
         )}
       </div>
     </section>

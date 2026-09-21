@@ -1,5 +1,6 @@
 "use client";
 
+import styles from "./fractal-studio.module.css";
 import { useEffect, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import FractalGallery from "./fractal-gallery";
@@ -204,7 +205,7 @@ function NumberField({ label, value, step, min, max, onChange }: {
   onChange: (value: number) => void;
 }) {
   return (
-    <label className="fractal-number-field">
+    <label className={styles.numberField}>
       <span>{label}</span>
       <input type="number" value={value} step={step} min={min} max={max} onChange={(event) => onChange(Number(event.target.value))} />
     </label>
@@ -222,7 +223,7 @@ function RangeField({ label, value, step, min, max, digits = 0, disabled = false
   onChange: (value: number) => void;
 }) {
   return (
-    <label className={`fractal-range-field${disabled ? " is-disabled" : ""}`}>
+    <label className={`${styles.rangeField} ${disabled ? styles.isDisabled : ""}`}>
       <span>{label}<output>{value.toFixed(digits).replace("-", "−")}</output></span>
       <input type="range" value={value} step={step} min={min} max={max} disabled={disabled} onChange={(event) => onChange(Number(event.target.value))} />
     </label>
@@ -248,11 +249,11 @@ function ConfigHeading({ index, title, help, diagram, diagrams }: {
   const helpId = `fractal-help-${index.toLowerCase()}`;
   const helpDiagrams = diagrams ?? (diagram ? [{ src: diagram }] : []);
   return (
-    <div className="fractal-config-heading" tabIndex={0} aria-describedby={helpId}>
+    <div className={styles.configHeading} tabIndex={0} aria-describedby={helpId}>
       <span>{index}</span>
       <h2>{title}</h2>
-      <div className="fractal-config-help" id={helpId} role="tooltip">
-        <div className={`fractal-config-help-visuals${helpDiagrams.length > 1 ? " is-grid" : ""}`}>
+      <div className={styles.configHelp} id={helpId} role="tooltip">
+        <div className={`${styles.configHelpVisuals} ${helpDiagrams.length > 1 ? styles.isGrid : ""}`}>
           {helpDiagrams.map(({ src, label }) => (
             <figure key={src}>
               <img src={src} alt="" width="240" height="104" />
@@ -269,9 +270,9 @@ function ConfigHeading({ index, title, help, diagram, diagrams }: {
 function FractalEquation({ family, power }: { family: Family; power: number }) {
   if (family === "newton") {
     return (
-      <div className="fractal-equation fractal-equation--newton" aria-label={`z sub n plus 1 equals z sub n minus the quantity z sub n to the power ${power} minus 1 divided by ${power} z sub n to the power ${power - 1}`}>
+      <div className={`${styles.equation} ${styles.equationNewton}`} aria-label={`z sub n plus 1 equals z sub n minus the quantity z sub n to the power ${power} minus 1 divided by ${power} z sub n to the power ${power - 1}`}>
         <i>z</i><sub>n+1</sub><b>=</b><i>z</i><sub>n</sub><b>−</b>
-        <span className="fractal-equation-fraction">
+        <span className={styles.equationFraction}>
           <span><i>z</i><sub>n</sub><sup>{power}</sup><b>−</b>1</span>
           <span><b>{power}</b><i>z</i><sub>n</sub><sup>{power - 1}</sup></span>
         </span>
@@ -281,19 +282,19 @@ function FractalEquation({ family, power }: { family: Family; power: number }) {
 
   if (family === "burning_ship") {
     return (
-      <div className="fractal-equation fractal-equation--long" aria-label={`z sub n plus 1 equals the quantity absolute real z sub n plus i absolute imaginary z sub n to the power ${power} plus c`}>
+      <div className={`${styles.equation} ${styles.equationLong}`} aria-label={`z sub n plus 1 equals the quantity absolute real z sub n plus i absolute imaginary z sub n to the power ${power} plus c`}>
         <i>z</i><sub>n+1</sub><b>=</b>
         <span>(|Re(<i>z</i><sub>n</sub>)| + <i>i</i>|Im(<i>z</i><sub>n</sub>)|)</span>
-        <sup>{power}</sup><b>+</b><i className="fractal-equation-constant">c</i>
+        <sup>{power}</sup><b>+</b><i className={styles.equationConstant}>c</i>
       </div>
     );
   }
 
   return (
-    <div className="fractal-equation" aria-label={`z sub n plus 1 equals ${family === "tricorn" ? "the conjugate of " : ""}z sub n to the power ${power} plus c`}>
+    <div className={styles.equation} aria-label={`z sub n plus 1 equals ${family === "tricorn" ? "the conjugate of " : ""}z sub n to the power ${power} plus c`}>
       <i>z</i><sub>n+1</sub><b>=</b>
-      {family === "tricorn" ? <span className="fractal-equation-conjugate"><i>z</i></span> : <i>z</i>}
-      <sub>n</sub><sup>{power}</sup><b>+</b><i className="fractal-equation-constant">c</i>
+      {family === "tricorn" ? <span className={styles.equationConjugate}><i>z</i></span> : <i>z</i>}
+      <sub>n</sub><sup>{power}</sup><b>+</b><i className={styles.equationConstant}>c</i>
     </div>
   );
 }
@@ -536,22 +537,22 @@ export default function FractalStudio() {
 
   return (
     <>
-    <form className="fractal-studio" onSubmit={render}>
-      <aside className="fractal-control-panel" aria-label="Fractal configuration">
-        <div className="fractal-equation-wrap">
-          <div className="fractal-equation-bar">
+    <form className={styles.studio} onSubmit={render}>
+      <aside className={styles.controlPanel} aria-label="Fractal configuration">
+        <div className={styles.equationWrap}>
+          <div className={styles.equationBar}>
             <FractalEquation family={parameters.family} power={parameters.power} />
           </div>
         </div>
 
-        <div className="fractal-config-sheet" aria-label="Fractal variables">
-        <section className="fractal-config-group fractal-family-section">
+        <div className={styles.configSheet} aria-label="Fractal variables">
+        <section className={`${styles.configGroup} ${styles.familySection}`}>
           <ConfigHeading index="I" title="Family" diagram="/fractals/help/family.svg" help="Chooses a known definition and replaces every control with its matching exponent, constant, viewport, orbit, resolution, and palette values." />
-          <div className={`fractal-family-picker${isPresetPickerOpen ? " is-open" : ""}`} onKeyDown={(event) => {
+          <div className={styles.familyPicker} onKeyDown={(event) => {
             if (event.key === "Escape") setIsPresetPickerOpen(false);
           }}>
             <button
-              className="fractal-family-choice"
+              className={styles.familyChoice}
               type="button"
               aria-expanded={isPresetPickerOpen}
               aria-controls="fractal-family-options"
@@ -565,9 +566,9 @@ export default function FractalStudio() {
               <strong aria-hidden="true">⌄</strong>
             </button>
             {isPresetPickerOpen && (
-              <div className="fractal-family-popover" id="fractal-family-options">
+              <div className={styles.familyPopover} id="fractal-family-options">
                 <p>Choose a definition</p>
-                <div className="fractal-preset-grid">
+                <div className={styles.presetGrid}>
                   {(Object.entries(PRESETS) as [PresetKey, Preset][]).map(([key, preset]) => (
                     <button type="button" key={key} aria-pressed={presetKey === key} onClick={() => choosePreset(key)}>
                       <img src={preset.thumbnail} alt="" width="74" height="48" />
@@ -581,46 +582,46 @@ export default function FractalStudio() {
           </div>
         </section>
 
-        <div className="fractal-config-pair fractal-config-pair--numbers">
-          <section className="fractal-config-group fractal-exponent">
+        <div className={`${styles.configPair} ${styles.configPairNumbers}`}>
+          <section className={styles.configGroup}>
             <ConfigHeading index="II" title={<>Exponent <i>p</i></>} diagram="/fractals/help/exponent.svg" help="Sets the exponent in the recurrence. Larger powers change the rotational symmetry and number of major lobes." />
             <NumberField label={<>Power <i>p</i></>} value={parameters.power} min={2} max={8} step={1} onChange={(value) => update("power", value)} />
           </section>
 
-          <section className="fractal-config-group fractal-raster">
-            <div className="fractal-raster-heading-row">
+          <section className={styles.configGroup}>
+            <div className={styles.rasterHeadingRow}>
               <ConfigHeading index="III" title="Resolution" diagram="/fractals/help/raster.svg" help="Sets the width and height of the output image in pixels. More pixels reveal finer detail, but increase render time and file size." />
               <button
-                className="fractal-aspect-lock"
+                className={styles.aspectLock}
                 type="button"
                 aria-pressed={isAspectLocked}
                 aria-label={`${isAspectLocked ? "Unlock" : "Lock"} aspect ratio`}
                 title="Lock aspect ratio"
                 onClick={toggleAspectLock}
               >
-                <span className="fractal-aspect-icon" aria-hidden="true" />
+                <span className={styles.aspectIcon} aria-hidden="true" />
               </button>
             </div>
-            <div className="fractal-number-row fractal-number-row--two">
+            <div className={`${styles.numberRow} ${styles.numberRowTwo}`}>
               <NumberField label={<>width <i>w</i></>} value={parameters.width} min={MIN_RASTER_SIZE} max={MAX_RASTER_SIZE} step={1} onChange={(value) => updateRaster("width", value)} />
               <NumberField label={<>height <i>h</i></>} value={parameters.height} min={MIN_RASTER_SIZE} max={MAX_RASTER_SIZE} step={1} onChange={(value) => updateRaster("height", value)} />
             </div>
-            <div className="fractal-resolution-tools">
+            <div className={styles.resolutionTools}>
               <select aria-label="Resolution preset" value={resolutionPresetKey} onChange={(event) => chooseResolution(event.target.value)}>
                 {Object.entries(RESOLUTION_PRESETS).map(([key, resolution]) => (
                   <option value={key} key={key}>{resolution.label}</option>
                 ))}
                 <option value="custom">Custom resolution</option>
               </select>
-              <output className={!isWithinWorkLimit ? "is-over-limit" : isSlowRender ? "is-slow" : ""}>
+              <output className={!isWithinWorkLimit ? styles.isOverLimit : isSlowRender ? styles.isSlow : ""}>
                 {(pixelCount / 1_000_000).toFixed(2)} MP · {(estimatedWork / 1_000_000).toFixed(1)}M tests
               </output>
             </div>
           </section>
         </div>
 
-        <div className="fractal-config-pair fractal-config-pair--ranges">
-          <section className="fractal-config-group fractal-constants">
+        <div className={styles.configPair}>
+          <section className={styles.configGroup}>
             <ConfigHeading index="IV" title={<>Constant <i>c</i></>} diagrams={[
               { src: "/fractals/help/constant-real.svg", label: "Real part — horizontal change" },
               { src: "/fractals/help/constant-imaginary.svg", label: "Imaginary part — vertical change" },
@@ -633,7 +634,7 @@ export default function FractalStudio() {
             <RangeField label={<>Im(<i>c</i>)</>} value={parameters.cImag} min={-2} max={2} step={0.001} digits={3} disabled={!usesFixedConstant} onChange={(value) => update("cImag", value)} />
           </section>
 
-          <section className="fractal-config-group fractal-orbit">
+          <section className={styles.configGroup}>
             <ConfigHeading index="V" title="Orbit" diagrams={[
               { src: "/fractals/help/orbit-iterations.svg", label: "Iterations — boundary detail" },
               { src: "/fractals/help/orbit-escape.svg", label: "Escape radius — orbit threshold" },
@@ -647,24 +648,24 @@ export default function FractalStudio() {
           </section>
         </div>
 
-        <section className="fractal-config-group fractal-plane">
+        <section className={`${styles.configGroup} ${styles.plane}`}>
           <ConfigHeading index="VI" title="Complex plane" diagrams={[
             { src: "/fractals/help/plane-x.svg", label: "Center x — pan horizontally" },
             { src: "/fractals/help/plane-y.svg", label: "Center y — pan vertically" },
             { src: "/fractals/help/plane-scale.svg", label: "Scale — zoom the viewport" },
           ]} help="Center x and y pan across the complex plane. Scale changes the span of the viewport: a smaller value reveals a tighter, magnified region." />
-          <div className="fractal-number-row">
+          <div className={styles.numberRow}>
             <NumberField label={<><i>x</i><sub>0</sub></>} value={parameters.centerX} min={-10} max={10} step="any" onChange={(value) => update("centerX", value)} />
             <NumberField label={<><i>y</i><sub>0</sub></>} value={parameters.centerY} min={-10} max={10} step="any" onChange={(value) => update("centerY", value)} />
             <NumberField label="scale" value={parameters.scale} min={0.000001} max={20} step="any" onChange={(value) => update("scale", value)} />
           </div>
         </section>
 
-        <section className="fractal-config-group fractal-color">
+        <section className={`${styles.configGroup} ${styles.color}`}>
           <ConfigHeading index="VII" title="Color function" diagram="/fractals/help/color.svg" help={parameters.family === "newton"
             ? "Assigns palette colors to the roots and uses convergence speed for brightness. Choose a preset or edit the stops."
             : "Maps normalized escape time to color. Choose a preset or edit the stops to create a continuous palette."} />
-          <label className="fractal-palette-select">
+          <label className={styles.paletteSelect}>
             <span>Palette preset</span>
             <select
               key={parameters.palette}
@@ -676,22 +677,22 @@ export default function FractalStudio() {
               <option value="custom">Custom palette</option>
             </select>
           </label>
-          <div className="fractal-palette-editor">
-            <div className="fractal-color-toolbar">
-              <div className="fractal-color-ramp" style={{ background: `linear-gradient(90deg, ${activeColors.join(", ")})` }} aria-hidden="true" />
-              <div className="fractal-color-tools" aria-label="Color stop tools">
+          <div className={styles.paletteEditor}>
+            <div className={styles.colorToolbar}>
+              <div className={styles.colorRamp} style={{ background: `linear-gradient(90deg, ${activeColors.join(", ")})` }} aria-hidden="true" />
+              <div className={styles.colorTools} aria-label="Color stop tools">
                 <button type="button" onClick={removeColor} disabled={activeColors.length <= MIN_COLOR_STOPS} aria-label="Remove a color stop" title="Remove color">−</button>
                 <output aria-live="polite">{activeColors.length}</output>
                 <button type="button" onClick={addColor} disabled={activeColors.length >= MAX_COLOR_STOPS} aria-label="Add a color stop" title="Add color">+</button>
-                <button className="fractal-color-randomize" type="button" onClick={randomizeColors} aria-label="Randomize colors" title="Randomize colors">
+                <button className={styles.colorRandomize} type="button" onClick={randomizeColors} aria-label="Randomize colors" title="Randomize colors">
                   <span aria-hidden="true">↻</span> Randomize
                 </button>
               </div>
             </div>
-            <div className="fractal-color-stops">
+            <div className={styles.colorStops}>
               {activeColors.map((color, index) => (
                 <label key={`${parameters.palette}-${index}-${color}`}>
-                  <span className="fractal-color-preview" style={{ backgroundColor: color }} />
+                  <span className={styles.colorPreview} style={{ backgroundColor: color }} />
                   <code>{color.toUpperCase()}</code>
                   <small>{stopLabel(index, activeColors.length)}</small>
                   <input type="color" value={color} aria-label={`Palette color ${index + 1}`} onChange={(event) => updateColor(index, event.target.value)} />
@@ -702,35 +703,35 @@ export default function FractalStudio() {
         </section>
         </div>
 
-        <div className="fractal-control-footer">
-          {status && <output className="fractal-render-status" aria-live="polite">{status}</output>}
-          {isSlowRender && <p className="fractal-work-warning">This combination may take longer to render.</p>}
-          {!isWithinWorkLimit && <p className="fractal-work-warning">Reduce resolution or iterations to stay below 200M tests.</p>}
-          <div className="fractal-control-actions">
+        <div className={styles.controlFooter}>
+          {status && <output className={styles.renderStatus} aria-live="polite">{status}</output>}
+          {isSlowRender && <p className={styles.workWarning}>This combination may take longer to render.</p>}
+          {!isWithinWorkLimit && <p className={styles.workWarning}>Reduce resolution or iterations to stay below 200M tests.</p>}
+          <div className={styles.controlActions}>
             <button
-              className={`fractal-generate${isRendering ? " is-rendering" : ""}`}
+              className={`button button--primary ${styles.generate} ${isRendering ? styles.isRendering : ""}`}
               type="submit"
               disabled={isRendering || !isWithinWorkLimit}
               aria-label={isRendering ? "Generating fractal" : undefined}
             >
               {isRendering ? (
-                <span className="fractal-generating-indicator" aria-hidden="true" />
+                <span className={styles.generatingIndicator} aria-hidden="true" />
               ) : (
                 <><span>Generate fractal</span><b aria-hidden="true">↗</b></>
               )}
             </button>
-            <button className="fractal-download" type="button" disabled={!hasRenderedImage || isRendering} onClick={downloadFractal}>
+            <button className={`button ${styles.download}`} type="button" disabled={!hasRenderedImage || isRendering} onClick={downloadFractal}>
               <span>Download</span>
               <b aria-hidden="true">↓</b>
             </button>
           </div>
         </div>
       </aside>
-      <div className="fractal-preview">
-        <div className="fractal-canvas-frame"><canvas ref={canvasRef} aria-label="Generated fractal" /></div>
-        <div className="fractal-preview-actions" aria-label="Rendered fractal actions">
+      <div className={styles.preview}>
+        <div className={styles.canvasFrame}><canvas ref={canvasRef} aria-label="Generated fractal" /></div>
+        <div className={styles.previewActions} aria-label="Rendered fractal actions">
           <button
-            className="fractal-add-to-gallery"
+            className="button button--primary"
             type="button"
             onClick={() => void addToGallery()}
             disabled={!hasRenderedImage || isRendering || isPublishing}

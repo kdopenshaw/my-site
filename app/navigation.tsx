@@ -1,5 +1,6 @@
 "use client";
 
+import styles from "./navigation.module.css";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -18,10 +19,10 @@ export default function Navigation() {
     href === "/" ? pathname === href : pathname.startsWith(href);
 
   return (
-    <header className="site-header">
-      <Link href="/" aria-label="Keith Openshaw — home">
+    <header className={styles.siteHeader}>
+      {/* <Link href="/" aria-label="Keith Openshaw — home">
         <Image src="/logo.png" alt="" width={60} height={60} priority />
-      </Link>
+      </Link> */}
 
       <nav aria-label="Primary navigation">
         {links.map((link) => (

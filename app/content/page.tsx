@@ -1,3 +1,4 @@
+import styles from "./content.module.css";
 import Link from "next/link";
 import type { Metadata } from "next";
 
@@ -16,13 +17,13 @@ export default function ContentPage() {
   );
 
   return (
-    <section className="content-index" aria-labelledby="content-heading">
-      <h1 id="content-heading">Content</h1>
+    <section className="page-shell" aria-labelledby="content-heading">
+      <h1 className="section-title section-title--accent" id="content-heading">Content</h1>
 
-      <div className="content-list" aria-label="Content">
+      <div className={styles.list} aria-label="Content">
         {posts.map((post) => (
-          <article className="content-entry" key={post.slug}>
-            <p className="content-entry__date">
+          <article className={styles.entry} key={post.slug}>
+            <p className={styles.entryDate}>
               {formatDate(post.metadata.publishedAt, false)}
             </p>
             <h2>

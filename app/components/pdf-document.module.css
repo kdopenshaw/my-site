@@ -1,0 +1,49 @@
+.pdfDocument {
+  margin-top: var(--spacing-sm);
+}
+
+.pages {
+  width: 100%;
+  height: min(75vh, 48rem);
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.pages :global(.react-pdf__Document) {
+  display: grid;
+  gap: 1px;
+}
+
+.pages :global(.react-pdf__Page) {
+  min-width: 100%;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-background);
+}
+
+.pages :global(.react-pdf__Page):last-child {
+  border-bottom: 0;
+}
+
+.pages :global(.react-pdf__Page__canvas) {
+  display: block;
+  max-width: 100%;
+  height: auto !important;
+}
+
+.loading,
+.status {
+  display: grid;
+  min-height: 18rem;
+  margin: 0;
+  place-items: center;
+  color: var(--color-text-muted);
+  font-size: var(--fs-small);
+}
+
+.open {
+  display: inline-block;
+  margin-bottom: var(--spacing-sm);
+  font-size: var(--fs-small);
+  font-weight: 500;
+}

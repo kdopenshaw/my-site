@@ -1,0 +1,41 @@
+.page {
+  --page-width: 44rem;
+}
+
+.intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 9rem;
+  gap: var(--spacing-md);
+  align-items: start;
+  margin-bottom: var(--spacing-xl);
+}
+
+.heroContent > p:last-child {
+  margin-bottom: 0;
+}
+
+.heroPhoto {
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+}
+
+.heroPhoto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 48rem) {
+  .page {
+    margin-top: var(--spacing-sm);
+  }
+  .intro {
+    grid-template-columns: 1fr;
+  }
+  .heroPhoto {
+    width: 9rem;
+  }
+}

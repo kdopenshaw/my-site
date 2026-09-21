@@ -10,6 +10,15 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) to view the site.
 
+## Styles
+
+`app/globals.css` owns design tokens, element defaults, accessibility, and the
+shared page shell, title, button, and image-grid primitives. Feature styles and
+their responsive rules live in CSS modules beside the page or component that
+uses them. MDX prose and PDF styles belong to their renderers; PDF vendor styles
+are imported by the reader. Reuse global tokens instead of adding local palettes,
+font scales, or copies of shared patterns.
+
 ## Deployment
 
 This site is deployed on Vercel.

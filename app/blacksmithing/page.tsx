@@ -1,3 +1,4 @@
+import styles from "./page.module.css";
 import Image from "next/image";
 import type { Metadata } from "next";
 import PinterestBoard, {
@@ -64,13 +65,13 @@ export default async function BlacksmithingPage() {
 
   return (
     <section
-      className="blacksmithing-page"
+      className={`page-shell ${styles.page}`}
       aria-labelledby="blacksmithing-heading"
     >
-      <h1 id="blacksmithing-heading">Blacksmithing</h1>
+      <h1 className="section-title section-title--accent" id="blacksmithing-heading">Blacksmithing</h1>
 
-      <div className="blacksmithing-intro">
-        <div className="blacksmithing-hero__content">
+      <div className={styles.intro}>
+        <div className={styles.heroContent}>
           <p>
             I am a hobbyist blacksmith and woodworker, and have been designing
             and selling custom pieces since 2018. I have made everything from
@@ -83,7 +84,7 @@ export default async function BlacksmithingPage() {
           </p>
         </div>
 
-        <div className="blacksmithing-hero__photo">
+        <div className={styles.heroPhoto}>
           <Image
             src="/blacksmith-profile.jpeg"
             alt="Keith wearing protective gear"

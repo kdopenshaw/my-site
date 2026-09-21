@@ -1,3 +1,4 @@
+import styles from "../content.module.css";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
@@ -39,14 +40,12 @@ export default async function ContentPost({ params }: ContentPostPageProps) {
   if (!post) notFound();
 
   return (
-    <section className="content-post">
-      <h1>{post.metadata.title}</h1>
-      <p className="content-post__date">
+    <section className={`page-shell ${styles.post}`}>
+      <h1 className="section-title">{post.metadata.title}</h1>
+      <p className={styles.postDate}>
         {formatDate(post.metadata.publishedAt)}
       </p>
-      <article className="prose">
-        <CustomMdx source={post.content} />
-      </article>
+      <CustomMdx source={post.content} />
     </section>
   );
 }

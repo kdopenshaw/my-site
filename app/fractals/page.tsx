@@ -1,3 +1,4 @@
+import styles from "./page.module.css";
 import FractalStudio from "./fractal-studio";
 import type { Metadata } from "next";
 
@@ -8,8 +9,8 @@ export const metadata: Metadata = {
 
 export default function FractalsPage() {
   return (
-    <main className="fractal-page">
-      <h1>Fractal Generator</h1>
+    <main className={styles.page}>
+      <h1 className="section-title section-title--accent">Fractal Generator</h1>
       <FractalStudio />
     </main>
   );

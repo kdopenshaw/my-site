@@ -1,5 +1,5 @@
+import styles from "./prose.module.css";
 import Image from "next/image";
-import type { ImageProps } from "next/image";
 import Link from "next/link";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { highlight } from "sugar-high";
@@ -66,10 +66,6 @@ function Code({
   return <code dangerouslySetInnerHTML={{ __html: codeHtml }} {...props} />;
 }
 
-function RoundedImage(props: ImageProps) {
-  return <Image className="prose-image" {...props} />;
-}
-
 function slugify(value: ReactNode) {
   return String(value)
     .toLowerCase()
@@ -105,11 +101,15 @@ const components = {
   h6: createHeading(6),
   a: CustomLink,
   code: Code,
-  Image: RoundedImage,
+  Image,
   PdfDocument,
   Table,
 };
 
 export default function CustomMdx({ source }: { source: string }) {
-  return <MDXRemote source={source} components={components} />;
+  return (
+    <article className={styles.prose}>
+      <MDXRemote source={source} components={components} />
+    </article>
+  );
 }

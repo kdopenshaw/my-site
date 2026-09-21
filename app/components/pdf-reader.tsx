@@ -1,7 +1,10 @@
 "use client";
 
+import styles from "./pdf-document.module.css";
 import { useEffect, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
+import "react-pdf/dist/Page/AnnotationLayer.css";
+import "react-pdf/dist/Page/TextLayer.css";
 
 export interface PdfReaderProps {
   href: string;
@@ -31,9 +34,9 @@ export default function PdfReader({ href, title }: PdfReaderProps) {
   }, []);
 
   return (
-    <div className="pdf-document">
+    <div className={styles.pdfDocument}>
       <a
-        className="pdf-document__open"
+        className={styles.open}
         href={href}
         target="_blank"
         rel="noopener noreferrer"
@@ -42,7 +45,7 @@ export default function PdfReader({ href, title }: PdfReaderProps) {
       </a>
       <div
         ref={containerRef}
-        className="pdf-document__pages"
+        className={styles.pages}
         role="region"
         aria-label={`${title} document preview`}
         tabIndex={0}
@@ -51,12 +54,12 @@ export default function PdfReader({ href, title }: PdfReaderProps) {
           file={href}
           onLoadSuccess={({ numPages }) => setPageCount(numPages)}
           loading={
-            <p className="pdf-document__status" role="status">
+            <p className={styles.status} role="status">
               Loading document…
             </p>
           }
           error={
-            <p className="pdf-document__status">
+            <p className={styles.status}>
               The document preview could not be loaded.
             </p>
           }

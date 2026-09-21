@@ -1,0 +1,101 @@
+.prose {
+  /* Syntax highlighting */
+  --sh-class: var(--color-heading-accent);
+  --sh-identifier: var(--color-text);
+  --sh-sign: var(--color-text-muted);
+  --sh-property: var(--color-focus);
+  --sh-entity: var(--color-heading-accent);
+  --sh-jsxliterals: var(--color-focus);
+  --sh-string: var(--color-text-muted);
+  --sh-keyword: var(--color-accent);
+  --sh-comment: var(--color-text-muted);
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4 {
+  margin-top: var(--spacing-md);
+  margin-bottom: var(--spacing-xs);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+}
+
+.prose h1 {
+  font-size: var(--fs-h2);
+}
+
+.prose h2 {
+  font-size: var(--fs-h3);
+}
+
+.prose h3 {
+  font-size: var(--fs-h4);
+}
+
+.prose p {
+  margin-block: var(--spacing-sm);
+}
+
+.prose ul,
+.prose ol,
+.prose blockquote {
+  max-width: var(--measure);
+}
+
+.prose ul,
+.prose ol,
+.prose blockquote {
+  margin-block: var(--spacing-sm);
+  padding-left: var(--spacing-md);
+}
+
+.prose li + li {
+  margin-top: var(--spacing-xs);
+}
+
+.prose blockquote {
+  border-left: 3px solid var(--color-accent);
+  color: var(--color-text-muted);
+}
+
+.prose strong {
+  font-weight: 500;
+}
+
+.prose pre {
+  margin-block: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  background: var(--color-surface);
+  font-size: var(--fs-small);
+}
+
+.prose code {
+  padding: 0.1em 0.3em;
+  border-radius: 0.5rem;
+  background: var(--color-surface);
+  font-size: 0.9em;
+}
+
+.prose pre code {
+  padding: 0;
+  background: transparent;
+  font-size: inherit;
+}
+
+.prose code span {
+  font-weight: 500;
+}
+
+.prose img {
+  height: auto;
+}
+
+.prose table {
+  display: block;
+  max-width: fit-content;
+  overflow-x: auto;
+  white-space: nowrap;
+}

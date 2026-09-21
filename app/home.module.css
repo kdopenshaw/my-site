@@ -1,0 +1,38 @@
+.splitLayout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: var(--spacing-sm) clamp(var(--spacing-sm), 10vw, 8.75rem);
+}
+
+.splitLayoutContent,
+.splitLayoutMedia {
+  flex: 1 1 50%;
+  padding-inline: var(--spacing-sm);
+}
+
+.splitLayoutMedia img {
+  width: 90%;
+  height: auto;
+}
+
+.iconLink {
+  display: inline-flex;
+  border-radius: 0.25rem;
+}
+
+@media (max-width: 48rem) {
+  .splitLayout {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-xl);
+  }
+  .splitLayoutContent, .splitLayoutMedia {
+    padding-inline: 0;
+  }
+  .splitLayoutMedia img {
+    width: 100%;
+  }
+}

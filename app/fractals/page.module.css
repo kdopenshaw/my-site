@@ -1,0 +1,14 @@
+.page {
+  width: min(calc(100% - 2 * var(--spacing-sm)), 76rem);
+  margin: var(--spacing-sm) auto var(--spacing-lg);
+}
+
+.page > h1 {
+  margin-bottom: var(--spacing-sm);
+}
+
+@media (max-width: 30rem) {
+  .page {
+    width: calc(100% - var(--spacing-sm));
+  }
+}
