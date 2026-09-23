@@ -10,13 +10,13 @@ import styles from "./home.module.css";
 
 const FRACTALS = {
   dark: {
-    gif: "/fractals/julia-growth-dark.gif?version=play-once",
+    gif: "/fractals/julia-growth-dark.gif?version=retain-frames",
     still: "/fractals/julia-growth-dark-last.png",
     width: 1000,
     height: 1000,
   },
   light: {
-    gif: "/fractals/julia_0.2841_0.01_20260921-154313_growth.gif?version=play-once",
+    gif: "/fractals/julia_0.2841_0.01_20260921-154313_growth.gif?version=retain-frames",
     still: "/fractals/julia_0.2841_0.01_20260921-154313_growth_last.png",
     width: 610,
     height: 784,
@@ -52,7 +52,6 @@ export default function HomeFractal() {
   useEffect(() => {
     if (!selection || selection.reducedMotion) return;
     const controller = new AbortController();
-    let objectUrl: string | undefined;
     const image = FRACTALS[selection.theme];
 
     async function load() {
@@ -61,9 +60,17 @@ export default function HomeFractal() {
         if (!response.ok) throw new Error("Unable to load the fractal animation");
         const blob = await response.blob();
         if (controller.signal.aborted) return;
-        // A complete, unique blob starts at frame one even with a warm cache.
-        objectUrl = URL.createObjectURL(blob);
-        setLoaded({ selection: selection!, src: objectUrl });
+        // Buffer the entire animation before mounting it. Data URLs are allowed
+        // by the site's image policy; blob URLs are not.
+        const dataUrl = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = () => reject(reader.error);
+          reader.readAsDataURL(blob);
+        });
+        if (controller.signal.aborted) return;
+        // A unique fragment gives each playback its own image resource.
+        setLoaded({ selection: selection!, src: `${dataUrl}#${crypto.randomUUID()}` });
       } catch {
         if (!controller.signal.aborted) setLoaded({ selection: selection!, src: image.still });
       }
@@ -71,7 +78,6 @@ export default function HomeFractal() {
     void load();
     return () => {
       controller.abort();
-      if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
   }, [selection]);
 
