@@ -12,14 +12,14 @@ const FRACTALS = {
   dark: {
     gif: "/fractals/julia-growth-dark.gif",
     still: "/fractals/julia-growth-dark-last.png",
-    duration: 3_960,
+    duration: 3_600,
     width: 1000,
     height: 1000,
   },
   light: {
     gif: "/fractals/julia_0.2841_0.01_20260921-154313_growth.gif",
     still: "/fractals/julia_0.2841_0.01_20260921-154313_growth_last.png",
-    duration: 4_950,
+    duration: 5_445,
     width: 610,
     height: 784,
   },

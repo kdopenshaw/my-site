@@ -61,3 +61,26 @@
 .iconLink img {
   clip-path: inset(1px round 2px);
 }
+
+@media (max-width: 44rem) {
+  .splitLayout {
+    gap: var(--spacing-xs);
+    padding-inline: 0;
+  }
+
+  .splitLayoutMedia {
+    padding-inline: var(--spacing-md);
+  }
+
+  .splitLayoutContent {
+    --fs-h1: var(--fs-h2);
+    width: 100%;
+    padding-inline: calc(var(--spacing-2xl) + var(--spacing-lg));
+    font-size: var(--fs-small);
+  }
+
+  .splitLayoutContent h1,
+  .splitLayoutContent p {
+    margin-bottom: var(--spacing-xs);
+  }
+}
