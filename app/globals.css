@@ -6,6 +6,7 @@
 :root {
   /* Palette */
   --color-background: #ffffff;
+  --color-image-overlay: rgb(0 0 0 / 35%);
   --color-surface: #f2f5f8;
   --color-heading: #0d1b2a;
   --color-heading-accent: #2c5282;
