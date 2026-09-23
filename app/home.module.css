@@ -4,7 +4,8 @@
   align-items: center;
   gap: var(--spacing-sm);
   max-width: var(--content-width);
-  margin: 0 auto;
+  /* Tighten the header spacing along with the image's empty canvas below. */
+  margin: calc(-1 * var(--spacing-sm)) auto 0;
   padding: 0 clamp(var(--spacing-xl), 4vw, var(--spacing-2xl)) var(--spacing-sm);
 }
 
@@ -24,12 +25,18 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: min(100%, 610px);
-  aspect-ratio: 610 / 784;
+  /* Reserve room for navigation and scale both dimensions on short screens.
+     svh keeps the whole fractal visible when mobile browser controls appear. */
+  width: min(100%, 610px, max(0px, calc((100svh - 2 * var(--spacing-2xl)) * 610 / 660)));
+  /* Both images contain a 612px-tall shape at this width. Trim the surrounding
+     blank canvas, leaving 24px above and below without cropping the fractal. */
+  aspect-ratio: 610 / 660;
   background: var(--color-background);
 }
 
-.fractal img {
+.fractal img,
+.fractal canvas {
+  display: block;
   width: 85%;
   height: auto;
   max-width: none;
@@ -37,12 +44,14 @@
   visibility: hidden;
 }
 
-.fractal img.fractalImageReady {
+.fractal img.fractalImageReady,
+.fractal canvas.fractalImageReady {
   visibility: visible;
 }
 
 /* The dark file is 1000px wide around the same 546px Julia shape. */
-.fractal img.darkFractalImage {
+.fractal img.darkFractalImage,
+.fractal canvas.darkFractalImage {
   width: 139.344%;
 }
 
@@ -74,9 +83,7 @@
 
   .splitLayoutContent {
     --fs-h1: var(--fs-h2);
-    width: 100%;
-    padding-inline: calc(var(--spacing-2xl) + var(--spacing-lg));
-    font-size: var(--fs-small);
+    font-size: var(--fs-body);
   }
 
   .splitLayoutContent h1,
