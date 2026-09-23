@@ -18,6 +18,64 @@
   height: auto;
 }
 
+.fractal {
+  position: relative;
+  width: 90%;
+  background: var(--color-background);
+}
+
+.fractalClip {
+  overflow: hidden;
+}
+
+.fractal::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: 1;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px var(--color-background);
+  background:
+    linear-gradient(
+      to right,
+      var(--color-background) 0,
+      var(--color-background) var(--spacing-2xs),
+      var(--color-background) 4%,
+      color-mix(in srgb, var(--color-background) 70%, transparent) 10%,
+      transparent 18%
+    ),
+    linear-gradient(
+      to left,
+      var(--color-background) 0,
+      var(--color-background) var(--spacing-2xs),
+      var(--color-background) 4%,
+      color-mix(in srgb, var(--color-background) 70%, transparent) 10%,
+      transparent 18%
+    ),
+    linear-gradient(
+      to bottom,
+      var(--color-background) 0,
+      var(--color-background) var(--spacing-2xs),
+      var(--color-background) 4%,
+      color-mix(in srgb, var(--color-background) 75%, transparent) 6%,
+      transparent 9%
+    ),
+    linear-gradient(
+      to top,
+      var(--color-background) 0,
+      var(--color-background) var(--spacing-2xs),
+      var(--color-background) 4%,
+      color-mix(in srgb, var(--color-background) 75%, transparent) 6%,
+      transparent 9%
+    );
+}
+
+.fractal img {
+  width: 100%;
+  transform: scale(1.1);
+  transform-origin: center;
+}
+
 .iconLink {
   display: inline-flex;
   border-radius: 0.25rem;
@@ -32,7 +90,8 @@
   .splitLayoutContent, .splitLayoutMedia {
     padding-inline: 0;
   }
-  .splitLayoutMedia img {
+  .splitLayoutMedia img,
+  .fractal {
     width: 100%;
   }
 }

@@ -1,5 +1,6 @@
 import styles from "./home.module.css";
 import Image from "next/image";
+import HomeFractal from "./home-fractal";
 
 export default function Home() {
   return (
@@ -20,13 +21,7 @@ export default function Home() {
       </div>
 
       <div className={styles.splitLayoutMedia}>
-        <Image
-          src="/fractals/julia_0.2841_notext.png"
-          alt="A colorful Julia set fractal"
-          width={640}
-          height={640}
-          priority
-        />
+        <HomeFractal />
       </div>
     </section>
   );
