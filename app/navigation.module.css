@@ -6,19 +6,100 @@
   padding: var(--spacing-lg);
 }
 
-.menuTrigger {
-  color: var(--color-nav);
+.menu {
+  position: relative;
 }
 
-.menuDropdown.menuDropdown {
-  --menu-item-hover: var(--color-surface);
-  border-color: color-mix(in srgb, var(--color-border) 72%, transparent);
+.menuTrigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 0;
+  border-radius: 0.25rem;
+  background: transparent;
+  color: var(--color-nav);
+  cursor: pointer;
+}
+
+.menuTrigger:hover {
+  color: var(--color-heading-accent);
+}
+
+.burger,
+.burger::before,
+.burger::after {
+  display: block;
+  width: 18px;
+  height: 1.5px;
+  border-radius: 1px;
+  background: currentColor;
+  transition-property: background-color, transform;
+  transition-duration: 300ms;
+  transition-timing-function: ease;
+}
+
+.burger {
+  position: relative;
+}
+
+.burger::before,
+.burger::after {
+  position: absolute;
+  left: 0;
+  content: "";
+}
+
+.burger::before {
+  top: -6px;
+}
+
+.burger::after {
+  top: 6px;
+}
+
+.menuTrigger[aria-expanded="true"] .burger {
+  background-color: transparent;
+}
+
+.menuTrigger[aria-expanded="true"] .burger::before {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.menuTrigger[aria-expanded="true"] .burger::after {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+.menuDropdown {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 0.35rem);
+  left: 50%;
+  width: min(17.5rem, calc(100vw - 2 * var(--spacing-sm)));
+  translate: -50% 0;
+  border: 1px solid color-mix(in srgb, var(--color-border) 72%, transparent);
   border-radius: 0.5rem;
-  --popover-radius: 0.5rem;
   background-color: color-mix(in srgb, var(--color-background) 68%, transparent);
   -webkit-backdrop-filter: blur(24px) saturate(140%);
   backdrop-filter: blur(24px) saturate(140%);
   padding: var(--spacing-2xs);
+}
+
+.menuDropdown::before {
+  position: absolute;
+  top: -0.5rem;
+  right: 0;
+  left: 0;
+  height: 0.5rem;
+  content: "";
+}
+
+.menuDropdown ul {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .menuItem,
@@ -26,7 +107,8 @@
   display: flex;
   align-items: baseline;
   gap: var(--spacing-xs);
-  overflow: hidden;
+  padding: 0.45rem 0.75rem;
+  border-radius: 0.25rem;
   color: var(--color-nav);
   font-family: var(--font-display);
   font-size: var(--fs-small);
@@ -39,14 +121,14 @@
   color: var(--color-heading-accent);
 }
 
-.menuItemActive,
-.menuItemActive:hover {
-  --menu-item-color: var(--color-heading-accent);
-  color: var(--color-heading-accent);
+.menuItem:hover {
+  background: var(--color-surface);
 }
 
+.menuItemActive,
 .menuItemActive:hover {
-  background-color: transparent;
+  background: transparent;
+  color: var(--color-heading-accent);
 }
 
 .breadcrumbItem {

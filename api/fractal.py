@@ -1,4 +1,8 @@
-"""Vercel serverless function for rendering escape-time fractals as PNGs."""
+"""Vercel serverless function for rendering escape-time fractals as PNGs.
+
+The form in app/fractals/fractal-studio.tsx calls GET /api/fractal.
+`npm run dev` does not run this file. Use `npm run dev:apis`.
+"""
 
 from __future__ import annotations
 

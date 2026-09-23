@@ -1,16 +1,14 @@
 "use client";
 
+// Shows the pins the server already loaded. This file is a client component
+// only so "load more" can reveal the next 10 without another request.
+
 import styles from "./pinterest-board.module.css";
-import { Button } from "@mantine/core";
 import { useEffect, useRef, useState } from "react";
 
-const PINS_PER_PAGE = 10;
+import type { PinterestPin } from "./pins";
 
-export interface PinterestPin {
-  title: string;
-  link: string;
-  image: string;
-}
+const PINS_PER_PAGE = 10;
 
 interface PinterestBoardProps {
   pins: PinterestPin[];
@@ -93,8 +91,7 @@ export default function PinterestBoard({
 
           {hasMore ? (
             <div ref={loadMoreRef} className={styles.loadMore}>
-              <Button
-                variant="outline"
+              <button
                 type="button"
                 onClick={() =>
                   setVisibleCount((count) =>
@@ -103,7 +100,7 @@ export default function PinterestBoard({
                 }
               >
                 Load more pins
-              </Button>
+              </button>
             </div>
           ) : null}
         </>

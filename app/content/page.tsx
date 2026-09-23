@@ -1,8 +1,11 @@
+// Content index. URL: /content
+// Posts are the .mdx files in ./posts. This page only lists them.
+
 import styles from "./content.module.css";
 import Link from "next/link";
 import type { Metadata } from "next";
 
-import { formatDate, getContentPosts } from "./utils";
+import { formatDate, getContentPosts } from "./posts";
 
 export const metadata: Metadata = {
   title: "Content | Keith Openshaw",
@@ -10,11 +13,7 @@ export const metadata: Metadata = {
 };
 
 export default function ContentPage() {
-  const posts = getContentPosts().sort(
-    (a, b) =>
-      new Date(b.metadata.publishedAt).getTime() -
-      new Date(a.metadata.publishedAt).getTime(),
-  );
+  const posts = getContentPosts();
 
   return (
     <section className="page-shell" aria-labelledby="content-heading">

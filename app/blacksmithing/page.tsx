@@ -1,58 +1,11 @@
+// Blacksmithing page. URL: /blacksmithing
+// Pin images are loaded in pins.ts, then handed to the board below.
+
 import styles from "./page.module.css";
 import Image from "next/image";
 import type { Metadata } from "next";
-import PinterestBoard, {
-  type PinterestPin,
-} from "../components/pinterest-board";
-
-const PINTEREST_BOARD_URL =
-  "https://www.pinterest.com/kopenshaw0014/keith-blacksmithing/";
-
-function decodeXml(value = "") {
-  return value
-    .replaceAll("&quot;", '"')
-    .replaceAll("&apos;", "'")
-    .replaceAll("&lt;", "<")
-    .replaceAll("&gt;", ">")
-    .replaceAll("&amp;", "&");
-}
-
-function readTag(item: string, tag: string) {
-  const match = item.match(new RegExp(`<${tag}>([\\s\\S]*?)<\\/${tag}>`));
-  return decodeXml(match?.[1]?.trim());
-}
-
-function getHighResolutionImage(url: string) {
-  return url.replace("/236x/", "/736x/");
-}
-
-async function getPinterestPins(): Promise<PinterestPin[]> {
-  try {
-    const response = await fetch(`${PINTEREST_BOARD_URL.slice(0, -1)}.rss`, {
-      next: { revalidate: 3600 },
-    });
-
-    if (!response.ok) return [];
-
-    const xml = await response.text();
-
-    return Array.from(xml.matchAll(/<item>([\s\S]*?)<\/item>/g))
-      .map(([, item]) => {
-        const description = readTag(item, "description");
-        const image = description.match(/<img[^>]+src="([^"]+)"/)?.[1];
-
-        return {
-          title: readTag(item, "title"),
-          link: readTag(item, "link"),
-          image: image ? getHighResolutionImage(image) : "",
-        };
-      })
-      .filter((pin) => pin.image);
-  } catch (error) {
-    console.error("Unable to load the Pinterest board preview:", error);
-    return [];
-  }
-}
+import PinterestBoard from "./pinterest-board";
+import { getPinterestPins, PINTEREST_BOARD_URL } from "./pins";
 
 export const metadata: Metadata = {
   title: "Blacksmithing | Keith Openshaw",

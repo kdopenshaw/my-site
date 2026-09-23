@@ -1,5 +1,7 @@
 "use client";
 
+// Draws each page of a PDF to fit the column width.
+
 import styles from "./pdf-document.module.css";
 import { useEffect, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";

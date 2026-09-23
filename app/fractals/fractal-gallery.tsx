@@ -1,7 +1,10 @@
 "use client";
 
+// Community gallery under the generator.
+// Images come from /api/fractal-gallery. The empty div at the bottom
+// loads the next page when it scrolls into view.
+
 import styles from "./fractal-gallery.module.css";
-import { Button, Card } from "@mantine/core";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const FRACTALS_PER_PAGE = 10;
@@ -111,7 +114,7 @@ export default function FractalGallery({ refreshKey }: { refreshKey: number }) {
   }, [hasMore, loadMore]);
 
   return (
-    <Card component="section" className={styles.gallery} aria-labelledby="fractal-gallery-title" padding={0} radius={0} withBorder={false}>
+    <section className={styles.gallery} aria-labelledby="fractal-gallery-title">
       <header className={styles.galleryHeader}>
         <h2 className="heading-accent" id="fractal-gallery-title">Fractal gallery</h2>
         {fractals.length > 0 && <span>{fractals.length} shown</span>}
@@ -149,9 +152,9 @@ export default function FractalGallery({ refreshKey }: { refreshKey: number }) {
           <p>The gallery is waiting for its first fractal.</p>
         )}
         {!isLoading && hasMore && fractals.length > 0 && (
-          <Button variant="outline" type="button" onClick={() => void loadMore()}>Load 10 more</Button>
+          <button className="button-outline" type="button" onClick={() => void loadMore()}>Load 10 more</button>
         )}
       </div>
-    </Card>
+    </section>
   );
 }

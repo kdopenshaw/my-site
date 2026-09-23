@@ -1,3 +1,6 @@
+// Fractal generator. URL: /fractals
+// The studio is a client component because drawing happens in the browser.
+
 import styles from "./page.module.css";
 import FractalStudio from "./fractal-studio";
 import type { Metadata } from "next";
@@ -9,9 +12,9 @@ export const metadata: Metadata = {
 
 export default function FractalsPage() {
   return (
-    <main className={styles.page}>
+    <div className={styles.page}>
       <h1 className="heading-accent">Fractal Generator</h1>
       <FractalStudio />
-    </main>
+    </div>
   );
 }

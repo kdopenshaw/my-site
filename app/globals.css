@@ -1,7 +1,12 @@
+/* Colors, type, and spacing for the whole site.
+   Change a value here and every page follows.
+   Page CSS should use these variables, not raw colors like #333.
+   Shared classes (.page-shell, .heading-accent, .image-grid, .button) are at the bottom. */
+
 :root {
   /* Palette */
   --color-background: #ffffff;
-  --color-surface: #277dff10;
+  --color-surface: #f2f5f8;
   --color-heading: #0d1b2a;
   --color-heading-accent: #2c5282;
   --color-text: #334155;
@@ -49,20 +54,6 @@
   --spacing-xl: 3rem;
   --spacing-2xl: 4rem;
   --content-width: 1400px;
-}
-
-/* Map Mantine's defaults onto the portfolio palette and typography. */
-:root,
-[data-mantine-color-scheme="light"] {
-  --mantine-color-blue-6: var(--color-heading-accent);
-  --mantine-color-blue-7: var(--color-link-hover);
-  --mantine-color-body: var(--color-background);
-  --mantine-color-text: var(--color-text);
-  --mantine-color-dimmed: var(--color-text-muted);
-  --mantine-color-anchor: var(--color-link);
-  --mantine-color-default-border: var(--color-border);
-  --mantine-color-default: var(--color-background);
-  --mantine-primary-color-contrast: var(--color-on-accent);
 }
 
 /* Smaller headings on mobile and tablet. All other tokens keep their values above. */
@@ -245,6 +236,48 @@ img {
 }
 
 .image-tile:hover img { transform: scale(1.035); }
+
+.button,
+.button-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  min-height: 2.25rem;
+  padding: 0.45rem 0.9rem;
+  border: 1px solid var(--color-heading-accent);
+  border-radius: 0.25rem;
+  background: var(--color-heading-accent);
+  color: var(--color-on-accent);
+  font-family: var(--font-primary);
+  font-size: var(--fs-small);
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  appearance: none;
+}
+
+.button:hover:not(:disabled) {
+  border-color: var(--color-link-hover);
+  background: var(--color-link-hover);
+  color: var(--color-on-accent);
+}
+
+.button-outline {
+  background: transparent;
+  color: var(--color-heading-accent);
+}
+
+.button-outline:hover:not(:disabled) {
+  background: var(--color-surface);
+  color: var(--color-heading-accent);
+}
+
+.button:disabled,
+.button-outline:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

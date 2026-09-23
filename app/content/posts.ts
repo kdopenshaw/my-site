@@ -1,6 +1,16 @@
 import fs from "node:fs";
 import path from "node:path";
 
+// Reads every .mdx file in ./posts.
+// The filename is the URL: posts/my-note.mdx → /content/my-note
+//
+// Each file starts with this block:
+// ---
+// title: "Title"
+// publishedAt: "YYYY-MM-DD"
+// summary: "Optional sentence for link previews"
+// ---
+
 export interface ContentMetadata {
   title: string;
   summary?: string;
@@ -63,17 +73,16 @@ function readMdxFile(filePath: string) {
   return parseFrontmatter(fs.readFileSync(filePath, "utf-8"));
 }
 
-function getMdxData(directory: string): ContentPost[] {
-  return getMdxFiles(directory).map((file) => {
-    const { metadata, content } = readMdxFile(path.join(directory, file));
-    const slug = path.basename(file, path.extname(file));
-
-    return { metadata, slug, content };
-  });
-}
-
 export function getContentPosts() {
-  return getMdxData(path.join(process.cwd(), "app", "content", "posts"));
+  const directory = path.join(process.cwd(), "app", "content", "posts");
+
+  return getMdxFiles(directory)
+    .map((file) => {
+      const { metadata, content } = readMdxFile(path.join(directory, file));
+      const slug = path.basename(file, path.extname(file));
+      return { metadata, slug, content };
+    })
+    .sort((a, b) => b.metadata.publishedAt.localeCompare(a.metadata.publishedAt));
 }
 
 export function formatDate(date: string, includeRelative = false) {

@@ -1,9 +1,12 @@
+// One article. URL: /content/[the filename of the .mdx file]
+// generateStaticParams tells Next.js which filenames exist at build time.
+
 import styles from "../content.module.css";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
-import CustomMdx from "../../components/mdx";
-import { formatDate, getContentPosts } from "../utils";
+import CustomMdx from "../mdx";
+import { formatDate, getContentPosts } from "../posts";
 
 export function generateStaticParams() {
   return getContentPosts().map((post) => ({ slug: post.slug }));

@@ -1,3 +1,7 @@
+// Home page. URL: /
+// This file renders on the server. The moving image is a separate file
+// because it needs the browser (see home-fractal.tsx).
+
 import styles from "./home.module.css";
 import Image from "next/image";
 import HomeFractal from "./home-fractal";

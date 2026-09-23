@@ -1,3 +1,8 @@
+// Gallery API. URL: /api/fractal-gallery
+// GET returns one page of images. POST stores a PNG and its parameters.
+// The browser never talks to Supabase directly. This file uses the secret
+// key from .env.local (see the README).
+
 import { createHash, randomUUID } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 

@@ -1,3 +1,6 @@
+// Turns one post's markdown into HTML.
+// `components` below is the list of tags a post can use, including PdfDocument.
+
 import styles from "./prose.module.css";
 import Image from "next/image";
 import Link from "next/link";

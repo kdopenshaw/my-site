@@ -67,6 +67,8 @@
 ## Implementation rules
 
 - Treat `app/globals.css` as the source of truth for palette, typography, spacing, resets, accessibility defaults, and shared layout primitives.
+- Use plain HTML for links and controls. Shared button classes are `.button` and `.button-outline` in `app/globals.css`.
+- Keep a page's components in that page's folder. Files next to `app/layout.tsx` are the shell shared by every page. Add `"use client"` only when a file needs state, events, or browser APIs.
 - Extend existing semantic tokens before inventing new ones. If a new token is necessary, name it by purpose rather than by a single page or component.
 - Avoid inline presentation styles unless a value is genuinely dynamic.
 - When changing the design system, check both `/` and `/content` so shared changes remain coherent.

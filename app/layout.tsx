@@ -2,10 +2,11 @@ import { Geologica, Hanken_Grotesk, Space_Mono } from "next/font/google";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
-import "@mantine/core/styles.css";
 import "./globals.css";
 import Navigation from "./navigation";
-import Providers from "./providers";
+
+// next/font downloads these at build time and exposes them as CSS variables.
+// globals.css connects those variables to --font-primary, --font-display, and --font-code.
 
 const hankenGrotesk = Hanken_Grotesk({
   weight: "variable",
@@ -37,10 +38,8 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
       className={`${hankenGrotesk.variable} ${geologica.variable} ${spaceMono.variable}`}
     >
       <body>
-        <Providers>
-          <Navigation />
-          <main>{children}</main>
-        </Providers>
+        <Navigation />
+        <main>{children}</main>
       </body>
     </html>
   );

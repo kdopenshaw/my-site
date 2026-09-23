@@ -1,5 +1,8 @@
 "use client";
 
+// Plays the growth GIF once, then holds the last frame.
+// Visitors who prefer reduced motion see the still image immediately.
+
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
