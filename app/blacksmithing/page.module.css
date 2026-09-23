@@ -29,9 +29,6 @@
 }
 
 @media (max-width: 48rem) {
-  .page {
-    margin-top: var(--spacing-sm);
-  }
   .intro {
     grid-template-columns: 1fr;
   }

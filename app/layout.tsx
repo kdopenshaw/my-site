@@ -2,8 +2,10 @@ import { Geologica, Hanken_Grotesk, Space_Mono } from "next/font/google";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
+import "@mantine/core/styles.css";
 import "./globals.css";
 import Navigation from "./navigation";
+import Providers from "./providers";
 
 const hankenGrotesk = Hanken_Grotesk({
   weight: "variable",
@@ -35,9 +37,10 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
       className={`${hankenGrotesk.variable} ${geologica.variable} ${spaceMono.variable}`}
     >
       <body>
-        <Navigation />
-
-        <main>{children}</main>
+        <Providers>
+          <Navigation />
+          <main>{children}</main>
+        </Providers>
       </body>
     </html>
   );

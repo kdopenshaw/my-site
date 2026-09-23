@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import styles from "./home.module.css";
@@ -25,12 +26,12 @@ export default function HomeFractal() {
 
   return (
     <div className={styles.fractal}>
-      <div className={styles.fractalClip}>
+      <Link href="/fractals" className={styles.fractalClip} aria-label="Open the fractal generator">
         <img
           src={src}
-          alt="A colorful Julia set fractal growing over time"
-          width={1000}
-          height={1000}
+          alt=""
+          width={610}
+          height={784}
           onLoad={(event) => {
             if (!event.currentTarget.src.includes(GIF_SRC)) return;
             window.clearTimeout(freezeTimer.current);
@@ -39,7 +40,7 @@ export default function HomeFractal() {
             }, PLAY_ONCE_MS);
           }}
         />
-      </div>
+      </Link>
     </div>
   );
 }

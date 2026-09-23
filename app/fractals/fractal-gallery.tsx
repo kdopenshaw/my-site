@@ -1,8 +1,7 @@
 "use client";
 
 import styles from "./fractal-gallery.module.css";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Button, Card } from "@mantine/core";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const FRACTALS_PER_PAGE = 10;
@@ -112,7 +111,7 @@ export default function FractalGallery({ refreshKey }: { refreshKey: number }) {
   }, [hasMore, loadMore]);
 
   return (
-    <Card className={styles.gallery} aria-labelledby="fractal-gallery-title">
+    <Card component="section" className={styles.gallery} aria-labelledby="fractal-gallery-title" padding={0} radius={0} withBorder={false}>
       <header className={styles.galleryHeader}>
         <h2 className="heading-accent" id="fractal-gallery-title">Fractal gallery</h2>
         {fractals.length > 0 && <span>{fractals.length} shown</span>}
@@ -150,7 +149,7 @@ export default function FractalGallery({ refreshKey }: { refreshKey: number }) {
           <p>The gallery is waiting for its first fractal.</p>
         )}
         {!isLoading && hasMore && fractals.length > 0 && (
-          <Button type="button" onClick={() => void loadMore()}>Load 10 more</Button>
+          <Button variant="outline" type="button" onClick={() => void loadMore()}>Load 10 more</Button>
         )}
       </div>
     </Card>

@@ -1,6 +1,6 @@
 .page {
   width: min(calc(100% - 2 * var(--spacing-sm)), 76rem);
-  margin: var(--spacing-sm) auto var(--spacing-lg);
+  margin: 0 auto var(--spacing-lg);
 }
 
 .page > h1 {

@@ -1,7 +1,7 @@
 "use client";
 
 import styles from "./pinterest-board.module.css";
-import { Button } from "@/components/ui/button";
+import { Button } from "@mantine/core";
 import { useEffect, useRef, useState } from "react";
 
 const PINS_PER_PAGE = 10;
@@ -94,6 +94,7 @@ export default function PinterestBoard({
           {hasMore ? (
             <div ref={loadMoreRef} className={styles.loadMore}>
               <Button
+                variant="outline"
                 type="button"
                 onClick={() =>
                   setVisibleCount((count) =>
