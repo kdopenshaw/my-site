@@ -1,9 +1,40 @@
 .siteHeader {
+  position: relative;
   display: flex;
   justify-content: center;
   max-width: var(--content-width);
   margin: 0 auto;
   padding: var(--spacing-lg);
+}
+
+.themeToggle {
+  position: absolute;
+  right: var(--spacing-lg);
+  top: var(--spacing-lg);
+  min-height: 2.25rem;
+  width: 2.25rem;
+  padding: 0;
+  border: 0;
+  border-radius: 0.25rem;
+  background: transparent;
+  color: var(--color-nav);
+  cursor: pointer;
+}
+
+.themeToggle svg {
+  display: block;
+  width: 1.125rem;
+  height: 1.125rem;
+  margin: auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+.themeToggle:hover {
+  color: var(--color-heading-accent);
 }
 
 .menu {
@@ -184,5 +215,9 @@
 @media (max-width: 48rem) {
   .siteHeader {
     padding-inline: 5%;
+  }
+
+  .themeToggle {
+    right: 5%;
   }
 }

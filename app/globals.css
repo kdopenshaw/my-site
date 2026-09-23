@@ -16,6 +16,7 @@
   --color-link-hover: var(--color-heading);
   --color-border: #e5e5e5;
   --color-accent: #e76f51;
+  --color-accent-text: var(--color-accent);
   --color-technical: #2563eb;
   --color-focus: #3b6ba1;
   --color-on-accent: #ffffff;
@@ -56,6 +57,28 @@
   --content-width: 1400px;
 }
 
+/* The featured Julia animation has a #333333 canvas; matching it here lets
+   the image meet the page without a visible rectangular edge. */
+:root[data-theme="dark"] {
+  --color-background: #333333;
+  --color-surface: #2d2b2a;
+  --color-heading: #e3d9cf;
+  --color-heading-accent: #3da286;
+  --color-text: #cbbfb5;
+  --color-text-muted: #b8aba0;
+  --color-nav: #ded4ca;
+  --color-link: var(--color-heading-accent);
+  --color-link-hover: var(--color-heading);
+  --color-border: #68605a;
+  --color-accent: #e76f51;
+  --color-accent-text: #ec7c5f;
+  --color-technical: #68caaf;
+  --color-focus: #68caaf;
+  --color-on-accent: #182738;
+  --shadow-popover: 0 1rem 2.5rem rgb(0 0 0 / 30%);
+  --shadow-control: 0 0.75rem 2.25rem rgb(0 0 0 / 16%);
+}
+
 /* Smaller headings on mobile and tablet. All other tokens keep their values above. */
 @media (max-width: 48rem) {
   :root {
@@ -78,8 +101,13 @@ html {
   scroll-behavior: smooth;
 }
 
+html[data-theme="dark"] {
+  color-scheme: dark;
+}
+
 body {
   min-height: 100vh;
+  background: var(--color-background);
   color: var(--color-text);
   font-family: var(--font-primary);
   font-size: var(--fs-body);

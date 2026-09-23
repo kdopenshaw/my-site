@@ -24,11 +24,26 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  width: min(100%, 610px);
+  aspect-ratio: 610 / 784;
+  background: var(--color-background);
 }
 
 .fractal img {
   width: 85%;
   height: auto;
+  max-width: none;
+  flex: 0 0 auto;
+  visibility: hidden;
+}
+
+.fractal img.fractalImageReady {
+  visibility: visible;
+}
+
+/* The dark file is 1000px wide around the same 546px Julia shape. */
+.fractal img.darkFractalImage {
+  width: 139.344%;
 }
 
 .iconLinks {
@@ -43,3 +58,6 @@
   color: var(--color-heading);
 }
 
+.iconLink img {
+  clip-path: inset(1px round 2px);
+}

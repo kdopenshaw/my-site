@@ -8,41 +8,74 @@ import { useEffect, useRef, useState } from "react";
 
 import styles from "./home.module.css";
 
-const GIF_SRC = "/fractals/julia_0.2841_0.01_20260921-154313_growth.gif";
-const LAST_FRAME_SRC = "/fractals/julia_0.2841_0.01_20260921-154313_growth_last.png";
-const PLAY_ONCE_MS = 4_950;
+const FRACTALS = {
+  dark: {
+    gif: "/fractals/julia-growth-dark.gif",
+    still: "/fractals/julia-growth-dark-last.png",
+    duration: 3_960,
+    width: 1000,
+    height: 1000,
+  },
+  light: {
+    gif: "/fractals/julia_0.2841_0.01_20260921-154313_growth.gif",
+    still: "/fractals/julia_0.2841_0.01_20260921-154313_growth_last.png",
+    duration: 4_950,
+    width: 610,
+    height: 784,
+  },
+};
+
+type Theme = keyof typeof FRACTALS;
 
 export default function HomeFractal() {
-  const [src, setSrc] = useState(GIF_SRC);
+  const [theme, setTheme] = useState<Theme>("light");
+  const [src, setSrc] = useState<string | null>(null);
+  const [ready, setReady] = useState(false);
   const freezeTimer = useRef<number>(0);
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setSrc(LAST_FRAME_SRC);
-      return;
-    }
+    const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const refresh = () => {
+      window.clearTimeout(freezeTimer.current);
+      setReady(false);
+      const currentTheme = document.documentElement.dataset.theme === "light" ? "light" : "dark";
+      setTheme(currentTheme);
+      const image = FRACTALS[currentTheme];
+      setSrc(motionPreference.matches ? image.still : `${image.gif}?play=${Date.now()}`);
+    };
 
-    setSrc(`${GIF_SRC}?play=${Date.now()}`);
-
-    return () => window.clearTimeout(freezeTimer.current);
+    refresh();
+    window.addEventListener("site-theme-change", refresh);
+    motionPreference.addEventListener("change", refresh);
+    return () => {
+      window.clearTimeout(freezeTimer.current);
+      window.removeEventListener("site-theme-change", refresh);
+      motionPreference.removeEventListener("change", refresh);
+    };
   }, []);
+
+  const image = FRACTALS[theme];
 
   return (
     <div className={styles.fractal}>
       <Link href="/fractals" className={styles.fractalClip} aria-label="Open the fractal generator">
-        <img
-          src={src}
-          alt=""
-          width={610}
-          height={784}
-          onLoad={(event) => {
-            if (!event.currentTarget.src.includes(GIF_SRC)) return;
-            window.clearTimeout(freezeTimer.current);
-            freezeTimer.current = window.setTimeout(() => {
-              setSrc(LAST_FRAME_SRC);
-            }, PLAY_ONCE_MS);
-          }}
-        />
+        {src && (
+          <img
+            src={src}
+            alt=""
+            width={image.width}
+            height={image.height}
+            className={`${theme === "dark" ? styles.darkFractalImage : ""} ${ready ? styles.fractalImageReady : ""}`}
+            onLoad={(event) => {
+              setReady(true);
+              if (!event.currentTarget.src.includes(image.gif)) return;
+              window.clearTimeout(freezeTimer.current);
+              freezeTimer.current = window.setTimeout(() => {
+                setSrc(image.still);
+              }, image.duration);
+            }}
+          />
+        )}
       </Link>
     </div>
   );

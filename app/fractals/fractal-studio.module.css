@@ -718,7 +718,7 @@
 
 .workWarning {
   margin: 0;
-  color: var(--color-accent);
+  color: var(--color-accent-text);
   font-family: var(--font-code);
   font-size: var(--fs-caption);
   line-height: 1.35;

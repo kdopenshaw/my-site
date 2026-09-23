@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import styles from "./navigation.module.css";
+import ThemeToggle from "./theme-toggle";
 
 // The menu on every page. "use client" is required because open/closed
 // and the current URL only exist in the browser.
@@ -146,6 +147,7 @@ export default function Navigation() {
           </nav>
         )}
       </div>
+      <ThemeToggle />
     </header>
   );
 }
