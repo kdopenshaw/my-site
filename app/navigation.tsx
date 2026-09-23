@@ -1,9 +1,9 @@
 "use client";
 
 import styles from "./navigation.module.css";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { NavigationMenu } from "@/components/ui/navigation-menu";
 
 const links = [
   { href: "/", label: "Home" },
@@ -21,7 +21,7 @@ export default function Navigation() {
   return (
     <header className={styles.siteHeader}>
 
-      <nav aria-label="Primary navigation">
+      <NavigationMenu aria-label="Primary navigation">
         {links.map((link) => (
           <Link
             key={link.href}
@@ -31,7 +31,7 @@ export default function Navigation() {
             {link.label}
           </Link>
         ))}
-      </nav>
+      </NavigationMenu>
     </header>
   );
 }

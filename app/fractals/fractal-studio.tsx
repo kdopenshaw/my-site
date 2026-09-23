@@ -4,6 +4,9 @@ import styles from "./fractal-studio.module.css";
 import { useEffect, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import FractalGallery from "./fractal-gallery";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 
 type Family = "mandelbrot" | "julia" | "burning_ship" | "tricorn" | "newton";
 
@@ -207,7 +210,7 @@ function NumberField({ label, value, step, min, max, onChange }: {
   return (
     <label className={styles.numberField}>
       <span>{label}</span>
-      <input type="number" value={value} step={step} min={min} max={max} onChange={(event) => onChange(Number(event.target.value))} />
+      <Input type="number" value={value} step={step} min={min} max={max} onChange={(event) => onChange(Number(event.target.value))} />
     </label>
   );
 }
@@ -225,7 +228,7 @@ function RangeField({ label, value, step, min, max, digits = 0, disabled = false
   return (
     <label className={`${styles.rangeField} ${disabled ? styles.isDisabled : ""}`}>
       <span>{label}<output>{value.toFixed(digits).replace("-", "−")}</output></span>
-      <input type="range" value={value} step={step} min={min} max={max} disabled={disabled} onChange={(event) => onChange(Number(event.target.value))} />
+      <Input className={styles.rangeInput} type="range" value={value} step={step} min={min} max={max} disabled={disabled} onChange={(event) => onChange(Number(event.target.value))} />
     </label>
   );
 }
@@ -551,7 +554,9 @@ export default function FractalStudio() {
           <div className={styles.familyPicker} onKeyDown={(event) => {
             if (event.key === "Escape") setIsPresetPickerOpen(false);
           }}>
-            <button
+            <Button
+              variant="outline"
+              size="sm"
               className={styles.familyChoice}
               type="button"
               aria-expanded={isPresetPickerOpen}
@@ -564,17 +569,17 @@ export default function FractalStudio() {
                 <small>{PRESETS[presetKey].detail}</small>
               </span>
               <strong aria-hidden="true">⌄</strong>
-            </button>
+            </Button>
             {isPresetPickerOpen && (
               <div className={styles.familyPopover} id="fractal-family-options">
                 <p>Choose a definition</p>
                 <div className={styles.presetGrid}>
                   {(Object.entries(PRESETS) as [PresetKey, Preset][]).map(([key, preset]) => (
-                    <button type="button" key={key} aria-pressed={presetKey === key} onClick={() => choosePreset(key)}>
+                    <Button variant="ghost" type="button" key={key} aria-pressed={presetKey === key} onClick={() => choosePreset(key)}>
                       <img src={preset.thumbnail} alt="" width="74" height="48" />
                       <span>{preset.label}</span>
                       <small>{preset.detail}</small>
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>
@@ -591,7 +596,9 @@ export default function FractalStudio() {
           <div role="group" aria-labelledby="fractal-label-iii" className={styles.configGroup}>
             <div className={styles.rasterHeadingRow}>
               <ConfigLabel index="III" title="Resolution" diagram="/fractals/help/raster.svg" help="Sets the width and height of the output image in pixels. More pixels reveal finer detail, but increase render time and file size." />
-              <button
+              <Button
+                variant="ghost"
+                size="icon"
                 className={styles.aspectLock}
                 type="button"
                 aria-pressed={isAspectLocked}
@@ -600,19 +607,19 @@ export default function FractalStudio() {
                 onClick={toggleAspectLock}
               >
                 <span className={styles.aspectIcon} aria-hidden="true" />
-              </button>
+              </Button>
             </div>
             <div className={`${styles.numberRow} ${styles.numberRowTwo}`}>
               <NumberField label={<>width <i>w</i></>} value={parameters.width} min={MIN_RASTER_SIZE} max={MAX_RASTER_SIZE} step={1} onChange={(value) => updateRaster("width", value)} />
               <NumberField label={<>height <i>h</i></>} value={parameters.height} min={MIN_RASTER_SIZE} max={MAX_RASTER_SIZE} step={1} onChange={(value) => updateRaster("height", value)} />
             </div>
             <div className={styles.resolutionTools}>
-              <select aria-label="Resolution preset" value={resolutionPresetKey} onChange={(event) => chooseResolution(event.target.value)}>
+              <Select aria-label="Resolution preset" value={resolutionPresetKey} onChange={(event) => chooseResolution(event.target.value)}>
                 {Object.entries(RESOLUTION_PRESETS).map(([key, resolution]) => (
                   <option value={key} key={key}>{resolution.label}</option>
                 ))}
                 <option value="custom">Custom resolution</option>
-              </select>
+              </Select>
               <output className={!isWithinWorkLimit ? styles.isOverLimit : isSlowRender ? styles.isSlow : ""}>
                 {(pixelCount / 1_000_000).toFixed(2)} MP · {(estimatedWork / 1_000_000).toFixed(1)}M tests
               </output>
@@ -667,7 +674,7 @@ export default function FractalStudio() {
             : "Maps normalized escape time to color. Choose a preset or edit the stops to create a continuous palette."} />
           <label className={styles.paletteSelect}>
             <span>Palette preset</span>
-            <select
+            <Select
               key={parameters.palette}
               value={parameters.palette}
               onChange={(event) => choosePalette(event.target.value)}
@@ -675,18 +682,18 @@ export default function FractalStudio() {
             >
               {Object.entries(PALETTES).map(([key, palette]) => <option value={key} key={key}>{palette.label}</option>)}
               <option value="custom">Custom palette</option>
-            </select>
+            </Select>
           </label>
           <div className={styles.paletteEditor}>
             <div className={styles.colorToolbar}>
               <div className={styles.colorRamp} style={{ background: `linear-gradient(90deg, ${activeColors.join(", ")})` }} aria-hidden="true" />
               <div className={styles.colorTools} aria-label="Color stop tools">
-                <button type="button" onClick={removeColor} disabled={activeColors.length <= MIN_COLOR_STOPS} aria-label="Remove a color stop" title="Remove color">−</button>
+                <Button variant="outline" size="icon" type="button" onClick={removeColor} disabled={activeColors.length <= MIN_COLOR_STOPS} aria-label="Remove a color stop" title="Remove color">−</Button>
                 <output aria-live="polite">{activeColors.length}</output>
-                <button type="button" onClick={addColor} disabled={activeColors.length >= MAX_COLOR_STOPS} aria-label="Add a color stop" title="Add color">+</button>
-                <button className={styles.colorRandomize} type="button" onClick={randomizeColors} aria-label="Randomize colors" title="Randomize colors">
+                <Button variant="outline" size="icon" type="button" onClick={addColor} disabled={activeColors.length >= MAX_COLOR_STOPS} aria-label="Add a color stop" title="Add color">+</Button>
+                <Button variant="ghost" className={styles.colorRandomize} type="button" onClick={randomizeColors} aria-label="Randomize colors" title="Randomize colors">
                   <span aria-hidden="true">↻</span> Randomize
-                </button>
+                </Button>
               </div>
             </div>
             <div className={styles.colorStops}>
@@ -708,8 +715,9 @@ export default function FractalStudio() {
           {isSlowRender && <p className={styles.workWarning}>This combination may take longer to render.</p>}
           {!isWithinWorkLimit && <p className={styles.workWarning}>Reduce resolution or iterations to stay below 200M tests.</p>}
           <div className={styles.controlActions}>
-            <button
-              className={`button button--primary ${styles.generate} ${isRendering ? styles.isRendering : ""}`}
+            <Button
+              variant="primary"
+              className={`${styles.generate} ${isRendering ? styles.isRendering : ""}`}
               type="submit"
               disabled={isRendering || !isWithinWorkLimit}
               aria-label={isRendering ? "Generating fractal" : undefined}
@@ -719,25 +727,25 @@ export default function FractalStudio() {
               ) : (
                 <><span>Generate fractal</span><b aria-hidden="true">↗</b></>
               )}
-            </button>
-            <button className={`button ${styles.download}`} type="button" disabled={!hasRenderedImage || isRendering} onClick={downloadFractal}>
+            </Button>
+            <Button className={styles.download} type="button" disabled={!hasRenderedImage || isRendering} onClick={downloadFractal}>
               <span>Download</span>
               <b aria-hidden="true">↓</b>
-            </button>
+            </Button>
           </div>
         </div>
       </aside>
       <div className={styles.preview}>
         <div className={styles.canvasFrame}><canvas ref={canvasRef} aria-label="Generated fractal" /></div>
         <div className={styles.previewActions} aria-label="Rendered fractal actions">
-          <button
-            className="button button--primary"
+          <Button
+            variant="primary"
             type="button"
             onClick={() => void addToGallery()}
             disabled={!hasRenderedImage || isRendering || isPublishing}
           >
             {isPublishing ? "Adding…" : "Add to gallery"}
-          </button>
+          </Button>
         </div>
       </div>
     </form>

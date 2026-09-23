@@ -4,7 +4,7 @@
   justify-content: center;
   max-width: var(--content-width);
   margin: 0 auto;
-  padding: var(--spacing-md);
+  padding: var(--spacing-lg);
 }
 
 .siteHeader nav a {

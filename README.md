@@ -8,7 +8,14 @@ A personal website built with Next.js.
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view the site.
+This starts plain Next.js for the usual frontend workflow. Open
+[http://localhost:3000](http://localhost:3000) to view the site. To serve the
+Python fractal function under `api/` as well, run `npm run dev:apis`. The first
+run may prompt you to install the Vercel CLI and link this checkout to the
+Vercel project.
+
+The Python function targets Python 3.12. Install Python 3.12 locally before
+running the Vercel dev server.
 
 ## Styles
 
@@ -32,16 +39,18 @@ Storage for PNG files. To connect it:
    Editor.
    Rerun this idempotent setup file after pulling gallery schema updates, such
    as support for additional fractal families.
-2. Add these server-side environment variables to Vercel (Preview and
-   Production), then redeploy:
+2. Put the same server-side environment variables in `.env.local` for local
+   development, and in Vercel (Preview and Production) for deployments:
 
    ```text
    SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
    SUPABASE_SECRET_KEY=sb_secret_...
    ```
 
-   A legacy `SUPABASE_SERVICE_ROLE_KEY` also works. Never prefix either secret
-   with `NEXT_PUBLIC_`.
+   Copy `.env.example` to `.env.local` and fill in your project URL and secret
+   key. `.env.local` is ignored by Git. A legacy
+   `SUPABASE_SERVICE_ROLE_KEY` also works. Never prefix either secret with
+   `NEXT_PUBLIC_`.
 3. If the bucket name is changed from `fractal-gallery`, set
    `SUPABASE_FRACTAL_BUCKET` and make the same change in the SQL setup file.
 

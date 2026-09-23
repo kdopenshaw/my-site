@@ -1,6 +1,7 @@
 "use client";
 
 import styles from "./pinterest-board.module.css";
+import { Button } from "@/components/ui/button";
 import { useEffect, useRef, useState } from "react";
 
 const PINS_PER_PAGE = 10;
@@ -92,7 +93,7 @@ export default function PinterestBoard({
 
           {hasMore ? (
             <div ref={loadMoreRef} className={styles.loadMore}>
-              <button
+              <Button
                 type="button"
                 onClick={() =>
                   setVisibleCount((count) =>
@@ -101,7 +102,7 @@ export default function PinterestBoard({
                 }
               >
                 Load more pins
-              </button>
+              </Button>
             </div>
           ) : null}
         </>
