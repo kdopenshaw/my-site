@@ -20,7 +20,8 @@ A folder with `page.tsx` is a page. The folder name is the URL. `app/layout.tsx`
 | `/` | `app/page.tsx` |
 | `/content` | `app/content/page.tsx` |
 | `/content/some-post` | `app/content/posts/some-post.mdx` |
-| `/fractals` | `app/fractals/page.tsx` |
+| `/projects/fractal-generator` | `app/projects/fractal-generator/page.tsx` |
+| `/fractals` | `app/fractals/page.tsx` (redirects to the generator) |
 | `/blacksmithing` | `app/blacksmithing/page.tsx` |
 
 Files next to `layout.tsx` (`navigation.tsx`, `globals.css`) are shared by the whole site. Everything else stays in the folder of the page that uses it.

@@ -472,9 +472,8 @@ export default function FractalStudio() {
           <div className={styles.canvasFrame} aria-busy={isRendering}>
             <canvas ref={canvasRef} aria-label="Generated fractal" />
             {isRendering && (
-              <div className={styles.canvasLoading} role="status" aria-live="polite">
+              <div className={styles.canvasLoading} role="status" aria-label="Loading fractal" aria-live="polite">
                 <span className={styles.canvasSpinner} aria-hidden="true" />
-                <span>Creating your fractal…</span>
               </div>
             )}
           </div>

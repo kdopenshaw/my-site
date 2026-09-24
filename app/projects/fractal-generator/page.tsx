@@ -1,8 +1,8 @@
 // Fractal generator. URL: /fractals
 // The studio is a client component because drawing happens in the browser.
 
-import styles from "../../fractals/page.module.css";
-import FractalStudio from "../../fractals/fractal-studio";
+import styles from "./page.module.css";
+import FractalStudio from "./fractal-studio";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
