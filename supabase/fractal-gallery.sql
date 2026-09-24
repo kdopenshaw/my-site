@@ -48,7 +48,9 @@ alter table fractal_gallery_private.uploads enable row level security;
 revoke all on table fractal_gallery_private.uploads from public, anon, authenticated;
 grant select, insert, delete on table fractal_gallery_private.uploads to service_role;
 
-create or replace function public.fractal_gallery_page(
+drop function if exists public.fractal_gallery_page(text, text, uuid, integer);
+
+create function public.fractal_gallery_page(
   p_seed text,
   p_after_order text default null,
   p_after_id uuid default null,
@@ -63,6 +65,7 @@ returns table (
   power smallint,
   palette text,
   created_at timestamptz,
+  parameters jsonb,
   order_key text
 )
 language sql
@@ -80,6 +83,7 @@ as $$
       gallery.power,
       gallery.palette,
       gallery.created_at,
+      gallery.parameters,
       md5(gallery.id::text || ':' || left(p_seed, 100)) as order_key
     from public.fractal_gallery as gallery
     where gallery.status = 'published'

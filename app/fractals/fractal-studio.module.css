@@ -757,6 +757,7 @@ button.download {
 }
 
 .canvasFrame {
+  position: relative;
   display: grid;
   place-items: center;
   min-height: min(34rem, calc(100svh - 10rem));
@@ -765,6 +766,32 @@ button.download {
   border: 1px solid var(--color-border);
   border-radius: 0.5rem;
   background: var(--color-surface);
+}
+
+.canvasLoading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  background: color-mix(in srgb, var(--color-surface) 82%, transparent);
+  color: var(--color-heading);
+  font-size: var(--fs-small);
+}
+
+.canvasSpinner {
+  width: 1.75rem;
+  aspect-ratio: 1;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-heading-accent);
+  border-radius: 50%;
+  animation: fractal-render-spin 700ms linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .canvasSpinner { animation-duration: 2s; }
 }
 
 .canvasFrame canvas {

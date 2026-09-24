@@ -11,7 +11,7 @@ export const runtime = "nodejs";
 
 const DEFAULT_BUCKET = "fractal-gallery";
 const MAX_IMAGE_BYTES = 6_000_000;
-const MAX_PAGE_SIZE = 10;
+const MAX_PAGE_SIZE = 8;
 
 type FractalFamily = "mandelbrot" | "julia" | "burning_ship" | "tricorn" | "newton";
 
@@ -49,6 +49,7 @@ type GalleryRow = {
   power: number;
   palette: string;
   created_at: string;
+  parameters: FractalMetadata;
 };
 
 type GalleryPageRow = GalleryRow & {
@@ -89,6 +90,7 @@ function galleryItem(row: GalleryRow, url: string, bucket: string) {
     power: row.power,
     palette: row.palette,
     createdAt: row.created_at,
+    parameters: row.parameters,
   };
 }
 
