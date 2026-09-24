@@ -1,8 +1,8 @@
--- Run this once in the Supabase SQL Editor for the site's gallery project.
+-- Gallery schema for Neon Postgres. Run with npm run db:migrate.
 
 create table if not exists public.fractal_gallery (
   id uuid primary key,
-  storage_path text not null unique check (storage_path ~ '^images/[0-9a-f-]+\.png$'),
+  storage_path text not null unique check (storage_path ~ '^(images/)?[0-9a-f-]+\.png$'),
   width integer not null check (width between 64 and 1200),
   height integer not null check (height between 64 and 1200),
   family text not null constraint fractal_gallery_family_check
@@ -26,12 +26,12 @@ create index if not exists fractal_gallery_published_idx
   where status = 'published';
 
 alter table public.fractal_gallery enable row level security;
-revoke all on table public.fractal_gallery from public, anon, authenticated;
-grant select, insert, update, delete on table public.fractal_gallery to service_role;
+revoke all on table public.fractal_gallery from public;
+grant select, insert, update, delete on table public.fractal_gallery to current_user;
 
 create schema if not exists fractal_gallery_private;
-revoke all on schema fractal_gallery_private from public, anon, authenticated;
-grant usage on schema fractal_gallery_private to service_role;
+revoke all on schema fractal_gallery_private from public;
+grant usage on schema fractal_gallery_private to current_user;
 
 create table if not exists fractal_gallery_private.uploads (
   request_hash text not null check (request_hash ~ '^[0-9a-f]{64}$'),
@@ -45,8 +45,8 @@ create index if not exists fractal_gallery_uploads_created_at_idx
   on fractal_gallery_private.uploads (created_at);
 
 alter table fractal_gallery_private.uploads enable row level security;
-revoke all on table fractal_gallery_private.uploads from public, anon, authenticated;
-grant select, insert, delete on table fractal_gallery_private.uploads to service_role;
+revoke all on table fractal_gallery_private.uploads from public;
+grant select, insert, delete on table fractal_gallery_private.uploads to current_user;
 
 drop function if exists public.fractal_gallery_page(text, text, uuid, integer);
 
@@ -97,9 +97,9 @@ as $$
 $$;
 
 revoke all on function public.fractal_gallery_page(text, text, uuid, integer)
-  from public, anon, authenticated;
+  from public;
 grant execute on function public.fractal_gallery_page(text, text, uuid, integer)
-  to service_role;
+  to current_user;
 
 create or replace function public.fractal_gallery_claim_upload(p_request_hash text)
 returns boolean
@@ -137,16 +137,6 @@ end;
 $$;
 
 revoke all on function public.fractal_gallery_claim_upload(text)
-  from public, anon, authenticated;
+  from public;
 grant execute on function public.fractal_gallery_claim_upload(text)
-  to service_role;
-
-insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-values ('fractal-gallery', 'fractal-gallery', true, 6000000, array['image/png'])
-on conflict (id) do update set
-  public = excluded.public,
-  file_size_limit = excluded.file_size_limit,
-  allowed_mime_types = excluded.allowed_mime_types;
-
--- Uploads go through the site's server-only endpoint with a Supabase secret key.
--- No INSERT/UPDATE/DELETE policy on storage.objects is intentionally created.
+  to current_user;

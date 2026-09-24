@@ -1,44 +1,51 @@
 # My Site
 
-Keith Openshaw's personal site. Next.js App Router, React, and plain CSS.
+Keith Openshaw's personal site, built with Next.js, React, and plain CSS.
 
-## Run
+## Development
+
+Requires Node.js 24 and Python 3.12.
 
 ```bash
 npm install
+cp .env.example .env.local
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000). Environment variables are
+documented in `.env.example`; keep `.env.local` out of version control.
 
-Copy `.env.example` to `.env.local`. Do not commit it, and do not prefix secrets with `NEXT_PUBLIC_`.
-
-Dev and production builds write to `.next-dev` and `.next` so `next build` does not wipe a running preview.
-
-## Fractal generator
-
-`npm run dev` serves the site only. Rendering uses the Python function in `api/fractal.py` (Python 3.12, see `.python-version`):
+The fractal renderer runs as a Python function through Vercel's local runtime.
+Use this command instead when working on the complete fractal flow:
 
 ```bash
 npm run dev:apis
 ```
 
-The first run may install the Vercel CLI and ask you to link this checkout.
+## Neon
 
-## Fractal gallery
-
-Create a Supabase project and run `supabase/fractal-gallery.sql` in the SQL Editor. Rerun that file after gallery schema changes; it is idempotent.
-
-Set `SUPABASE_URL` and `SUPABASE_SECRET_KEY` in `.env.local` and in Vercel. `SUPABASE_SERVICE_ROLE_KEY` still works as a legacy name.
-
-The storage bucket is `fractal-gallery`. A different name needs `SUPABASE_FRACTAL_BUCKET` and the same change in the SQL file.
-
-## Technical threshold backtesting
-
-Set `ALPACA_API_KEY` and `ALPACA_SECRET_KEY` in `.env.local` and in the deployment environment. `ALPACA_DATA_FEED` defaults to `iex`; `sip` needs the matching Alpaca data subscription.
-
-`npm run dev` serves the UI and the stock API. Check the engine with Node 24+:
+The fractal gallery stores records in Neon Postgres and images in the
+`fractal-gallery` Object Storage bucket. Link the local checkout and pull its
+credentials with:
 
 ```bash
+neon link --project-id damp-mountain-06763139 --branch production -y
+neon deploy
+```
+
+Apply gallery schema changes with:
+
+```bash
+npm run db:migrate
+```
+
+Set the variables from `.env.example` in Vercel before deploying. Keep database
+and storage credentials server-side.
+
+## Checks
+
+```bash
+npm run build
 node --test tests/stock-backtester.test.mjs
+python3 -m unittest tests/test_fractal.py
 ```
