@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import MarketOverview from "./market-overview";
 import styles from "./backtester.module.css";
-export const metadata: Metadata = { title: "Trading Application | Keith Openshaw", description: "Analyze and test RSI and SMA trading strategies with historical market data." };
+export const metadata: Metadata = { title: "Technical Threshold Backtesting | Keith Openshaw", description: "Backtest RSI and SMA threshold strategies against historical market data." };
 export default function StockBacktesterPage() {
   return <>
-    <h1 className="heading-accent" id="stock-backtester-heading">Stock Backtester</h1>
+    <h1 className="heading-accent" id="stock-backtester-heading">Technical Threshold Backtesting</h1>
     <section className={styles.section}>
       <h2>About</h2>
-      <p>This trading application began as a personal Python and Flask project to explore computer science and financial markets. It focuses on backtesting: applying a strategy to historical stock prices to understand how it would have performed.</p>
+      <p>This is trading application I built in 2021 to investigate the effectiveness of technical trading strategies. It uses the alpaca API to get historical stock prices and backtest technical strategies using default or customer parameters. It focuses on the two most common technical indicators: relative strength index (RSI) and simple moving average (SMA).</p>
     </section>
     <div className={styles.strategyChoices}>
       {(["rsi", "sma"] as const).map((strategy) => <section key={strategy}>

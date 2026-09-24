@@ -27,7 +27,7 @@ export default function TradingNavigation({ strategy }: { strategy?: "rsi" | "sm
   }))];
 
   return (
-    <nav className={styles.breadcrumb} aria-label="Trading application">
+    <nav className={styles.breadcrumb} aria-label="Technical threshold backtesting">
       <ol>
         {crumbs.map((crumb, index) => {
           const current = index === crumbs.length - 1;

@@ -20,10 +20,10 @@ const projects = [
   },
   {
     href: "/projects/stock-backtester",
-    title: "Stock Backtester",
+    title: "Technical Threshold Backtesting",
     description: "Test RSI and moving average strategies against historical stock prices. A new home for my original Python and Flask project.",
-    image: "",
-    imageAlt: "",
+    image: "/projects/stock-backtester.png",
+    imageAlt: "RSI price chart with green buy and red sell marks beside key portfolio metrics",
   },
 ];
 

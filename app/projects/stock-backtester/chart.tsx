@@ -28,7 +28,7 @@ export default function Chart({ title, lines, unit = "currency" }: { title: stri
           type: "scatter", mode: line.marker ? "markers" : "lines", name: line.name,
           x: line.points.map((point) => point.date), y: line.points.map((point) => point.value),
           line: { color: colors[index % colors.length], width: 2 },
-          marker: { color: line.marker === "sell" ? token("--color-accent-text") : colors[0], symbol: line.marker === "sell" ? "triangle-down" : "triangle-up", size: 10 },
+          marker: { color: line.marker === "sell" ? token("--color-loss") : line.marker === "buy" ? token("--color-gain") : colors[index % colors.length], symbol: line.marker === "sell" ? "triangle-down" : "triangle-up", size: 10 },
           hovertemplate: `%{x|%b %d, %Y}<br>${unit === "currency" ? "$" : ""}%{y:.2f}${unit === "percent" ? "%" : ""}<extra>%{fullData.name}</extra>`,
         })), {
           autosize: true, margin: { l: 65, r: 16, t: 15, b: 65 },
@@ -51,13 +51,7 @@ export default function Chart({ title, lines, unit = "currency" }: { title: stri
   }, [serialized, unit]);
   return <figure className={styles.chart}>
     <figcaption id={id}>{title}</figcaption>
-    {error && <p role="alert">The interactive chart could not load. Values are available in the table below.</p>}
+    {error && <p role="alert">The interactive chart could not load.</p>}
     <div ref={ref} className={styles.plot} role="img" aria-labelledby={id} />
-    <details className={styles.chartData}><summary>View chart values</summary>
-      <div className={styles.tableScroll} tabIndex={0} role="region" aria-label={`${title} values`}><table>
-        <thead><tr><th scope="col">Series</th><th scope="col">Date</th><th scope="col">Value{unit === "currency" ? " (USD)" : unit === "percent" ? " (%)" : ""}</th></tr></thead>
-        <tbody>{lines.flatMap((line) => line.points.map((point, i) => <tr key={`${line.name}-${i}`}><th scope="row">{line.name}</th><td>{point.date}</td><td>{point.value?.toFixed(2) ?? "—"}</td></tr>))}</tbody>
-      </table></div>
-    </details>
   </figure>;
 }

@@ -18,6 +18,8 @@
   --color-border: #e5e5e5;
   --color-accent: #e76f51;
   --color-accent-text: var(--color-accent);
+  --color-gain: #1b7f4e;
+  --color-loss: #b42318;
   --color-technical: #2563eb;
   --color-focus: #3b6ba1;
   --color-on-accent: #ffffff;
@@ -73,6 +75,8 @@
   --color-border: #68605a;
   --color-accent: #e76f51;
   --color-accent-text: #ec7c5f;
+  --color-gain: #5dbe86;
+  --color-loss: #ef7a6a;
   --color-technical: #68caaf;
   --color-focus: #68caaf;
   --color-on-accent: #182738;

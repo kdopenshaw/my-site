@@ -1,10 +1,11 @@
 "use client";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { BacktestResult } from "../engine";
 import Results from "../results";
 import TradingNavigation from "../trading-navigation";
 import styles from "../backtester.module.css";
-export default function ResultsLoader({ payload }: { payload: string }) {
+export default function ResultsLoader({ payload, backHref }: { payload: string; backHref: string }) {
   const [result, setResult] = useState<BacktestResult | null>(null);
   const [error, setError] = useState("");
   const [attempt, setAttempt] = useState(0);
@@ -26,7 +27,7 @@ export default function ResultsLoader({ payload }: { payload: string }) {
         <h1 className="heading-accent">Backtesting Results</h1>
         <TradingNavigation />
       </header>
-      {error ? <div role="alert"><p>{error}</p><button type="button" className="button-outline" onClick={() => setAttempt((n) => n + 1)}>Try again</button></div> : <p role="status">Loading historical prices and calculating trades…</p>}
+      {error ? <div role="alert"><p>{error}</p>{error.startsWith("Not enough historical prices") ? <Link className="button-outline" href={backHref}>Back</Link> : <button type="button" className="button-outline" onClick={() => setAttempt((n) => n + 1)}>Try again</button>}</div> : <p role="status">Loading historical prices and calculating trades…</p>}
     </>}
   </>;
 }

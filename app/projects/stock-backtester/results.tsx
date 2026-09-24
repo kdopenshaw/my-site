@@ -6,6 +6,25 @@ import styles from "./backtester.module.css";
 
 const money = (value: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(value);
 const percent = (value: number) => `${value.toFixed(2)}%`;
+const tone = (amount: number) => amount > 0 ? styles.gain : amount < 0 ? styles.loss : undefined;
+
+function buyAndHold(result: BacktestResult) {
+  const symbols = result.series.map((series) => series.symbol);
+  const start = new Map(result.series.map((series) => [series.symbol, series.points[0]?.close]));
+  const latest = new Map<string, number>();
+  const dates = [...new Set(result.series.flatMap((series) => series.points.map((point) => point.date)))].sort();
+  const closes = new Map(dates.map((date) => [date, new Map<string, number>()]));
+  for (const series of result.series) {
+    for (const point of series.points) closes.get(point.date)?.set(series.symbol, point.close);
+  }
+  return dates.map((date) => {
+    const day = closes.get(date)!;
+    for (const [symbol, close] of day) latest.set(symbol, close);
+    if (symbols.some((symbol) => !start.get(symbol) || latest.get(symbol) === undefined)) return { date, value: null };
+    const growth = symbols.reduce((sum, symbol) => sum + latest.get(symbol)! / start.get(symbol)!, 0) / symbols.length;
+    return { date, value: (growth - 1) * 100 };
+  });
+}
 
 function TradeTable({ trades, open }: { trades: Trade[]; open: boolean }) {
   return (
@@ -17,7 +36,7 @@ function TradeTable({ trades, open }: { trades: Trade[]; open: boolean }) {
             <caption>Each row represents one share. All amounts are in USD.</caption>
             <thead><tr><th scope="col">Symbol</th><th scope="col">Bought</th><th scope="col">Entry</th><th scope="col">{open ? "Last price date" : "Sold"}</th><th scope="col">{open ? "Last close" : "Exit"}</th><th scope="col">Gain / loss</th><th scope="col">Return</th></tr></thead>
             <tbody>{trades.map((trade, index) => <tr key={`${trade.symbol}-${trade.bought}-${index}`}>
-              <th scope="row">{trade.symbol}</th><td>{trade.bought}</td><td>{money(trade.purchasePrice)}</td><td>{trade.sold ?? trade.lastDate}</td><td>{money(trade.lastPrice)}</td><td>{money(trade.gain)}</td><td>{percent(trade.returnPercent)}</td>
+              <th scope="row">{trade.symbol}</th><td>{trade.bought}</td><td>{money(trade.purchasePrice)}</td><td>{trade.sold ?? trade.lastDate}</td><td>{money(trade.lastPrice)}</td><td className={tone(trade.gain)}>{money(trade.gain)}</td><td>{percent(trade.returnPercent)}</td>
             </tr>)}</tbody>
           </table>
         </div>}
@@ -53,8 +72,9 @@ export default function Results({ result }: { result: BacktestResult }) {
     ["Maximum drawdown", percent(m.maxDrawdown)],
   ];
   const openMetrics = [["Number of open shares", String(m.openShares)], ["Value of open shares", money(m.finalBalance - m.cash)], ["Unrealized gain", money(m.unrealizedGain)], ["Available cash", money(m.cash)]];
+  const signed = new Set(["Portfolio change", "Total gain", "Mean gain", "Unrealized gain"]);
   function metrics(rows: string[][]) {
-    return <dl className={styles.metricList}>{rows.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>;
+    return <dl className={styles.metricList}>{rows.map(([label, value]) => <div key={label}><dt>{label}</dt><dd className={signed.has(label) ? tone(Number(value.replace(/[^0-9.-]/g, ""))) : undefined}>{value}</dd></div>)}</dl>;
   }
   const symbolTrades = result.trades.filter((trade) => trade.symbol === symbol);
   return (
@@ -76,7 +96,6 @@ export default function Results({ result }: { result: BacktestResult }) {
             { name: "Sell", marker: "sell", points: [...new Map(symbolTrades.filter((trade) => trade.sold).map((trade) => [trade.sold!, { date: trade.sold!, value: trade.lastPrice }])).values()] },
           ]} />
           {p.strategy === "rsi" && <Chart title={`${series.symbol} RSI`} unit="number" lines={[{ name: `${p.period}-session RSI`, points: series.points.map((point) => ({ date: point.date, value: point.indicator })) }]} />}
-          <p className={styles.muted}>Drag to zoom; double-click to reset. Triangles show opening fill prices.</p>
         </section>
         <aside className={`${styles.panel} ${styles.keyMetrics}`} aria-labelledby="metrics-heading"><h2 id="metrics-heading">Key Metrics</h2>{metrics(keyMetrics)}</aside>
       </div>
@@ -87,9 +106,13 @@ export default function Results({ result }: { result: BacktestResult }) {
         </aside>
         <div className={styles.tradeLogs}><h2>Trade Log</h2><TradeTable trades={closed} open={false} /><TradeTable trades={open} open /></div>
       </div>
-      <details className={styles.method}><summary>Portfolio value over time</summary>
-        <Chart title="Portfolio value" lines={[{ name: "Cash + held shares", points: result.equity.map((point) => ({ date: point.date, value: point.value })) }]} />
-      </details>
+      <div className={styles.chartPair}>
+        <Chart title="Portfolio value over time" lines={[{ name: "Cash + held shares", points: result.equity.map((point) => ({ date: point.date, value: point.value })) }]} />
+        <Chart title="Return versus owning the stocks" unit="percent" lines={[
+          { name: "Strategy", points: result.equity.map((point) => ({ date: point.date, value: (point.value / p.initialBalance - 1) * 100 })) },
+          { name: "Buy and hold", points: buyAndHold(result) },
+        ]} />
+      </div>
       <p className={styles.muted}>One share per buy, with available cash. Signals fill at the next session’s open. Open positions use the last available close. No dividends, fees, slippage, taxes, or interest are included. Historical results do not predict future returns.</p>
     </section>
   );

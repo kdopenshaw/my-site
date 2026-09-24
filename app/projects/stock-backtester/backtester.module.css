@@ -32,6 +32,7 @@
 .error { border-left: 3px solid var(--color-accent); padding-left: var(--spacing-sm); }
 .resultsTop { display: grid; grid-template-columns: minmax(0, 3fr) minmax(15rem, 1fr); gap: var(--spacing-lg); align-items: start; margin-block: var(--spacing-lg); }
 .resultsBottom { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: var(--spacing-lg); align-items: start; margin-block: var(--spacing-lg); }
+.chartPair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--spacing-lg); align-items: start; margin-block: var(--spacing-lg); }
 .panel { border: 1px solid var(--color-border); border-radius: var(--spacing-2xs); padding: var(--spacing-sm); min-width: 0; }
 .panel + .panel { margin-top: var(--spacing-lg); }
 .graphHeading { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--spacing-sm); }
@@ -43,6 +44,10 @@
 .resultsBottom .metricList > div { padding-block: var(--spacing-xs); border-bottom: 0; }
 .metricList dt { color: var(--color-text-muted); }
 .metricList dd { text-align: right; font-weight: 500; color: var(--color-heading); font-variant-numeric: tabular-nums; }
+.gain { color: var(--color-gain); }
+.loss { color: var(--color-loss); }
+.metricList dd.gain { color: var(--color-gain); }
+.metricList dd.loss { color: var(--color-loss); }
 .tradeLogs { min-width: 0; }
 .tradeLogs .section { margin-block: var(--spacing-md) var(--spacing-lg); }
 .chart { min-width: 0; margin-bottom: var(--spacing-md); }
@@ -51,9 +56,6 @@
 .pairedCharts .plot { height: 16rem; }
 .singleChart .plot { height: 32rem; }
 .pairedCharts .chart { margin-bottom: var(--spacing-xs); }
-.chartData { font-size: var(--fs-small); }
-.chartData summary { color: var(--color-text-muted); cursor: pointer; padding-block: var(--spacing-xs); }
-.chartData summary:hover { color: var(--color-link); }
 .marketGrid { display: grid; grid-template-columns: minmax(0, 3fr) minmax(15rem, 1fr); gap: var(--spacing-lg); align-items: start; }
 .marketCharts { min-width: 0; }
 .marketGrid .tableScroll { max-height: none; }
@@ -72,7 +74,7 @@
   .resultsTop, .marketGrid { grid-template-columns: minmax(0, 2fr) minmax(14rem, 1fr); }
 }
 @media (max-width: 48rem) {
-  .customLayout, .resultsTop, .resultsBottom, .marketGrid, .strategyChoices, .aboutColumns { grid-template-columns: minmax(0, 1fr); }
+  .customLayout, .resultsTop, .resultsBottom, .chartPair, .marketGrid, .strategyChoices, .aboutColumns { grid-template-columns: minmax(0, 1fr); }
   .welcome { padding: var(--spacing-lg) var(--spacing-sm); }
   .strategyPage { padding: 0; }
   .strategyLayout .formPanel { float: none; width: 100%; margin: 0 0 var(--spacing-lg); }
