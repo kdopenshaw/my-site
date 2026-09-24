@@ -183,9 +183,12 @@
 }
 
 .breadcrumbSeparator {
+  width: 0.7em;
+  height: 0.7em;
   margin-inline: var(--spacing-xs);
   color: var(--color-text-muted);
   flex: 0 0 auto;
+  align-self: center;
 }
 
 .breadcrumbLink,

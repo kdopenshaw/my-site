@@ -1,10 +1,10 @@
 "use client";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { BacktestResult } from "../engine";
 import Results from "../results";
+import TradingNavigation from "../trading-navigation";
 import styles from "../backtester.module.css";
-export default function ResultsLoader({ payload, editHref }: { payload: string; editHref: string }) {
+export default function ResultsLoader({ payload }: { payload: string }) {
   const [result, setResult] = useState<BacktestResult | null>(null);
   const [error, setError] = useState("");
   const [attempt, setAttempt] = useState(0);
@@ -21,9 +21,11 @@ export default function ResultsLoader({ payload, editHref }: { payload: string; 
     return () => { active = false; clearTimeout(timeout); controller.abort(); };
   }, [payload, attempt]);
   return <>
-    <Link href={editHref} className={styles.back}>Back to strategy settings</Link>
     {result ? <Results key={payload} result={result} /> : <>
-      <h1>Backtesting Results</h1>
+      <header className={styles.pageHeader}>
+        <h1 className="heading-accent">Backtesting Results</h1>
+        <TradingNavigation />
+      </header>
       {error ? <div role="alert"><p>{error}</p><button type="button" className="button-outline" onClick={() => setAttempt((n) => n + 1)}>Try again</button></div> : <p role="status">Loading historical prices and calculating trades…</p>}
     </>}
   </>;

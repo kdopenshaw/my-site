@@ -122,6 +122,7 @@ h3,
 h4,
 h5,
 h6 {
+  margin-top: 0;
   color: var(--color-heading);
   font-family: var(--font-display);
   font-weight: 500;
@@ -228,6 +229,7 @@ img {
 .page-shell {
   width: min(calc(100% - 2 * var(--spacing-sm)), var(--page-width, 36rem));
   margin: 0 auto;
+  padding-top: var(--spacing-sm);
   padding-bottom: var(--spacing-2xl);
 }
 
@@ -282,6 +284,7 @@ img {
   font-size: var(--fs-small);
   font-weight: 500;
   line-height: 1;
+  text-decoration: none;
   cursor: pointer;
   appearance: none;
 }

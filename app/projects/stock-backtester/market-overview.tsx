@@ -30,7 +30,6 @@ export default function MarketOverview() {
   return <section className={styles.section} aria-labelledby="market-heading" aria-busy={busy}>
     <h2 id="market-heading">Market overview</h2>
     <p>Compare SPY, QQQ, and DIA over the past year, alongside closing prices and year-to-date changes for selected stocks.</p>
-    <button className="button-outline" type="button" onClick={() => load()} disabled={busy}>{busy ? "Loading prices…" : data ? "Refresh overview" : "Load market overview"}</button>
     <p role="status" className={styles.status}>{busy ? "Loading market prices…" : ""}</p>
     {error && <p role="alert" className={styles.error}>{error}</p>}
     {data && <>

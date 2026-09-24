@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { BacktestResult, Trade } from "./engine";
 import Chart from "./chart";
+import TradingNavigation from "./trading-navigation";
 import styles from "./backtester.module.css";
 
 const money = (value: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(value);
@@ -58,7 +59,10 @@ export default function Results({ result }: { result: BacktestResult }) {
   const symbolTrades = result.trades.filter((trade) => trade.symbol === symbol);
   return (
     <section aria-labelledby="results-heading">
-      <h1 id="results-heading">Backtesting Results for {p.symbols.join(", ")}</h1>
+      <header className={styles.pageHeader}>
+        <h1 className="heading-accent" id="results-heading">Backtesting Results for {p.symbols.join(", ")}</h1>
+        <TradingNavigation strategy={p.strategy} />
+      </header>
       <p className={styles.muted}>{p.strategy.toUpperCase()} ({p.period} sessions) · {p.start} to {p.end} · Alpaca {result.feed.toUpperCase()} · Split-adjusted prices</p>
       <div className={styles.resultsTop}>
         <section className={`${styles.panel} ${p.strategy === "rsi" ? styles.pairedCharts : styles.singleChart}`}>

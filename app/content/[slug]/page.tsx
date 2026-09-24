@@ -44,7 +44,7 @@ export default async function ContentPost({ params }: ContentPostPageProps) {
 
   return (
     <section className={`page-shell ${styles.post}`}>
-      <h1>{post.metadata.title}</h1>
+      <h1 className="heading-accent">{post.metadata.title}</h1>
       <p className={styles.postDate}>
         {formatDate(post.metadata.publishedAt)}
       </p>

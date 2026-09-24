@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { Strategy } from "./engine";
+import TradingNavigation from "./trading-navigation";
 import styles from "./backtester.module.css";
 
 type Query = Record<string, string | string[] | undefined>;
@@ -15,7 +16,10 @@ export default function Backtester({ strategy, custom, initial }: { strategy: St
   }
   useEffect(() => { setDates((current) => current.start && current.end ? current : pastYear()); }, []);
   return <section className={styles.strategyPage}>
-    <h1>{label}-Based Trading Strategy{custom ? ": Custom Parameters" : ""}</h1>
+    <header className={styles.pageHeader}>
+      <h1 className="heading-accent">{label}-Based Trading Strategy{custom ? ": Custom Parameters" : ""}</h1>
+      <TradingNavigation />
+    </header>
     <div className={custom ? styles.customLayout : styles.strategyLayout}>
       <form action="/projects/stock-backtester/results" method="get" className={styles.formPanel}>
         <fieldset className={styles.fields}>
