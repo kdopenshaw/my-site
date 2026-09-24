@@ -27,11 +27,13 @@ function pageLabel(segment: string) {
 export default function Navigation() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [hidden, setHidden] = useState(false);
   // After a click, ignore hover until the pointer moves.
   // Otherwise the menu reopens immediately under the cursor.
   const [hoverEnabled, setHoverEnabled] = useState(true);
   const menuRef = useRef<HTMLDivElement>(null);
   const openedByHoverAt = useRef(0);
+  const lastScrollY = useRef(0);
   const segments = pathname.split("/").filter(Boolean);
 
   const isActive = (href: string) =>
@@ -44,7 +46,35 @@ export default function Navigation() {
   };
 
   useEffect(() => {
+    lastScrollY.current = window.scrollY;
+    setHidden(false);
+
+    if (pathname === "/") return undefined;
+
+    const updateVisibility = () => {
+      const currentScrollY = Math.max(window.scrollY, 0);
+
+      if (open || currentScrollY <= 1) {
+        setHidden(false);
+      } else if (currentScrollY > lastScrollY.current + 4) {
+        setHidden(true);
+      } else if (currentScrollY < lastScrollY.current - 4) {
+        setHidden(false);
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener("scroll", updateVisibility, { passive: true });
+    return () => window.removeEventListener("scroll", updateVisibility);
+  }, [open, pathname]);
+
+  useEffect(() => {
     if (!open) return undefined;
+
+    if (pathname === "/") {
+      window.dispatchEvent(new Event("homepage-navigation-open"));
+    }
 
     const closeOnOutsideClick = (event: PointerEvent) => {
       if (!menuRef.current?.contains(event.target as Node)) setOpen(false);
@@ -59,10 +89,10 @@ export default function Navigation() {
       document.removeEventListener("pointerdown", closeOnOutsideClick);
       document.removeEventListener("keydown", closeOnEscape);
     };
-  }, [open]);
+  }, [open, pathname]);
 
   return (
-    <header className={styles.siteHeader}>
+    <header className={`${styles.siteHeader} ${pathname === "/" ? styles.homeHeader : ""} ${hidden ? styles.headerHidden : ""}`}>
       <div
         className={styles.menu}
         ref={menuRef}

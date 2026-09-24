@@ -5,7 +5,6 @@
 // twice there, disposal method 2 clears the picture at the end of each pass, and
 // a new src (or unmounting the image) starts the file over from frame one.
 
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import styles from "./home.module.css";
@@ -100,7 +99,11 @@ function frameDelay(duration: number | null, parsed: number | undefined) {
   return 100;
 }
 
-export default function HomeFractal() {
+type HomeFractalProps = {
+  onPlaybackComplete?: () => void;
+};
+
+export default function HomeFractal({ onPlaybackComplete }: HomeFractalProps) {
   const [theme, setTheme] = useState<Theme | null>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [useStill, setUseStill] = useState(false);
@@ -147,6 +150,7 @@ export default function HomeFractal() {
     const image = FRACTALS[theme];
     if (heldThemeRef.current === theme && canvas.width === image.width && canvas.height === image.height) {
       setPaintedTheme(theme);
+      onPlaybackComplete?.();
       return;
     }
     // Assigning the same canvas size clears its bitmap, so only write a change.
@@ -212,6 +216,7 @@ export default function HomeFractal() {
         }
         if (index === count - 1) {
           heldThemeRef.current = theme;
+          onPlaybackComplete?.();
           break;
         }
         elapsed += delay;
@@ -236,14 +241,14 @@ export default function HomeFractal() {
       controller.abort();
       closeDecoder();
     };
-  }, [reducedMotion, theme, useStill]);
+  }, [onPlaybackComplete, reducedMotion, theme, useStill]);
 
   const image = FRACTALS[theme ?? "light"];
   const showStill = Boolean(theme) && (reducedMotion || useStill);
 
   return (
     <div className={styles.fractal}>
-      <Link href="/fractals" className={styles.fractalClip} aria-label="Open the fractal generator">
+      <div className={styles.fractalClip}>
         {showStill && (
           <img
             src={image.still}
@@ -260,7 +265,7 @@ export default function HomeFractal() {
             className={`${theme === "dark" ? styles.darkFractalImage : ""} ${paintedTheme === theme ? styles.fractalImageReady : ""}`}
           />
         )}
-      </Link>
+      </div>
     </div>
   );
 }
