@@ -45,7 +45,7 @@ class FractalFunctionTests(unittest.TestCase):
 
     def test_rejects_excessive_work(self):
         with self.assertRaisesRegex(ParameterError, "200,000,000"):
-            parse_parameters("/api/fractal?width=1200&height=1200&iterations=1000")
+            parse_parameters("/api/fractal?width=1200&height=1200&iterations=400")
 
     def test_accepts_work_above_fast_preview_budget(self):
         parameters = parse_parameters(

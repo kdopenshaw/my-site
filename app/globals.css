@@ -12,6 +12,8 @@
   --color-heading-accent: #2c5282;
   --color-text: #334155;
   --color-text-muted: #5f7188;
+  /* Informational labels and metadata, distinct from values and controls. */
+  --color-text-secondary: #667180;
   --color-nav: #2e2e2e;
   --color-link: var(--color-heading-accent);
   --color-link-hover: var(--color-heading);
@@ -69,6 +71,7 @@
   --color-heading-accent: #3da286;
   --color-text: #cbbfb5;
   --color-text-muted: #b8aba0;
+  --color-text-secondary: #aaa198;
   --color-nav: #ded4ca;
   --color-link: var(--color-heading-accent);
   --color-link-hover: var(--color-heading);

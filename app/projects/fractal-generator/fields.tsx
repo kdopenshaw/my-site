@@ -1,6 +1,7 @@
 "use client";
 
 import { useId } from "react";
+import DiagramHelp from "./diagram-help";
 import type { ReactNode } from "react";
 
 import styles from "./fractal-studio.module.css";
@@ -15,6 +16,8 @@ export function NumberField({
   min,
   max,
   onChange,
+  help,
+  stepper = false,
 }: {
   label: ReactNode;
   value: number;
@@ -22,29 +25,70 @@ export function NumberField({
   min?: number;
   max?: number;
   onChange: (value: number) => void;
+  help?: { label: string; src: string; text: string };
+  stepper?: boolean;
 }) {
   const id = useId();
+  const stepSize = typeof step === "number" ? step : 1;
+
+  function commit(next: number) {
+    const bounded = Math.min(max ?? next, Math.max(min ?? next, next));
+    onChange(bounded);
+  }
+
+  const input = (
+    <input
+      id={id}
+      className={styles.numberInput}
+      type="number"
+      value={value}
+      step={step}
+      min={min}
+      max={max}
+      onChange={(event) => {
+        if (event.target.value === "") {
+          onChange(0);
+          return;
+        }
+        const parsed = Number(event.target.value);
+        if (Number.isFinite(parsed)) onChange(parsed);
+      }}
+    />
+  );
 
   return (
     <div className={styles.numberField}>
-      <label className={styles.fieldLabel} htmlFor={id}>{label}</label>
-      <input
-        id={id}
-        className={styles.numberInput}
-        type="number"
-        value={value}
-        step={step}
-        min={min}
-        max={max}
-        onChange={(event) => {
-          if (event.target.value === "") {
-            onChange(0);
-            return;
-          }
-          const parsed = Number(event.target.value);
-          if (Number.isFinite(parsed)) onChange(parsed);
-        }}
-      />
+      <div className={styles.fieldHeading}>
+        <label className={styles.fieldLabel} htmlFor={id}>
+          {label}
+        </label>
+        {help && <DiagramHelp label={help.label} diagrams={[{ src: help.src }]} help={help.text} />}
+      </div>
+      {stepper ? (
+        <div className={styles.stepper}>
+          {input}
+          <span className={styles.stepperButtons}>
+            <button
+              type="button"
+              aria-label={`Decrease ${typeof label === "string" ? label : "value"}`}
+              disabled={min !== undefined && value <= min}
+              onClick={() => commit(value - stepSize)}
+            >
+              −
+            </button>
+            <button
+              type="button"
+              aria-label={`Increase ${typeof label === "string" ? label : "value"}`}
+              disabled={max !== undefined && value >= max}
+              onClick={() => commit(value + stepSize)}
+            >
+              +
+            </button>
+          </span>
+        </div>
+      ) : (
+        input
+      )}
     </div>
   );
 }
@@ -58,6 +102,7 @@ export function RangeField({
   digits = 0,
   disabled = false,
   onChange,
+  help,
 }: {
   label: ReactNode;
   value: number;
@@ -67,14 +112,22 @@ export function RangeField({
   digits?: number;
   disabled?: boolean;
   onChange: (value: number) => void;
+  help?: { label: string; src: string; text: string };
 }) {
+  const id = useId();
   return (
-    <label className={`${styles.rangeField} ${disabled ? styles.isDisabled : ""}`}>
-      <span className={styles.rangeLabel}>
-        <span>{label}</span>
+    <div className={`${styles.rangeField} ${disabled ? styles.isDisabled : ""}`}>
+      <div className={styles.rangeLabel}>
+        <div className={styles.fieldHeading}>
+          <label htmlFor={id}>{label}</label>
+          {help && (
+            <DiagramHelp label={help.label} diagrams={[{ src: help.src }]} help={help.text} />
+          )}
+        </div>
         <output>{value.toFixed(digits).replace("-", "−")}</output>
-      </span>
+      </div>
       <input
+        id={id}
         className={styles.rangeSlider}
         type="range"
         value={value}
@@ -84,7 +137,7 @@ export function RangeField({
         disabled={disabled}
         onChange={(event) => onChange(Number(event.target.value))}
       />
-    </label>
+    </div>
   );
 }
 
@@ -106,28 +159,23 @@ export function ConfigLabel({
 }: {
   index: string;
   title: ReactNode;
-  help: string;
+  help?: string;
   diagram?: string;
   diagrams?: HelpDiagram[];
 }) {
-  const helpId = `fractal-help-${index.toLowerCase()}`;
   const helpDiagrams = diagrams ?? (diagram ? [{ src: diagram }] : []);
-
   return (
-    <div className={styles.configLabel} tabIndex={0} aria-describedby={helpId}>
-      <span className={styles.configIndex}>{index}</span>
-      <span className={styles.configTitle} id={`fractal-label-${index.toLowerCase()}`}>{title}</span>
-      <div className={styles.configHelp} id={helpId} role="tooltip">
-        <div className={`${styles.configHelpVisuals} ${helpDiagrams.length > 1 ? styles.isGrid : ""}`}>
-          {helpDiagrams.map(({ src, label }) => (
-            <figure key={src}>
-              <img src={src} alt="" width="240" height="104" />
-              {label && <figcaption>{label}</figcaption>}
-            </figure>
-          ))}
-        </div>
-        <p>{help}</p>
-      </div>
+    <div className={styles.configLabel}>
+      <span className={styles.configTitle} id={`fractal-label-${index.toLowerCase()}`}>
+        {title}
+      </span>
+      {helpDiagrams.length > 0 && (
+        <DiagramHelp
+          label={typeof title === "string" ? title : "Fractal setting"}
+          diagrams={helpDiagrams}
+          help={help ?? ""}
+        />
+      )}
     </div>
   );
 }
@@ -135,11 +183,29 @@ export function ConfigLabel({
 export function FractalEquation({ family, power }: { family: FractalFamily; power: number }) {
   if (family === "newton") {
     return (
-      <div className={`${styles.equation} ${styles.equationNewton}`} aria-label={`z sub n plus 1 equals z sub n minus the quantity z sub n to the power ${power} minus 1 divided by ${power} z sub n to the power ${power - 1}`}>
-        <i>z</i><sub>n+1</sub><b>=</b><i>z</i><sub>n</sub><b>−</b>
+      <div
+        className={`${styles.equation} ${styles.equationNewton}`}
+        aria-label={`z sub n plus 1 equals z sub n minus the quantity z sub n to the power ${power} minus 1 divided by ${power} z sub n to the power ${power - 1}`}
+      >
+        <i>z</i>
+        <sub>n+1</sub>
+        <b>=</b>
+        <i>z</i>
+        <sub>n</sub>
+        <b>−</b>
         <span className={styles.equationFraction}>
-          <span><i>z</i><sub>n</sub><sup>{power}</sup><b>−</b>1</span>
-          <span><b>{power}</b><i>z</i><sub>n</sub><sup>{power - 1}</sup></span>
+          <span>
+            <i>z</i>
+            <sub>n</sub>
+            <sup>{power}</sup>
+            <b>−</b>1
+          </span>
+          <span>
+            <b>{power}</b>
+            <i>z</i>
+            <sub>n</sub>
+            <sup>{power - 1}</sup>
+          </span>
         </span>
       </div>
     );
@@ -147,19 +213,44 @@ export function FractalEquation({ family, power }: { family: FractalFamily; powe
 
   if (family === "burning_ship") {
     return (
-      <div className={`${styles.equation} ${styles.equationLong}`} aria-label={`z sub n plus 1 equals the quantity absolute real z sub n plus i absolute imaginary z sub n to the power ${power} plus c`}>
-        <i>z</i><sub>n+1</sub><b>=</b>
-        <span>(|Re(<i>z</i><sub>n</sub>)| + <i>i</i>|Im(<i>z</i><sub>n</sub>)|)</span>
-        <sup>{power}</sup><b>+</b><i className={styles.equationConstant}>c</i>
+      <div
+        className={`${styles.equation} ${styles.equationLong}`}
+        aria-label={`z sub n plus 1 equals the quantity absolute real z sub n plus i absolute imaginary z sub n to the power ${power} plus c`}
+      >
+        <i>z</i>
+        <sub>n+1</sub>
+        <b>=</b>
+        <span>
+          (|Re(<i>z</i>
+          <sub>n</sub>)| + <i>i</i>|Im(<i>z</i>
+          <sub>n</sub>)|)
+        </span>
+        <sup>{power}</sup>
+        <b>+</b>
+        <i className={styles.equationConstant}>c</i>
       </div>
     );
   }
 
   return (
-    <div className={styles.equation} aria-label={`z sub n plus 1 equals ${family === "tricorn" ? "the conjugate of " : ""}z sub n to the power ${power} plus c`}>
-      <i>z</i><sub>n+1</sub><b>=</b>
-      {family === "tricorn" ? <span className={styles.equationConjugate}><i>z</i></span> : <i>z</i>}
-      <sub>n</sub><sup>{power}</sup><b>+</b><i className={styles.equationConstant}>c</i>
+    <div
+      className={styles.equation}
+      aria-label={`z sub n plus 1 equals ${family === "tricorn" ? "the conjugate of " : ""}z sub n to the power ${power} plus c`}
+    >
+      <i>z</i>
+      <sub>n+1</sub>
+      <b>=</b>
+      {family === "tricorn" ? (
+        <span className={styles.equationConjugate}>
+          <i>z</i>
+        </span>
+      ) : (
+        <i>z</i>
+      )}
+      <sub>n</sub>
+      <sup>{power}</sup>
+      <b>+</b>
+      <i className={styles.equationConstant}>c</i>
     </div>
   );
 }

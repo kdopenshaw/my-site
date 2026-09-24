@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
 
 import styles from "./fractal-studio.module.css";
+import { RadioGroup, RadioGroupItem } from "./radio-group";
+import PlaneControl from "./plane-control";
 import { randomPalette, resampleColors } from "./colors";
 import { ConfigLabel, FractalEquation, NumberField, RangeField, stopLabel } from "./fields";
 import FractalGallery from "./fractal-gallery";
@@ -30,9 +32,9 @@ export default function FractalStudio() {
     colors: [...PRESETS.mandelbrot.parameters.colors],
   }));
   const [presetKey, setPresetKey] = useState<PresetKey>("mandelbrot");
-  const [isPresetPickerOpen, setIsPresetPickerOpen] = useState(false);
   const [isAspectLocked, setIsAspectLocked] = useState(true);
   const [status, setStatus] = useState("");
+  const [renderError, setRenderError] = useState("");
   const [isRendering, setIsRendering] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
   const [hasRenderedImage, setHasRenderedImage] = useState(false);
@@ -42,11 +44,12 @@ export default function FractalStudio() {
   const hasInitializedRef = useRef(false);
   const aspectRatioRef = useRef(parameters.width / parameters.height);
   const renderedParametersRef = useRef<FractalParameters | null>(null);
-  const presetPickerRef = useRef<HTMLDivElement>(null);
   const activeColors = colorsFor(parameters);
-  const resolutionPresetKey = Object.entries(RESOLUTION_PRESETS).find(([, resolution]) => (
-    resolution.width === parameters.width && resolution.height === parameters.height
-  ))?.[0] ?? "custom";
+  const resolutionPresetKey =
+    Object.entries(RESOLUTION_PRESETS).find(
+      ([, resolution]) =>
+        resolution.width === parameters.width && resolution.height === parameters.height,
+    )?.[0] ?? "custom";
   const pixelCount = parameters.width * parameters.height;
   const estimatedWork = pixelCount * parameters.iterations;
   const isWithinWorkLimit = estimatedWork <= MAX_RENDER_WORK;
@@ -62,7 +65,6 @@ export default function FractalStudio() {
     setPresetKey(key);
     aspectRatioRef.current = PRESETS[key].parameters.width / PRESETS[key].parameters.height;
     setParameters({ ...PRESETS[key].parameters, colors: [...PRESETS[key].parameters.colors] });
-    setIsPresetPickerOpen(false);
   };
 
   const updateRaster = (dimension: "width" | "height", value: number) => {
@@ -111,14 +113,15 @@ export default function FractalStudio() {
   };
 
   const updateColor = (index: number, color: string) => {
-    setCustomColors(activeColors.map((currentColor, colorIndex) => (
-      colorIndex === index ? color : currentColor
-    )));
+    setCustomColors(
+      activeColors.map((currentColor, colorIndex) => (colorIndex === index ? color : currentColor)),
+    );
   };
 
   const renderFractal = async (nextParameters: FractalParameters) => {
     const requestId = ++requestRef.current;
     setIsRendering(true);
+    setRenderError("");
     setStatus("");
     const colors = colorsFor(nextParameters);
     // These names match the arguments of api/fractal.py.
@@ -160,7 +163,11 @@ export default function FractalStudio() {
       setHasRenderedImage(true);
       setStatus("");
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "The render could not be completed.");
+      if (requestId === requestRef.current) {
+        setRenderError(
+          error instanceof Error ? error.message : "The render could not be completed.",
+        );
+      }
     } finally {
       if (requestId === requestRef.current) setIsRendering(false);
     }
@@ -214,36 +221,19 @@ export default function FractalStudio() {
 
       const response = await fetch("/api/fractal-gallery", { method: "POST", body: form });
       const result = await response.json().catch(() => null);
-      if (!response.ok) throw new Error(result?.error ?? "The fractal could not be added to the gallery.");
+      if (!response.ok)
+        throw new Error(result?.error ?? "The fractal could not be added to the gallery.");
 
       setStatus("Added to the community gallery.");
       setGalleryRefreshKey((key) => key + 1);
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "The fractal could not be added to the gallery.");
+      setStatus(
+        error instanceof Error ? error.message : "The fractal could not be added to the gallery.",
+      );
     } finally {
       setIsPublishing(false);
     }
   };
-
-  useEffect(() => {
-    if (!isPresetPickerOpen) return undefined;
-
-    const closeOnOutsideClick = (event: PointerEvent) => {
-      if (!presetPickerRef.current?.contains(event.target as Node)) {
-        setIsPresetPickerOpen(false);
-      }
-    };
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setIsPresetPickerOpen(false);
-    };
-
-    document.addEventListener("pointerdown", closeOnOutsideClick);
-    document.addEventListener("keydown", closeOnEscape);
-    return () => {
-      document.removeEventListener("pointerdown", closeOnOutsideClick);
-      document.removeEventListener("keydown", closeOnEscape);
-    };
-  }, [isPresetPickerOpen]);
 
   useEffect(() => {
     // React runs effects twice in development. Only request the first image once.
@@ -265,189 +255,393 @@ export default function FractalStudio() {
   return (
     <>
       <form className={styles.studio} onSubmit={render}>
-        <aside className={styles.controlPanel} aria-label="Fractal configuration">
-          <div className={styles.equationWrap}>
-            <div className={styles.equationBar}>
-              <FractalEquation family={parameters.family} power={parameters.power} />
-            </div>
-          </div>
-
-          <div className={styles.configSheet} aria-label="Fractal variables">
-            <div role="group" aria-labelledby="fractal-label-i" className={`${styles.configGroup} ${styles.familySection}`}>
-              <ConfigLabel index="I" title="Family" diagram="/fractals/help/family.svg" help="Chooses a known definition and replaces every control with its matching exponent, constant, viewport, orbit, resolution, and palette values." />
-              <div className={styles.familyPicker} ref={presetPickerRef}>
-                <button
-                  type="button"
-                  className={styles.familyChoice}
-                  aria-expanded={isPresetPickerOpen}
-                  aria-label={`Choose fractal family. Current selection: ${PRESETS[presetKey].label}`}
-                  onClick={() => setIsPresetPickerOpen((open) => !open)}
+        <aside className={styles.familyRail} aria-label="Fractal family">
+          <ConfigLabel
+            index="I"
+            title="Fractal family"
+            diagram="/fractals/help/family.svg"
+            help="Choose a definition to load its matching exponent, viewport, orbit, resolution, and palette values."
+          />
+          <RadioGroup
+            value={presetKey}
+            onValueChange={(key) => choosePreset(key as PresetKey)}
+            aria-labelledby="fractal-label-i"
+            className={styles.familyList}
+          >
+            {(Object.entries(PRESETS) as [PresetKey, (typeof PRESETS)[PresetKey]][]).map(
+              ([key, preset]) => (
+                <div
+                  key={key}
+                  className={`${styles.familyOption} ${presetKey === key ? styles.selectedFamily : ""}`}
                 >
-                  <span>
-                    <b>{PRESETS[presetKey].label}</b>
-                    <small>{PRESETS[presetKey].detail}</small>
-                  </span>
-                  <span className={styles.familyChoiceSection} aria-hidden="true">⌄</span>
-                </button>
-                {isPresetPickerOpen && (
-                  <div className={styles.familyPopover}>
-                    <p className={styles.familyMenuLabel}>Choose a definition</p>
-                    {(Object.entries(PRESETS) as [PresetKey, (typeof PRESETS)[PresetKey]][]).map(([key, preset]) => (
-                      <button
-                        key={key}
-                        type="button"
-                        className={styles.presetItem}
-                        aria-current={presetKey === key ? "true" : undefined}
-                        onClick={() => choosePreset(key)}
-                      >
-                        <img src={preset.thumbnail} alt="" width="74" height="48" />
-                        <span className={styles.presetItemContent}>
-                          <span>{preset.label}</span>
-                          <small>{preset.detail}</small>
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className={`${styles.configPair} ${styles.configPairNumbers}`}>
-              <div role="group" aria-labelledby="fractal-label-ii" className={styles.configGroup}>
-                <ConfigLabel index="II" title={<>Exponent <i>p</i></>} diagram="/fractals/help/exponent.svg" help="Sets the exponent in the recurrence. Larger powers change the rotational symmetry and number of major lobes." />
-                <NumberField label={<>Power <i>p</i></>} value={parameters.power} min={2} max={8} step={1} onChange={(value) => update("power", value)} />
-              </div>
-
-              <div role="group" aria-labelledby="fractal-label-iii" className={styles.configGroup}>
-                <div className={styles.rasterHeadingRow}>
-                  <ConfigLabel index="III" title="Resolution" diagram="/fractals/help/raster.svg" help="Sets the width and height of the output image in pixels. More pixels reveal finer detail, but increase render time and file size." />
-                  <button
-                    type="button"
-                    className={styles.aspectLock}
-                    aria-pressed={isAspectLocked}
-                    aria-label={`${isAspectLocked ? "Unlock" : "Lock"} aspect ratio`}
-                    title="Lock aspect ratio"
-                    onClick={toggleAspectLock}
-                  >
-                    <span className={styles.aspectIcon} aria-hidden="true" />
-                  </button>
+                  <RadioGroupItem value={key} className={styles.familyChoice}>
+                    <img src={preset.thumbnail} alt="" width="40" height="32" />
+                    <span>{preset.label}</span>
+                  </RadioGroupItem>
+                  {presetKey === key && (
+                    <div className={styles.equationBar}>
+                      <span className={`${styles.fieldLabel} ${styles.equationLabel}`}>ITERATION RULE</span>
+                      <FractalEquation family={parameters.family} power={parameters.power} />
+                    </div>
+                  )}
+                  {presetKey === key && usesFixedConstant && (
+                    <div
+                      className={styles.constantControls}
+                      role="group"
+                      aria-labelledby="fractal-label-iv"
+                    >
+                      <ConfigLabel index="IV" title="Constant c" />
+                      <RangeField
+                        label="real"
+                        help={{
+                          label: "real",
+                          src: "/fractals/help/constant-real.svg",
+                          text: "Slides the Julia constant along the real axis. The set stays mirror-symmetric. Near zero it is almost a disk; farther left it pinches into the two-bulb basilica, then breaks apart into dust.",
+                        }}
+                        value={parameters.cReal}
+                        min={-2}
+                        max={2}
+                        step={0.001}
+                        digits={3}
+                        onChange={(value) => update("cReal", value)}
+                      />
+                      <RangeField
+                        label="imaginary"
+                        help={{
+                          label: "imaginary",
+                          src: "/fractals/help/constant-imaginary.svg",
+                          text: "Lifts c off the real axis. The horizontal mirror symmetry breaks and spirals appear. The opposite sign reflects the Julia set from top to bottom.",
+                        }}
+                        value={parameters.cImag}
+                        min={-2}
+                        max={2}
+                        step={0.001}
+                        digits={3}
+                        onChange={(value) => update("cImag", value)}
+                      />
+                    </div>
+                  )}
                 </div>
-                <div className={`${styles.numberRow} ${styles.numberRowTwo}`}>
-                  <NumberField label={<>width <i>w</i></>} value={parameters.width} min={MIN_RASTER_SIZE} max={MAX_RASTER_SIZE} step={1} onChange={(value) => updateRaster("width", value)} />
-                  <NumberField label={<>height <i>h</i></>} value={parameters.height} min={MIN_RASTER_SIZE} max={MAX_RASTER_SIZE} step={1} onChange={(value) => updateRaster("height", value)} />
-                </div>
-                <div className={styles.resolutionTools}>
-                  <select
-                    aria-label="Resolution preset"
-                    className={styles.selectInput}
-                    value={resolutionPresetKey}
-                    onChange={(event) => chooseResolution(event.target.value)}
-                  >
-                    {Object.entries(RESOLUTION_PRESETS).map(([value, resolution]) => (
-                      <option key={value} value={value}>{resolution.label}</option>
-                    ))}
-                    <option value="custom">Custom resolution</option>
-                  </select>
-                  <output className={workClassName}>
-                    {(pixelCount / 1_000_000).toFixed(2)} MP · {(estimatedWork / 1_000_000).toFixed(1)}M tests
-                  </output>
-                </div>
+              ),
+            )}
+          </RadioGroup>
+        </aside>
+        <div className={styles.preview}>
+          <div className={styles.canvasFrame} aria-busy={isRendering}>
+            <canvas ref={canvasRef} aria-label="Generated fractal" />
+            {renderError && !isRendering && (
+              <div className={styles.canvasMessage} data-has-image={hasRenderedImage} role="status">
+                <p>{renderError}</p>
               </div>
+            )}
+            {isRendering && (
+              <div
+                className={styles.canvasLoading}
+                role="status"
+                aria-label="Loading fractal"
+                aria-live="polite"
+              >
+                <span className={styles.canvasSpinner} aria-hidden="true" />
+              </div>
+            )}
+          </div>
+          {hasRenderedImage && (
+            <div className={styles.previewActions} aria-label="Rendered fractal actions">
+              <button
+                className="button-outline"
+                type="button"
+                disabled={isRendering}
+                onClick={downloadFractal}
+              >
+                Download ↓
+              </button>
+              <button
+                className="button"
+                type="button"
+                onClick={() => void addToGallery()}
+                disabled={isRendering || isPublishing}
+              >
+                {isPublishing ? "Adding…" : "Add to gallery"}
+              </button>
             </div>
-
-            <div className={styles.configPair}>
-              <div role="group" aria-labelledby="fractal-label-iv" className={styles.configGroup}>
-                <ConfigLabel index="IV" title={<>Constant <i>c</i></>} diagrams={[
-                  { src: "/fractals/help/constant-real.svg", label: "Real part — horizontal change" },
-                  { src: "/fractals/help/constant-imaginary.svg", label: "Imaginary part — vertical change" },
-                ]} help={usesFixedConstant
-                  ? "Changing either coordinate of c transforms the Julia set's topology, not merely its position."
-                  : parameters.family === "newton"
-                    ? "Newton's method solves z raised to p minus one, so this family does not use the constant c."
-                    : "This family assigns c from each point in the complex plane, so a separate fixed constant is not used."} />
-                <RangeField label={<>Re(<i>c</i>)</>} value={parameters.cReal} min={-2} max={2} step={0.001} digits={3} disabled={!usesFixedConstant} onChange={(value) => update("cReal", value)} />
-                <RangeField label={<>Im(<i>c</i>)</>} value={parameters.cImag} min={-2} max={2} step={0.001} digits={3} disabled={!usesFixedConstant} onChange={(value) => update("cImag", value)} />
-              </div>
-
-              <div role="group" aria-labelledby="fractal-label-v" className={styles.configGroup}>
-                <ConfigLabel index="V" title="Orbit" diagrams={[
-                  { src: "/fractals/help/orbit-iterations.svg", label: "Iterations — boundary detail" },
-                  { src: "/fractals/help/orbit-escape.svg", label: "Escape radius — orbit threshold" },
-                  { src: "/fractals/help/orbit-gamma.svg", label: "Gamma — tonal distribution" },
-                ]} help={parameters.family === "newton"
-                  ? "Iterations set the convergence budget and gamma shapes basin brightness. Newton fractals converge to roots instead of escaping a radius."
-                  : "These values change how the same orbit is classified and shaded: test duration, escape threshold, and the curve applied to its color value."} />
-                <RangeField label="iterations" value={parameters.iterations} min={10} max={1000} step={1} onChange={(value) => update("iterations", value)} />
-                <RangeField label={<>escape |<i>z</i>|</>} value={parameters.escapeRadius} min={2} max={100} step={0.1} digits={1} disabled={!usesEscapeRadius} onChange={(value) => update("escapeRadius", value)} />
-                <RangeField label={<>gamma <i>γ</i></>} value={parameters.gamma} min={0.1} max={5} step={0.1} digits={1} onChange={(value) => update("gamma", value)} />
-              </div>
-            </div>
-
-            <div role="group" aria-labelledby="fractal-label-vi" className={`${styles.configGroup} ${styles.plane}`}>
-              <ConfigLabel index="VI" title="Complex plane" diagrams={[
+          )}
+        </div>
+        <aside className={styles.controlPanel} aria-label="Fractal settings">
+          <div role="group" aria-labelledby="fractal-label-v" className={styles.configGroup}>
+            <ConfigLabel index="V" title="Orbit" />
+            <NumberField
+              label="exponent p"
+              help={{
+                label: "exponent p",
+                src: "/fractals/help/exponent.svg",
+                text: "Sets the exponent in the recurrence. Larger powers change the rotational symmetry and number of major lobes.",
+              }}
+              value={parameters.power}
+              min={2}
+              max={8}
+              step={1}
+              stepper
+              onChange={(value) => update("power", value)}
+            />
+            <RangeField
+              label="iterations"
+              help={{
+                label: "iterations",
+                src: "/fractals/help/orbit-iterations.svg",
+                text: "How many steps each orbit may take. A low count paints a thick, smooth interior, including points that have not escaped yet. More steps let those slow points escape, so the interior shrinks onto the true set and fine filaments appear. Newton images use the same count to decide which root a point has reached.",
+              }}
+              value={parameters.iterations}
+              min={20}
+              max={400}
+              step={1}
+              onChange={(value) => update("iterations", value)}
+            />
+            <RangeField
+              label={
+                <>
+                  escape |<i>z</i>|
+                </>
+              }
+              help={{
+                label: "Escape radius",
+                src: "/fractals/help/orbit-escape.svg",
+                text: usesEscapeRadius
+                  ? "Sets the threshold at which an orbit is considered to escape."
+                  : "Newton fractals converge to roots instead of escaping a radius; this control is not used.",
+              }}
+              value={parameters.escapeRadius}
+              min={2}
+              max={10}
+              step={0.1}
+              digits={1}
+              disabled={!usesEscapeRadius}
+              onChange={(value) => update("escapeRadius", value)}
+            />
+            <RangeField
+              label={
+                <>
+                  gamma <i>γ</i>
+                </>
+              }
+              help={{
+                label: "Gamma",
+                src: "/fractals/help/orbit-gamma.svg",
+                text: "Changes the tonal curve applied to the orbit’s color value, shaping brightness and contrast.",
+              }}
+              value={parameters.gamma}
+              min={0.5}
+              max={2.2}
+              step={0.1}
+              digits={1}
+              onChange={(value) => update("gamma", value)}
+            />
+          </div>
+          <div
+            role="group"
+            aria-labelledby="fractal-label-vi"
+            className={`${styles.configGroup} ${styles.planeGroup}`}
+          >
+            <ConfigLabel
+              index="VI"
+              title="Complex plane"
+              diagrams={[
                 { src: "/fractals/help/plane-x.svg", label: "Center x — pan horizontally" },
                 { src: "/fractals/help/plane-y.svg", label: "Center y — pan vertically" },
                 { src: "/fractals/help/plane-scale.svg", label: "Scale — zoom the viewport" },
-              ]} help="Center x and y pan across the complex plane. Scale changes the span of the viewport: a smaller value reveals a tighter, magnified region." />
-              <div className={styles.numberRow}>
-                <NumberField label={<><i>x</i><sub>0</sub></>} value={parameters.centerX} min={-10} max={10} step="any" onChange={(value) => update("centerX", value)} />
-                <NumberField label={<><i>y</i><sub>0</sub></>} value={parameters.centerY} min={-10} max={10} step="any" onChange={(value) => update("centerY", value)} />
-                <NumberField label="scale" value={parameters.scale} min={0.000001} max={20} step="any" onChange={(value) => update("scale", value)} />
-              </div>
-            </div>
+              ]}
+              help="Center x and y pan across the complex plane. Scale changes the span of the viewport: a smaller value reveals a tighter, magnified region."
+            />
+            <PlaneControl
+              key={`${presetKey}-${parameters.width}-${parameters.height}`}
+              centerX={parameters.centerX}
+              centerY={parameters.centerY}
+              scale={parameters.scale}
+              aspectRatio={
+                Math.max(MIN_RASTER_SIZE, parameters.width) /
+                Math.max(MIN_RASTER_SIZE, parameters.height)
+              }
+              onChange={(viewport) => setParameters((current) => ({ ...current, ...viewport }))}
+            />
+          </div>
 
-            <div role="group" aria-labelledby="fractal-label-vii" className={`${styles.configGroup} ${styles.color}`}>
-              <ConfigLabel index="VII" title="Color function" diagram="/fractals/help/color.svg" help={parameters.family === "newton"
-                ? "Assigns palette colors to the roots and uses convergence speed for brightness. Choose a preset or edit the stops."
-                : "Maps normalized escape time to color. Choose a preset or edit the stops to create a continuous palette."} />
-              <label className={styles.paletteSelect}>
-                <span className={styles.fieldLabel}>Palette preset</span>
-                <select
-                  className={styles.selectInput}
-                  value={parameters.palette}
-                  onChange={(event) => choosePalette(event.target.value)}
-                >
-                  {Object.entries(PALETTES).map(([value, palette]) => (
-                    <option key={value} value={value}>{palette.label}</option>
-                  ))}
-                  <option value="custom">Custom palette</option>
-                </select>
-              </label>
-              <div className={styles.paletteEditor}>
-                <div className={styles.colorToolbar}>
-                  <div className={styles.colorRamp} style={{ background: `linear-gradient(90deg, ${activeColors.join(", ")})` }} aria-hidden="true" />
-                  <div className={styles.colorTools} aria-label="Color stop tools">
-                    <button type="button" onClick={() => setCustomColors(resampleColors(activeColors, activeColors.length - 1))} disabled={activeColors.length <= MIN_COLOR_STOPS} aria-label="Remove a color stop" title="Remove color">−</button>
-                    <output aria-live="polite">{activeColors.length}</output>
-                    <button type="button" onClick={() => setCustomColors(resampleColors(activeColors, activeColors.length + 1))} disabled={activeColors.length >= MAX_COLOR_STOPS} aria-label="Add a color stop" title="Add color">+</button>
-                    <button type="button" className={styles.colorRandomize} onClick={() => setCustomColors(randomPalette(activeColors.length))} aria-label="Randomize colors" title="Randomize colors">
-                      <span aria-hidden="true">↻</span> Randomize
-                    </button>
+          <div role="group" aria-labelledby="fractal-label-vii" className={styles.configGroup}>
+            <ConfigLabel
+              index="VII"
+              title="Color function"
+              diagram="/fractals/help/color.svg"
+              help={
+                parameters.family === "newton"
+                  ? "Assigns palette colors to the roots and uses convergence speed for brightness. Choose a preset or edit the stops."
+                  : "Maps normalized escape time to color. Choose a preset or edit the stops to create a continuous palette."
+              }
+            />
+            <div className={styles.paletteHeading}>
+              <span className={styles.fieldLabel} id="palette-label">
+                palette
+              </span>
+              <output>{PALETTES[parameters.palette]?.label ?? "Custom palette"}</output>
+            </div>
+            <RadioGroup
+              aria-labelledby="palette-label"
+              value={parameters.palette}
+              onValueChange={choosePalette}
+              className={styles.paletteChoices}
+            >
+              {Object.entries(PALETTES).map(([value, palette]) => (
+                <RadioGroupItem
+                  key={value}
+                  value={value}
+                  className={styles.paletteChoice}
+                  aria-label={palette.label}
+                  title={palette.label}
+                  style={{
+                    background: `linear-gradient(to bottom, ${palette.colors.map((color, index) => `${color} ${(index / palette.colors.length) * 100}% ${((index + 1) / palette.colors.length) * 100}%`).join(", ")})`,
+                  }}
+                />
+              ))}
+            </RadioGroup>
+            <div className={styles.paletteEditor}>
+              <div className={styles.colorToolbar}>
+                <div
+                  className={styles.colorRamp}
+                  style={{ background: `linear-gradient(90deg, ${activeColors.join(", ")})` }}
+                  aria-hidden="true"
+                />
+                <div className={styles.colorTools} aria-label="Color stop tools">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setCustomColors(resampleColors(activeColors, activeColors.length - 1))
+                    }
+                    disabled={activeColors.length <= MIN_COLOR_STOPS}
+                    aria-label="Remove a color stop"
+                    title="Remove color"
+                  >
+                    −
+                  </button>
+                  <output aria-live="polite">{activeColors.length}</output>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setCustomColors(resampleColors(activeColors, activeColors.length + 1))
+                    }
+                    disabled={activeColors.length >= MAX_COLOR_STOPS}
+                    aria-label="Add a color stop"
+                    title="Add color"
+                  >
+                    +
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.colorRandomize}
+                    onClick={() => setCustomColors(randomPalette(activeColors.length))}
+                    aria-label="Randomize colors"
+                    title="Randomize colors"
+                  >
+                    <span aria-hidden="true">↻</span> Randomize
+                  </button>
+                </div>
+              </div>
+              <div className={styles.colorStops}>
+                {activeColors.map((color, index) => (
+                  <div className={styles.colorStop} key={`${parameters.palette}-${index}`}>
+                    <input
+                      className={styles.colorSwatch}
+                      type="color"
+                      value={color}
+                      aria-label={`Palette color ${index + 1}`}
+                      onChange={(event) => updateColor(index, event.target.value)}
+                    />
+                    <code>{color.toUpperCase()}</code>
+                    <small>{stopLabel(index, activeColors.length)}</small>
                   </div>
-                </div>
-                <div className={styles.colorStops}>
-                  {activeColors.map((color, index) => (
-                    <div className={styles.colorStop} key={`${parameters.palette}-${index}`}>
-                      <input
-                        className={styles.colorSwatch}
-                        type="color"
-                        value={color}
-                        aria-label={`Palette color ${index + 1}`}
-                        onChange={(event) => updateColor(index, event.target.value)}
-                      />
-                      <code>{color.toUpperCase()}</code>
-                      <small>{stopLabel(index, activeColors.length)}</small>
-                    </div>
-                  ))}
-                </div>
+                ))}
               </div>
             </div>
           </div>
-
+          <div role="group" aria-labelledby="fractal-label-iii" className={styles.configGroup}>
+            <div className={styles.rasterHeadingRow}>
+              <ConfigLabel
+                index="III"
+                title="Resolution"
+                diagram="/fractals/help/raster.svg"
+                help="Sets the width and height of the output image in pixels. More pixels reveal finer detail, but increase render time and file size."
+              />
+              <button
+                type="button"
+                className={styles.aspectLock}
+                aria-pressed={isAspectLocked}
+                aria-label={`${isAspectLocked ? "Unlock" : "Lock"} aspect ratio`}
+                title="Lock aspect ratio"
+                onClick={toggleAspectLock}
+              >
+                <span className={styles.aspectIcon} aria-hidden="true" />
+              </button>
+            </div>
+            <div className={styles.resolutionTools}>
+              <RadioGroup
+                aria-label="Resolution preset"
+                value={resolutionPresetKey}
+                onValueChange={chooseResolution}
+                className={styles.resolutionOptions}
+              >
+                {Object.entries(RESOLUTION_PRESETS).map(([value, resolution]) => (
+                  <RadioGroupItem
+                    key={value}
+                    value={value}
+                    className={styles.resolutionChoice}
+                    title={resolution.label}
+                  >
+                    {resolution.label.split(" · ")[0]}
+                  </RadioGroupItem>
+                ))}
+              </RadioGroup>
+              <div className={styles.rasterDimensions}>
+                <NumberField
+                  label={
+                    <>
+                      width <i>w</i>
+                    </>
+                  }
+                  value={parameters.width}
+                  min={MIN_RASTER_SIZE}
+                  max={MAX_RASTER_SIZE}
+                  step={1}
+                  onChange={(value) => updateRaster("width", value)}
+                />
+                <NumberField
+                  label={
+                    <>
+                      height <i>h</i>
+                    </>
+                  }
+                  value={parameters.height}
+                  min={MIN_RASTER_SIZE}
+                  max={MAX_RASTER_SIZE}
+                  step={1}
+                  onChange={(value) => updateRaster("height", value)}
+                />
+              </div>
+              <output className={workClassName}>
+                {(pixelCount / 1_000_000).toFixed(2)} MP · {(estimatedWork / 1_000_000).toFixed(1)}M
+                tests
+              </output>
+            </div>
+          </div>
           <div className={styles.controlFooter}>
-            {status && <output className={styles.renderStatus} aria-live="polite">{status}</output>}
-            {isSlowRender && <p className={styles.workWarning}>This combination may take longer to render.</p>}
-            {!isWithinWorkLimit && <p className={styles.workWarning}>Reduce resolution or iterations to stay below 200M tests.</p>}
+            {status && (
+              <output className={styles.renderStatus} aria-live="polite">
+                {status}
+              </output>
+            )}
+            {isSlowRender && (
+              <p className={styles.workWarning}>This combination may take longer to render.</p>
+            )}
+            {!isWithinWorkLimit && (
+              <p className={styles.workWarning}>
+                Reduce resolution or iterations to stay below 200M tests.
+              </p>
+            )}
             <div className={styles.controlActions}>
               <button
                 className={`button ${styles.generate} ${isRendering ? styles.isRendering : ""}`}
@@ -458,36 +652,15 @@ export default function FractalStudio() {
                 {isRendering ? (
                   <span className={styles.generatingIndicator} aria-hidden="true" />
                 ) : (
-                  <><span>Generate fractal</span><b aria-hidden="true">↗</b></>
+                  <>
+                    <span>Generate fractal</span>
+                    <b aria-hidden="true">↗</b>
+                  </>
                 )}
-              </button>
-              <button className={`button-outline ${styles.download}`} type="button" disabled={!hasRenderedImage || isRendering} onClick={downloadFractal}>
-                <span>Download</span>
-                <b aria-hidden="true">↓</b>
               </button>
             </div>
           </div>
         </aside>
-        <div className={styles.preview}>
-          <div className={styles.canvasFrame} aria-busy={isRendering}>
-            <canvas ref={canvasRef} aria-label="Generated fractal" />
-            {isRendering && (
-              <div className={styles.canvasLoading} role="status" aria-label="Loading fractal" aria-live="polite">
-                <span className={styles.canvasSpinner} aria-hidden="true" />
-              </div>
-            )}
-          </div>
-          <div className={styles.previewActions} aria-label="Rendered fractal actions">
-            <button
-              className="button"
-              type="button"
-              onClick={() => void addToGallery()}
-              disabled={!hasRenderedImage || isRendering || isPublishing}
-            >
-              {isPublishing ? "Adding…" : "Add to gallery"}
-            </button>
-          </div>
-        </div>
       </form>
       <FractalGallery refreshKey={galleryRefreshKey} />
     </>

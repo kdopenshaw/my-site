@@ -18,7 +18,7 @@ from urllib.parse import parse_qs, urlparse
 
 MAX_WIDTH = 1_200
 MAX_HEIGHT = 1_200
-MAX_ITERATIONS = 1_000
+MAX_ITERATIONS = 400
 MAX_WORK = 200_000_000
 FAMILIES = ("mandelbrot", "julia", "burning_ship", "tricorn", "newton")
 
@@ -117,7 +117,7 @@ def parse_parameters(path: str) -> FractalParameters:
 
     width = _integer(query, "width", 480, 64, MAX_WIDTH)
     height = _integer(query, "height", 320, 64, MAX_HEIGHT)
-    iterations = _integer(query, "iterations", 120, 10, MAX_ITERATIONS)
+    iterations = _integer(query, "iterations", 120, 20, MAX_ITERATIONS)
     if width * height * iterations > MAX_WORK:
         raise ParameterError(
             f"width × height × iterations must not exceed {MAX_WORK:,}"
@@ -141,8 +141,8 @@ def parse_parameters(path: str) -> FractalParameters:
         c_real=_number(query, "c_real", -0.8, -2.0, 2.0),
         c_imag=_number(query, "c_imag", 0.156, -2.0, 2.0),
         power=_integer(query, "power", 2, 2, 8),
-        escape_radius=_number(query, "escape_radius", 2.0, 2.0, 100.0),
-        gamma=_number(query, "gamma", 1.0, 0.1, 5.0),
+        escape_radius=_number(query, "escape_radius", 2.0, 2.0, 10.0),
+        gamma=_number(query, "gamma", 1.0, 0.5, 2.2),
         palette=palette,
         colors=colors,
     )

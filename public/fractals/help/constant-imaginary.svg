@@ -1,3 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 104">
-  <rect width="240" height="104" rx="8" fill="#f4f7f9"/><g fill="#174a7c"><path d="M18 53c13-16 27-18 42-6 11 9 21 7 30-5-1 15 6 23 21 26-14 5-20 14-17 26-11-11-22-12-34-4 0-15-8-22-23-22z"/><path d="M146 25c10 2 16 9 17 20 2 11 9 15 21 13-8 8-9 16-3 25-10-4-18-1-23 8-3-11-10-16-21-15 7-8 7-16 1-24 10-2 14-9 12-20z"/></g><path d="M108 52h25" stroke="#b66a3c" stroke-width="3"/><path d="m126 45 8 7-8 7" fill="none" stroke="#b66a3c" stroke-width="3"/><text x="28" y="18" fill="#174a7c" font-family="monospace" font-size="11">Im(c) = .15</text><text x="159" y="18" fill="#174a7c" font-family="monospace" font-size="11">Im(c) = .75</text>
+  <rect width="240" height="104" rx="8" fill="#f4f7f9"/>
+  <circle cx="40" cy="42" r="14" fill="#174a7c"/>
+  <circle cx="68" cy="42" r="12" fill="#174a7c"/>
+  <path d="M50 38h8v8h-8z" fill="#174a7c"/>
+  <path d="M12 42h14M80 42h14" stroke="#b66a3c" stroke-width="1.5" stroke-dasharray="2.5 2.5"/>
+  <path d="M100 42h28" stroke="#b66a3c" stroke-width="3"/>
+  <path d="m121 35 8 7-8 7" fill="none" stroke="#b66a3c" stroke-width="3"/>
+  <circle cx="168" cy="50" r="15" fill="#174a7c"/>
+  <circle cx="190" cy="28" r="11" fill="#174a7c"/>
+  <circle cx="206" cy="52" r="10" fill="#174a7c"/>
+  <path d="M176 38c8-10 12-8 16-2" fill="none" stroke="#174a7c" stroke-width="5" stroke-linecap="round"/>
+  <text x="18" y="92" fill="#174a7c" font-family="serif" font-size="13">Im(c) = 0</text>
+  <text x="158" y="92" fill="#174a7c" font-family="serif" font-size="13">Im(c) &gt; 0</text>
 </svg>
