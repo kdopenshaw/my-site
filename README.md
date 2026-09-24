@@ -58,6 +58,45 @@ The first run may install the Vercel CLI and ask you to link this checkout to th
 
 Dev and production builds write to different folders on purpose (`.next-dev` and `.next`, set in `next.config.ts`) so a production build does not wipe a running preview.
 
+## Stock backtester
+
+`/projects/stock-backtester` ports the RSI and SMA strategies and market overview
+from `kdopenshaw/websitepythonanywhere` into this Next.js app. The original checkout
+is at `../websitepythonanywhere`; Flask and pandas are not required here.
+Plotly is loaded in the browser for interactive charts.
+
+Set `ALPACA_API_KEY` and `ALPACA_SECRET_KEY` in `.env.local` and in the deployment's
+server environment. Use fresh keys: the original repository contains hardcoded
+credentials, which should be revoked/rotated. Do not prefix these settings with
+`NEXT_PUBLIC_` or commit them. `ALPACA_DATA_FEED` defaults to `iex`; `sip` requires
+appropriate data access. The server reads daily, split-adjusted prices from
+[Alpaca's historical bars API](https://docs.alpaca.markets/us/reference/stockbars),
+following pagination and caching price requests for one hour. No trading API is used.
+
+The form supports up to five symbols, five years per run, 2–200-session indicators,
+custom buy/sell thresholds, and initial cash. The original page organization is retained: a home page with market overview,
+`/rsi` and `/sma` basic strategy pages, `/rsi/custom` and `/sma/custom` parameter
+forms, and a dedicated `/results` page, all under `/projects/stock-backtester`.
+Basic forms retain the original defaults (RSI 14/30/65; SMA 14/2%/5%).
+Results URLs carry the parameters, so they can be reloaded or shared; data is
+recalculated by the server. Charts support hover, drag-to-zoom, and reset, with
+accessible value tables. Desktop results pair charts with key metrics and trade
+logs with position statistics; the columns stack on smaller screens.
+RSI uses rolling averages as in the original, not Wilder smoothing. Flat prices
+produce neutral RSI 50. Prior sessions warm up the indicators.
+
+Accounting is intentionally corrected: all symbols share cash on a chronological
+timeline; buys require available cash; sales appear for every symbol; open shares
+are valued at the last available close. Signals execute at the next session's open
+to avoid using the same close for both a decision and a fill. Sales happen before
+buys, with alphabetical buy priority. Each purchase is one split-adjusted share.
+Dividends, fees, slippage, taxes, and interest are excluded. The original
+trade-return-based Sharpe calculation is omitted; the new metrics include equity
+drawdown, realized/unrealized gains, and closed-trade win rate instead.
+
+`npm run dev` serves both the UI and the stock API; no Python process is needed.
+Run the focused checks with Node 24+: `node --test tests/stock-backtester.test.mjs`.
+
 ## Fractal gallery
 
 Create a Supabase project and run `supabase/fractal-gallery.sql` in the SQL Editor. Rerun that file after pulling gallery schema changes; it is idempotent.

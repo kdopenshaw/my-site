@@ -70,6 +70,10 @@
   line-height: 1.375;
 }
 
+.header:first-child {
+  padding-top: var(--card-spacing);
+}
+
 .description {
   color: var(--color-text-muted);
   font-size: var(--fs-small);
