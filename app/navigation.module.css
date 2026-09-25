@@ -29,20 +29,6 @@
   pointer-events: auto;
 }
 
-.siteHeader .menu::before,
-.siteHeader .themeToggle::before {
-  position: absolute;
-  z-index: -1;
-  inset: -0.8rem;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--color-background) 74%, transparent);
-  -webkit-backdrop-filter: blur(14px) saturate(130%);
-  backdrop-filter: blur(14px) saturate(130%);
-  -webkit-mask-image: radial-gradient(circle, #000 36%, transparent 74%);
-  mask-image: radial-gradient(circle, #000 36%, transparent 74%);
-  content: "";
-}
-
 .themeToggle {
   position: absolute;
   right: var(--spacing-lg);
@@ -51,15 +37,16 @@
   width: 2.25rem;
   padding: 0;
   border: 0;
-  border-radius: 0.25rem;
-  background: transparent;
-  color: var(--color-nav);
+  border-radius: 0.45rem;
+  background: color-mix(in srgb, var(--color-background) 74%, transparent);
+  color: var(--color-heading);
   cursor: pointer;
+  -webkit-backdrop-filter: blur(14px) saturate(130%);
+  backdrop-filter: blur(14px) saturate(130%);
 }
 
 .siteHeader .themeToggle {
   top: max(var(--spacing-lg), env(safe-area-inset-top));
-  isolation: isolate;
 }
 
 .themeToggle svg {
@@ -75,15 +62,11 @@
 }
 
 .themeToggle:hover {
-  color: var(--color-heading-accent);
+  color: var(--color-primary);
 }
 
 .menu {
   position: relative;
-}
-
-.siteHeader .menu {
-  isolation: isolate;
 }
 
 .menuTrigger {
@@ -93,14 +76,16 @@
   width: 2.25rem;
   height: 2.25rem;
   border: 0;
-  border-radius: 0.25rem;
-  background: transparent;
-  color: var(--color-nav);
+  border-radius: 0.45rem;
+  background: color-mix(in srgb, var(--color-background) 74%, transparent);
+  color: var(--color-heading);
   cursor: pointer;
+  -webkit-backdrop-filter: blur(14px) saturate(130%);
+  backdrop-filter: blur(14px) saturate(130%);
 }
 
 .menuTrigger:hover {
-  color: var(--color-heading-accent);
+  color: var(--color-primary);
 }
 
 .burger,
@@ -185,7 +170,7 @@
   gap: var(--spacing-xs);
   padding: 0.45rem 0.75rem;
   border-radius: 0.25rem;
-  color: var(--color-nav);
+  color: var(--color-heading);
   font-family: var(--font-display);
   font-size: var(--fs-small);
   font-weight: 600;
@@ -194,7 +179,7 @@
 
 .menuItem:hover,
 .menuItemActive {
-  color: var(--color-heading-accent);
+  color: var(--color-primary);
 }
 
 .menuItem:hover {
@@ -204,7 +189,7 @@
 .menuItemActive,
 .menuItemActive:hover {
   background: transparent;
-  color: var(--color-heading-accent);
+  color: var(--color-primary);
 }
 
 .breadcrumbItem {
@@ -237,18 +222,18 @@
 
 .breadcrumbLink,
 .currentPage {
-  color: var(--color-nav);
+  color: var(--color-heading);
   font-family: var(--font-display);
   font-weight: 500;
   text-decoration: none;
 }
 
 .breadcrumbLink:hover {
-  color: var(--color-heading-accent);
+  color: var(--color-primary);
 }
 
 .breadcrumbItem a[aria-current="page"] {
-  color: var(--color-heading-accent);
+  color: var(--color-primary);
 }
 
 .currentPage {
@@ -257,7 +242,7 @@
 }
 
 .currentPage:hover {
-  color: var(--color-heading-accent);
+  color: var(--color-primary);
 }
 
 @media (max-width: 48rem) {
@@ -275,8 +260,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .siteHeader .menu::before,
-  .siteHeader .themeToggle::before {
+  .menuTrigger,
+  .themeToggle {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }

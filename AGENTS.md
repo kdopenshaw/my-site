@@ -36,10 +36,12 @@
 
 ## Color
 
-- Use semantic color tokens from `app/globals.css`; do not add raw color values inside components or pages.
-- White is the default background. Dark slate is the default prose color. Deep and primary blues establish hierarchy and interaction.
-- Navigation links are near-black by default and primary blue when active or hovered. Do not underline navigation links.
-- Use copper sparingly as an accent, not as a competing primary color.
+- Use the semantic tokens in `app/globals.css`. Do not add raw color values inside components or pages.
+- Neutrals are one family: `background`, `surface`, `border`, `heading`, `text`, and `text-muted`.
+- Primary is the emphasis color for page titles, links, the current navigation item, selected controls, and filled buttons. Use `primary-hover` for the hover step, `primary-subtle` for a faint wash, and `on-primary` for text on a solid primary fill. Focus rings use primary.
+- Navigation links use the heading color at rest and primary when active or hovered. Do not underline navigation links.
+- Copper is the accent. Use `accent` for the sparse mark and `accent-text` when copper is read as text.
+- `gain` and `loss` are status colors for values and errors.
 - Muted text must remain readable. Preserve sufficient contrast for dates, labels, captions, and disabled states.
 
 ## Layout and spacing

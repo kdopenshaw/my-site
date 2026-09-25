@@ -22,7 +22,7 @@ export default function Chart({ title, lines, unit = "currency" }: { title: stri
       const render = async () => {
         const css = getComputedStyle(element);
         const token = (name: string) => css.getPropertyValue(name).trim();
-        const colors = [token("--color-heading-accent"), token("--color-accent-text"), token("--color-text")];
+        const colors = [token("--color-primary"), token("--color-accent-text"), token("--color-text")];
         const data: ChartLine[] = JSON.parse(serialized);
         await library.react(element, data.map((line, index) => ({
           type: "scatter", mode: line.marker ? "markers" : "lines", name: line.name,

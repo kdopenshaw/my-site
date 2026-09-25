@@ -100,11 +100,11 @@ export default function HomeExperience({ children }: HomeExperienceProps) {
 
   return (
     <div className={styles.homeExperience}>
-      <div className={styles.fractalBackground} aria-hidden="true">
-        <HomeFractal onPlaybackComplete={handlePlaybackComplete} />
-      </div>
-
       <section className={styles.fractalOpening} aria-label="Animated Julia fractal">
+        <div className={styles.fractalMedia} aria-hidden="true">
+          <HomeFractal onPlaybackComplete={handlePlaybackComplete} />
+        </div>
+
         <a className={styles.introductionLink} href="#introduction">
           About me
         </a>

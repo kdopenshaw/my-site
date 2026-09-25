@@ -20,11 +20,11 @@
 
 .projectLink:hover .card,
 .projectLink:focus-visible .card {
-  box-shadow: 0 0 0 1px var(--color-link);
+  box-shadow: 0 0 0 1px var(--color-primary);
 }
 
 .projectLink:hover .title {
-  color: var(--color-link);
+  color: var(--color-primary);
 }
 
 .card {

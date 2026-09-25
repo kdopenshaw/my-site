@@ -1,30 +1,40 @@
 /* Colors, type, and spacing for the whole site.
    Change a value here and every page follows.
    Page CSS should use these variables, not raw colors like #333.
+
+   Toolbox:
+   - Neutral: background, surface, border, heading, text, text-muted
+   - Primary: primary, primary-hover, primary-subtle, on-primary
+   - Accent: accent, accent-text
+   - Status: gain, loss
+
    Shared classes (.page-shell, .heading-accent, .image-grid, .button) are at the bottom. */
 
 :root {
-  /* Palette */
+  /* Neutral. One slate for reading and for chrome. */
   --color-background: #ffffff;
-  --color-image-overlay: rgb(0 0 0 / 35%);
   --color-surface: #f2f5f8;
+  --color-border: #e0e6eb;
   --color-heading: #0d1b2a;
-  --color-heading-accent: #2c5282;
   --color-text: #334155;
   --color-text-muted: #5f7188;
-  /* Informational labels and metadata, distinct from values and controls. */
-  --color-text-secondary: #667180;
-  --color-nav: #2e2e2e;
-  --color-link: var(--color-heading-accent);
-  --color-link-hover: var(--color-heading);
-  --color-border: #e5e5e5;
+
+  /* Primary. Emphasis for titles, links, selection, and filled controls.
+     Hover is the next step of this same hue. */
+  --color-primary: #2c5282;
+  --color-primary-hover: #1f3a5b;
+  --color-primary-subtle: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  --color-on-primary: #ffffff;
+
+  /* Accent. Copper, used sparingly. accent-text is the step that is read. */
   --color-accent: #e76f51;
   --color-accent-text: var(--color-accent);
+
+  /* Status. Values and errors. */
   --color-gain: #1b7f4e;
   --color-loss: #b42318;
-  --color-technical: #2563eb;
-  --color-focus: #3b6ba1;
-  --color-on-accent: #ffffff;
+
+  --color-image-overlay: rgb(0 0 0 / 35%);
   --shadow-popover: 0 1rem 2.5rem rgb(13 27 42 / 18%);
   --shadow-control: 0 0.75rem 2.25rem rgb(13 27 42 / 10%);
 
@@ -62,27 +72,27 @@
   --content-width: 1400px;
 }
 
-/* The featured Julia animation has a #333333 canvas; matching it here lets
-   the image meet the page without a visible rectangular edge. */
+/* The featured Julia animation has a #333333 canvas; matching the page
+   background here lets the image meet the page without a visible edge.
+   Unlisted tokens inherit from :root. Primary-subtle follows primary. */
 :root[data-theme="dark"] {
   --color-background: #333333;
   --color-surface: #2d2b2a;
-  --color-heading: #e3d9cf;
-  --color-heading-accent: #3da286;
-  --color-text: #cbbfb5;
-  --color-text-muted: #b8aba0;
-  --color-text-secondary: #aaa198;
-  --color-nav: #ded4ca;
-  --color-link: var(--color-heading-accent);
-  --color-link-hover: var(--color-heading);
   --color-border: #68605a;
+  --color-heading: #e3d9cf;
+  --color-text: #cbbfb5;
+  --color-text-muted: #a89d94;
+
+  --color-primary: #3da286; /* emerald green #3da286 */
+  --color-primary-hover: #4dbc9d;
+  --color-on-primary: #182738;
+
   --color-accent: #e76f51;
-  --color-accent-text: #ec7c5f;
+  --color-accent-text: var(--color-accent);
+
   --color-gain: #5dbe86;
   --color-loss: #ef7a6a;
-  --color-technical: #68caaf;
-  --color-focus: #68caaf;
-  --color-on-accent: #182738;
+
   --shadow-popover: 0 1rem 2.5rem rgb(0 0 0 / 30%);
   --shadow-control: 0 0.75rem 2.25rem rgb(0 0 0 / 16%);
 }
@@ -139,7 +149,7 @@ h6 {
 
 h1 {
   margin-bottom: var(--spacing-lg);
-  color: var(--color-heading-accent);
+  color: var(--color-primary);
   font-size: var(--fs-h1);
   font-weight: 600;
   letter-spacing: -0.03em;
@@ -178,24 +188,24 @@ p {
 }
 
 a {
-  color: var(--color-link);
+  color: var(--color-primary);
   text-decoration-thickness: 0.08em;
   text-underline-offset: 0.18em;
   transition: color 150ms ease;
 }
 
 a:hover {
-  color: var(--color-link-hover);
+  color: var(--color-primary-hover);
 }
 
 :focus-visible {
-  outline: 3px solid var(--color-focus);
+  outline: 3px solid var(--color-primary);
   outline-offset: 4px;
 }
 
 ::selection {
-  background: var(--color-heading-accent);
-  color: var(--color-on-accent);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
 }
 
 small {
@@ -214,7 +224,7 @@ code,
 pre,
 kbd,
 samp {
-  color: var(--color-technical);
+  color: var(--color-text);
   font-family: var(--font-code);
 }
 
@@ -240,7 +250,7 @@ img {
   padding-bottom: var(--spacing-2xl);
 }
 
-/* Decoration only; heading sizes are defined in the h1–h6 rules above. */
+/* Copper mark under a title. Heading sizes are defined in the h1–h6 rules above. */
 .heading-accent::after {
   display: block;
   width: 2.5rem;
@@ -283,10 +293,10 @@ img {
   gap: var(--spacing-xs);
   min-height: 2.25rem;
   padding: 0.45rem 0.9rem;
-  border: 1px solid var(--color-heading-accent);
+  border: 1px solid var(--color-primary);
   border-radius: 0.25rem;
-  background: var(--color-heading-accent);
-  color: var(--color-on-accent);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
   font-family: var(--font-primary);
   font-size: var(--fs-small);
   font-weight: 500;
@@ -297,19 +307,19 @@ img {
 }
 
 .button:hover:not(:disabled) {
-  border-color: var(--color-link-hover);
-  background: var(--color-link-hover);
-  color: var(--color-on-accent);
+  border-color: var(--color-primary-hover);
+  background: var(--color-primary-hover);
+  color: var(--color-on-primary);
 }
 
 .button-outline {
   background: transparent;
-  color: var(--color-heading-accent);
+  color: var(--color-primary);
 }
 
 .button-outline:hover:not(:disabled) {
   background: var(--color-surface);
-  color: var(--color-heading-accent);
+  color: var(--color-primary);
 }
 
 .button:disabled,

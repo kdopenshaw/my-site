@@ -1,11 +1,11 @@
 .prose {
   /* Syntax highlighting */
-  --sh-class: var(--color-heading-accent);
+  --sh-class: var(--color-primary);
   --sh-identifier: var(--color-text);
   --sh-sign: var(--color-text-muted);
-  --sh-property: var(--color-focus);
-  --sh-entity: var(--color-heading-accent);
-  --sh-jsxliterals: var(--color-focus);
+  --sh-property: var(--color-primary-hover);
+  --sh-entity: var(--color-primary);
+  --sh-jsxliterals: var(--color-primary-hover);
   --sh-string: var(--color-text-muted);
   --sh-keyword: var(--color-accent);
   --sh-comment: var(--color-text-muted);
