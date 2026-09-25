@@ -9,7 +9,7 @@ import contentStyles from "./content/content.module.css";
 import { formatDate, getContentPosts } from "./content/posts";
 import HomeExperience from "./home-experience";
 import styles from "./home.module.css";
-import { projects } from "./projects/page";
+import { projects } from "./projects/projects";
 
 const previewLimit = 3;
 

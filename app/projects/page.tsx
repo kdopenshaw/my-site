@@ -4,35 +4,19 @@ import type { Metadata } from "next";
 
 import styles from "./projects.module.css";
 import { Card, CardAction, CardDescription, CardHeader, CardTitle } from "./card";
+import { projects } from "./projects";
 
 export const metadata: Metadata = {
   title: "Projects | Keith Openshaw",
   description: "Selected projects by Keith Openshaw.",
 };
 
-export const projects = [
-  {
-    href: "/projects/fractal-generator",
-    title: "Fractal Generator",
-    description: "Explore and render fractals by adjusting their mathematical parameters. (The tool I used to make the designs on this website)",
-    image: "/fractals/julia-minus-0.8-0.156 copy.png",
-    imageAlt: "Blue spirals of the Julia set for c = -0.8 + 0.156i on a white background",
-  },
-  {
-    href: "/projects/stock-backtester",
-    title: "Technical Threshold Backtesting",
-    description: "Test RSI and moving average strategies against historical stock prices. A new home for my original Python and Flask project.",
-    image: "/projects/stock-backtester.png",
-    imageAlt: "RSI price chart with green buy and red sell marks beside key portfolio metrics",
-  },
-];
-
 export default function ProjectsPage() {
   return (
     <section className={`page-shell ${styles.page}`} aria-labelledby="projects-heading">
       <h1 className="heading-accent" id="projects-heading">Projects</h1>
       <ul className={styles.list} aria-label="Projects" role="list">
-        {projects.map((project) => (
+        {projects.map((project, index) => (
           <li key={project.href}>
             <Link className={styles.projectLink} href={project.href}>
               <Card>
@@ -43,6 +27,7 @@ export default function ProjectsPage() {
                     alt={project.imageAlt}
                     width={3500}
                     height={3570}
+                    priority={index === 0}
                     sizes="(max-width: 40rem) calc(100vw - 32px), (max-width: 52rem) calc((100vw - 64px) / 2), 384px"
                   />}
                 </div>
