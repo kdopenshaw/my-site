@@ -1,9 +1,9 @@
 "use client";
 
-// Draw the growth GIF ourselves and stop. An img element cannot: Chromium loops
-// a GIF forever when the Netscape loop block is missing, a loop count of 1 plays
-// twice there, disposal method 2 clears the picture at the end of each pass, and
-// a new src (or unmounting the image) starts the file over from frame one.
+// Draw the growth GIF ourselves, one frame at a time, and stop on the last frame.
+// An img element cannot: Chromium loops a GIF forever when the Netscape loop
+// block is missing. ImageDecoder cannot either on a phone: it retains every
+// decoded frame, and these files are dozens of full-size frames.
 
 import { useEffect, useRef, useState } from "react";
 
@@ -25,78 +25,211 @@ const FRACTALS = {
 };
 
 type Theme = keyof typeof FRACTALS;
-type DecodedFrame = { close(): void; duration: number | null };
-type GifDecoder = {
-  tracks: { ready: Promise<void>; selectedTrack: { frameCount: number } | null };
-  completed: Promise<void>;
-  decode(options: { frameIndex: number; completeFramesOnly: boolean }): Promise<{ image: DecodedFrame }>;
-  close(): void;
+type GifFrame = {
+  delay: number;
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+  minCodeSize: number;
+  compressed: Uint8Array;
+  palette: Uint8Array;
 };
+type GifAnimation = { width: number; height: number; frames: GifFrame[] };
 
-function gifFrameDelays(buffer: ArrayBuffer) {
+function skipBlocks(bytes: Uint8Array, start: number) {
+  let cursor = start;
+  while (cursor < bytes.length) {
+    const size = bytes[cursor];
+    cursor += 1;
+    if (size === 0) return cursor;
+    cursor += size;
+  }
+  return bytes.length + 1;
+}
+
+function readGif(buffer: ArrayBuffer): GifAnimation | null {
   const bytes = new Uint8Array(buffer);
-  if (bytes.length < 13) return [];
+  if (bytes.length < 13) return null;
   const header = String.fromCharCode(...bytes.subarray(0, 6));
-  if (header !== "GIF87a" && header !== "GIF89a") return [];
+  if (header !== "GIF87a" && header !== "GIF89a") return null;
 
+  const width = bytes[6] | (bytes[7] << 8);
+  const height = bytes[8] | (bytes[9] << 8);
   let offset = 13;
-  if (bytes[10] & 0x80) offset += 3 * (2 << (bytes[10] & 0x07));
-  if (offset > bytes.length) return [];
+  const globalCount = bytes[10] & 0x80 ? 2 << (bytes[10] & 0x07) : 0;
+  const globalPalette = globalCount ? bytes.subarray(offset, offset + globalCount * 3) : null;
+  if (globalCount) offset += globalCount * 3;
+  if (offset > bytes.length || !globalPalette) return null;
 
-  const delays: number[] = [];
+  const frames: GifFrame[] = [];
   let pending = 100;
-
-  const skipBlocks = (start: number) => {
-    let cursor = start;
-    while (cursor < bytes.length) {
-      const size = bytes[cursor];
-      cursor += 1;
-      if (size === 0) return cursor;
-      cursor += size;
-    }
-    return bytes.length + 1;
-  };
 
   while (offset < bytes.length) {
     const marker = bytes[offset];
     offset += 1;
-    if (marker === 0x3b) return delays;
+    if (marker === 0x3b) return frames.length > 1 ? { width, height, frames } : null;
     if (marker === 0x21) {
-      if (offset >= bytes.length) return [];
+      if (offset >= bytes.length) return null;
       const label = bytes[offset];
       offset += 1;
-      if (label === 0xf9 && offset + 3 < bytes.length && bytes[offset] === 4) {
+      if (label === 0xf9 && offset + 4 < bytes.length && bytes[offset] === 4) {
         const centiseconds = bytes[offset + 2] | (bytes[offset + 3] << 8);
         // A stored delay of 0 is defined as 100ms by browsers.
         pending = centiseconds === 0 ? 100 : centiseconds * 10;
       }
-      offset = skipBlocks(offset);
-      if (offset > bytes.length) return [];
+      offset = skipBlocks(bytes, offset);
+      if (offset > bytes.length) return null;
       continue;
     }
-    if (marker === 0x2c) {
-      if (offset + 9 > bytes.length) return [];
-      const packed = bytes[offset + 8];
-      offset += 9;
-      if (packed & 0x80) offset += 3 * (2 << (packed & 0x07));
-      if (offset >= bytes.length) return [];
-      offset += 1;
-      offset = skipBlocks(offset);
-      if (offset > bytes.length) return [];
-      delays.push(pending);
-      pending = 100;
-      continue;
+    if (marker !== 0x2c || offset + 9 > bytes.length) return null;
+
+    const left = bytes[offset] | (bytes[offset + 1] << 8);
+    const top = bytes[offset + 2] | (bytes[offset + 3] << 8);
+    const frameWidth = bytes[offset + 4] | (bytes[offset + 5] << 8);
+    const frameHeight = bytes[offset + 6] | (bytes[offset + 7] << 8);
+    const packed = bytes[offset + 8];
+    offset += 9;
+    let palette = globalPalette;
+    if (packed & 0x80) {
+      const count = 2 << (packed & 0x07);
+      if (offset + count * 3 > bytes.length) return null;
+      palette = bytes.subarray(offset, offset + count * 3);
+      offset += count * 3;
     }
-    return [];
+    if (
+      (packed & 0x40) ||
+      offset >= bytes.length ||
+      frameWidth === 0 ||
+      frameHeight === 0 ||
+      left + frameWidth > width ||
+      top + frameHeight > height
+    ) return null;
+    const minCodeSize = bytes[offset];
+    offset += 1;
+    const dataStart = offset;
+    offset = skipBlocks(bytes, offset);
+    if (offset > bytes.length || minCodeSize < 2 || minCodeSize > 8) return null;
+
+    const parts: Uint8Array[] = [];
+    let cursor = dataStart;
+    let length = 0;
+    while (cursor < offset - 1) {
+      const size = bytes[cursor];
+      cursor += 1;
+      if (size === 0) break;
+      parts.push(bytes.subarray(cursor, cursor + size));
+      length += size;
+      cursor += size;
+    }
+    const compressed = new Uint8Array(length);
+    let at = 0;
+    for (const part of parts) {
+      compressed.set(part, at);
+      at += part.length;
+    }
+    frames.push({
+      delay: pending,
+      left,
+      top,
+      width: frameWidth,
+      height: frameHeight,
+      minCodeSize,
+      compressed,
+      palette,
+    });
+    pending = 100;
   }
 
-  return [];
+  return null;
 }
 
-function frameDelay(duration: number | null, parsed: number | undefined) {
-  if (parsed !== undefined) return parsed;
-  if (duration !== null && duration > 0) return duration / 1000;
-  return 100;
+function lzwDecode(minCodeSize: number, data: Uint8Array, pixelCount: number) {
+  const clearCode = 1 << minCodeSize;
+  const eoiCode = clearCode + 1;
+  const prefix = new Int16Array(4096);
+  const suffix = new Uint8Array(4096);
+  const output = new Uint8Array(pixelCount);
+  const stack = new Uint8Array(4096);
+  let out = 0;
+  let codeSize = minCodeSize + 1;
+  let nextCode = eoiCode + 1;
+  let prev = -1;
+  let bitBuffer = 0;
+  let bitCount = 0;
+  let cursor = 0;
+
+  const readCode = () => {
+    while (bitCount < codeSize) {
+      if (cursor >= data.length) return -1;
+      bitBuffer |= data[cursor] << bitCount;
+      cursor += 1;
+      bitCount += 8;
+    }
+    const code = bitBuffer & ((1 << codeSize) - 1);
+    bitBuffer >>= codeSize;
+    bitCount -= codeSize;
+    return code;
+  };
+
+  while (out < pixelCount) {
+    const code = readCode();
+    if (code < 0 || code === eoiCode) break;
+    if (code === clearCode) {
+      codeSize = minCodeSize + 1;
+      nextCode = eoiCode + 1;
+      prev = -1;
+      continue;
+    }
+
+    const special = code === nextCode;
+    const walk = special ? prev : code;
+    if (walk < 0 || (!special && code > nextCode)) return null;
+    let stackPos = 0;
+    let current = walk;
+    while (current >= clearCode) {
+      stack[stackPos] = suffix[current];
+      stackPos += 1;
+      current = prefix[current];
+    }
+    const root = current;
+    stack[stackPos] = root;
+    stackPos += 1;
+
+    if (prev >= 0 && nextCode < 4096) {
+      prefix[nextCode] = prev;
+      suffix[nextCode] = root;
+      nextCode += 1;
+      if (nextCode === (1 << codeSize) && codeSize < 12) codeSize += 1;
+    }
+    prev = special ? nextCode - 1 : code;
+
+    for (let index = stackPos - 1; index >= 0 && out < pixelCount; index -= 1) {
+      output[out] = stack[index];
+      out += 1;
+    }
+    if (special && out < pixelCount) {
+      output[out] = root;
+      out += 1;
+    }
+  }
+
+  return out === pixelCount ? output : null;
+}
+
+function paintFrame(pixels: Uint8ClampedArray, canvasWidth: number, frame: GifFrame, indexes: Uint8Array) {
+  const { palette, left, top, width, height } = frame;
+  for (let y = 0; y < height; y += 1) {
+    const row = (top + y) * canvasWidth + left;
+    for (let x = 0; x < width; x += 1) {
+      const color = indexes[y * width + x] * 3;
+      const pixel = (row + x) * 4;
+      pixels[pixel] = palette[color];
+      pixels[pixel + 1] = palette[color + 1];
+      pixels[pixel + 2] = palette[color + 2];
+      pixels[pixel + 3] = 255;
+    }
+  }
 }
 
 type HomeFractalProps = {
@@ -157,20 +290,9 @@ export default function HomeFractal({ onPlaybackComplete }: HomeFractalProps) {
     if (canvas.width !== image.width) canvas.width = image.width;
     if (canvas.height !== image.height) canvas.height = image.height;
     const controller = new AbortController();
-    const session: { decoder?: GifDecoder } = {};
     let active = true;
     let timeoutId = 0;
     let finishWait = () => {};
-
-    const closeDecoder = () => {
-      const decoder = session.decoder;
-      session.decoder = undefined;
-      try {
-        decoder?.close();
-      } catch {
-        // Closing an already-closed decoder is how a cancelled draw stops.
-      }
-    };
 
     const wait = (ms: number) => new Promise<void>((resolve) => {
       finishWait = resolve;
@@ -178,59 +300,44 @@ export default function HomeFractal({ onPlaybackComplete }: HomeFractalProps) {
     });
 
     async function play(surface: HTMLCanvasElement, drawing: CanvasRenderingContext2D) {
-      const Decoder = (window as Window & { ImageDecoder?: new (init: { data: ArrayBuffer; type: string; preferAnimation: boolean }) => GifDecoder }).ImageDecoder;
-      if (!Decoder) throw new Error("This browser cannot decode the fractal animation");
-
       const response = await fetch(image.gif, { signal: controller.signal });
       if (!response.ok) throw new Error("Unable to load the fractal animation");
       const bytes = await response.arrayBuffer();
       if (!active) return;
 
-      const delays = gifFrameDelays(bytes);
-      const decoder = new Decoder({ data: bytes, type: "image/gif", preferAnimation: true });
-      session.decoder = decoder;
-      await decoder.tracks.ready;
-      await decoder.completed;
-      if (!active) return;
-
-      const count = decoder.tracks.selectedTrack?.frameCount ?? 0;
-      if (count < 2 || (delays.length > 1 && delays.length !== count)) {
+      const animation = readGif(bytes);
+      if (!animation || animation.width !== surface.width || animation.height !== surface.height) {
         throw new Error("The fractal animation did not decode completely");
       }
 
+      const bitmap = drawing.createImageData(surface.width, surface.height);
       let elapsed = 0;
       let origin = 0;
-      for (let index = 0; index < count; index += 1) {
+      for (let index = 0; index < animation.frames.length; index += 1) {
         if (!active) return;
-        const { image: frame } = await decoder.decode({ frameIndex: index, completeFramesOnly: true });
-        if (!active) {
-          frame.close();
-          return;
-        }
-        drawing.drawImage(frame as CanvasImageSource, 0, 0, surface.width, surface.height);
-        const delay = frameDelay(frame.duration, delays.length === count ? delays[index] : undefined);
-        frame.close();
+        const frame = animation.frames[index];
+        const indexes = lzwDecode(frame.minCodeSize, frame.compressed, frame.width * frame.height);
+        if (!indexes) throw new Error("The fractal animation did not decode completely");
+        paintFrame(bitmap.data, surface.width, frame, indexes);
+        drawing.putImageData(bitmap, 0, 0);
         if (index === 0) {
           origin = performance.now();
           setPaintedTheme(theme);
         }
-        if (index === count - 1) {
+        if (index === animation.frames.length - 1) {
           heldThemeRef.current = theme;
           onPlaybackComplete?.();
           break;
         }
-        elapsed += delay;
+        elapsed += frame.delay;
         const remaining = elapsed - (performance.now() - origin);
         if (!active) return;
         if (remaining > 0) await wait(remaining);
       }
     }
 
-    play(canvas, context).then(() => {
-      if (active) closeDecoder();
-    }).catch(() => {
+    play(canvas, context).catch(() => {
       if (!active) return;
-      closeDecoder();
       setUseStill(true);
     });
 
@@ -239,7 +346,6 @@ export default function HomeFractal({ onPlaybackComplete }: HomeFractalProps) {
       window.clearTimeout(timeoutId);
       finishWait();
       controller.abort();
-      closeDecoder();
     };
   }, [onPlaybackComplete, reducedMotion, theme, useStill]);
 

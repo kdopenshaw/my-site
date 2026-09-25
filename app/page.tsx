@@ -15,7 +15,7 @@ export default function Home() {
   return (
     <HomeExperience>
       <div className={styles.introductionCopy}>
-        <h1 className="heading-accent" id="home-heading">Hi, I&apos;m Keith!</h1>
+        <h1>Hi, I&apos;m Keith!</h1>
 
         <p>I have a lot of interests.</p>
         <p>Some of them are on this site. Check it out!</p>
@@ -50,9 +50,9 @@ export default function Home() {
       <nav className={styles.homeDirectory} aria-label="Explore the site">
         <ul>
           <li>
-            <h2><Link href="/content">Content</Link></h2>
+            <h3 className="heading-accent"><Link href="/content">Content</Link></h3>
             {firstPost && (
-              <Link className={styles.featureLink} href={`/content/${firstPost.slug}`}>
+              <Link className={styles.entryLink} href={`/content/${firstPost.slug}`}>
                 {firstPost.metadata.title}
               </Link>
             )}
