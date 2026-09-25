@@ -5,12 +5,16 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { getContentPosts } from "./content/posts";
+import contentStyles from "./content/content.module.css";
+import { formatDate, getContentPosts } from "./content/posts";
 import HomeExperience from "./home-experience";
 import styles from "./home.module.css";
+import { projects } from "./projects/page";
+
+const previewLimit = 3;
 
 export default function Home() {
-  const firstPost = getContentPosts()[0];
+  const posts = getContentPosts().slice(0, previewLimit);
 
   return (
     <HomeExperience>
@@ -50,25 +54,55 @@ export default function Home() {
       <nav className={styles.homeDirectory} aria-label="Explore the site">
         <ul>
           <li>
-            <h3 className="heading-accent"><Link href="/content">Content</Link></h3>
-            {firstPost && (
-              <Link className={styles.entryLink} href={`/content/${firstPost.slug}`}>
-                {firstPost.metadata.title}
-              </Link>
+            <h4><Link href="/content">Content</Link></h4>
+            {posts.length > 0 && (
+              <ul className={`${contentStyles.list} ${styles.previewList}`} aria-label="Latest content">
+                {posts.map((post) => (
+                  <li className={contentStyles.entry} key={post.slug}>
+                    <Link className={contentStyles.entryLink} href={`/content/${post.slug}`}>
+                      {post.metadata.title}
+                    </Link>
+                    <p className={contentStyles.entryDate}>
+                      {formatDate(post.metadata.publishedAt, false)}
+                    </p>
+                  </li>
+                ))}
+              </ul>
             )}
           </li>
           <li>
-            <h2><Link href="/projects">Projects</Link></h2>
-            <Link className={styles.featureLink} href="/projects/fractal-generator">
-              Fractal Generator
-            </Link>
+            <h4><Link href="/projects">Projects</Link></h4>
+            <ul className={`${contentStyles.list} ${styles.previewList}`} aria-label="Projects">
+              {projects.slice(0, previewLimit).map((project) => (
+                <li key={project.href}>
+                  <Link className={contentStyles.entryLink} href={project.href}>
+                    {project.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </li>
           <li>
-            <h2><Link href="/blacksmithing">Blacksmithing</Link></h2>
-            <p>Metalwork and woodworking</p>
+            <h4>
+              <Link href="/blacksmithing">Blacksmithing</Link>
+            </h4>
           </li>
         </ul>
       </nav>
+
+      <footer className={styles.contact}>
+        Contact me:
+        <br />
+        <a href="mailto:kopensha@gmail.com">kopensha@gmail.com</a>
+        <br />
+        <a
+          href="https://www.linkedin.com/in/keith-openshaw/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          linkedin
+        </a>
+      </footer>
     </HomeExperience>
   );
 }

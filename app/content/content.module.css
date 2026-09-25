@@ -10,9 +10,9 @@
 
 .entry {
   display: grid;
-  grid-template-columns: 10rem minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) 10rem;
   align-items: baseline;
-  column-gap: var(--spacing-xs);
+  column-gap: var(--spacing-sm);
 }
 
 .entry p,
@@ -23,6 +23,8 @@
 
 .entryDate {
   color: var(--color-text-muted);
+  font-family: var(--font-code);
+  font-size: var(--fs-caption);
   font-variant-numeric: tabular-nums;
   line-height: 1.5;
   white-space: nowrap;
@@ -32,7 +34,7 @@
   color: var(--color-heading);
   font-family: var(--font-display);
   font-size: var(--fs-small);
-  font-weight: 500;
+  font-weight: 400;
   letter-spacing: -0.025em;
   line-height: 1.5;
   text-decoration: none;

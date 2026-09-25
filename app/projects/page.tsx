@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description: "Selected projects by Keith Openshaw.",
 };
 
-const projects = [
+export const projects = [
   {
     href: "/projects/fractal-generator",
     title: "Fractal Generator",

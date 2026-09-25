@@ -22,12 +22,12 @@ export default function ContentPage() {
       <ul className={styles.list} aria-label="Content" role="list">
         {posts.map((post) => (
           <li className={styles.entry} key={post.slug}>
-            <p className={styles.entryDate}>
-              {formatDate(post.metadata.publishedAt, false)}
-            </p>
             <Link className={styles.entryLink} href={`/content/${post.slug}`}>
               {post.metadata.title}
             </Link>
+            <p className={styles.entryDate}>
+              {formatDate(post.metadata.publishedAt, false)}
+            </p>
           </li>
         ))}
       </ul>
