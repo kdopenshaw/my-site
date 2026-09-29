@@ -2,17 +2,28 @@
 
 import { useRef, useState } from "react";
 
+import { Slider } from "@/components/ui/slider";
+import {
+  Questionnaire,
+  QuestionnaireActions,
+  QuestionnaireChoice,
+  QuestionnaireChoiceDescription,
+  QuestionnaireChoices,
+  QuestionnaireDescription,
+  QuestionnaireError,
+  QuestionnaireItem,
+  QuestionnaireNext,
+  QuestionnairePrevious,
+  QuestionnaireProgress,
+  QuestionnaireSubmit,
+  QuestionnaireTitle,
+} from "@/components/ui/questionnaire";
 import { startQuestionnaire, submitQuestionnaire } from "./actions";
-import { questionnaire, type Framing } from "./questions";
+import { questionnaireStyles } from "@/components/ui/questionnaire";
+import { questionnaire, type Dilemma, type Framing } from "./questions";
 import styles from "./questionnaire.module.css";
 
-type Answer = {
-  choiceId: string;
-  preference: number;
-  confidence: number;
-  optionOrder: string[];
-  responseTimeMs: number;
-};
+type Rating = { preference: number; confidence: number };
 
 function shuffle<T>(items: T[]) {
   const next = [...items];
@@ -23,30 +34,29 @@ function shuffle<T>(items: T[]) {
   return next;
 }
 
+function splitChoice(text: string) {
+  const match = text.match(/^(.+?[.!?])\s+([\s\S]+)$/);
+  if (!match) return { label: text, description: "" };
+  return { label: match[1], description: match[2] };
+}
+
 export default function QuestionnaireForm() {
   const [email, setEmail] = useState("");
   const [framing, setFraming] = useState<Framing | null>(null);
-  const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState<Answer[]>([]);
+  const [orders, setOrders] = useState<Record<string, string[]>>({});
+  const [ratings, setRatings] = useState<Record<string, Rating>>({});
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
   const shownAt = useRef(0);
-  const times = useRef<number[]>([]);
+  const activeId = useRef("");
+  const times = useRef<Record<string, number>>({});
 
   const questions = framing ? questionnaire[framing] : [];
-  const dilemma = questions[step - 1];
-  const answer = answers[step - 1];
 
-  function update(patch: Partial<Answer>) {
-    setAnswers((current) =>
-      current.map((item, index) => (index === step - 1 ? { ...item, ...patch } : item)),
-    );
-  }
-
-  function recordTime(index: number) {
-    const elapsed = Math.max(0, Date.now() - shownAt.current);
-    times.current[index] = (times.current[index] ?? 0) + elapsed;
+  function stamp(id: string) {
+    if (!id) return;
+    times.current[id] = (times.current[id] ?? 0) + Math.max(0, Date.now() - shownAt.current);
     shownAt.current = Date.now();
   }
 
@@ -66,37 +76,34 @@ export default function QuestionnaireForm() {
       );
       return;
     }
-    const nextAnswers = questionnaire[result.framing].map((item) => ({
-      choiceId: "",
-      preference: 50,
-      confidence: 50,
-      optionOrder: shuffle(item.options.map((option) => option.id)),
-      responseTimeMs: 0,
-    }));
-    times.current = nextAnswers.map(() => 0);
-    setFraming(result.framing);
-    setAnswers(nextAnswers);
+    const nextOrders: Record<string, string[]> = {};
+    const nextRatings: Record<string, Rating> = {};
+    for (const item of questionnaire[result.framing]) {
+      nextOrders[item.id] = shuffle(item.options.map((option) => option.id));
+      nextRatings[item.id] = { preference: 50, confidence: 50 };
+      times.current[item.id] = 0;
+    }
+    activeId.current = questionnaire[result.framing][0].id;
     shownAt.current = Date.now();
-    setStep(1);
+    setOrders(nextOrders);
+    setRatings(nextRatings);
+    setFraming(result.framing);
   }
 
-  async function advance(event: React.FormEvent) {
+  async function finish(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!framing) return;
-    recordTime(step - 1);
-    if (step < questions.length) {
-      setStep((current) => current + 1);
-      return;
-    }
+    stamp(activeId.current);
     setPending(true);
     setError("");
-    const payload = answers.map((item, index) => ({
-      dilemmaId: questions[index].id,
-      choiceId: item.choiceId,
-      preference: item.preference,
-      confidence: item.confidence,
-      optionOrder: item.optionOrder,
-      responseTimeMs: times.current[index] ?? 0,
+    const data = new FormData(event.currentTarget);
+    const payload = questions.map((item) => ({
+      dilemmaId: item.id,
+      choiceId: String(data.get(item.id) ?? ""),
+      preference: ratings[item.id].preference,
+      confidence: ratings[item.id].confidence,
+      optionOrder: orders[item.id],
+      responseTimeMs: times.current[item.id] ?? 0,
     }));
     const result = await submitQuestionnaire(email, framing, payload);
     setPending(false);
@@ -112,16 +119,21 @@ export default function QuestionnaireForm() {
   }
 
   if (done) {
-    return <p>Thank you. Your answers are saved. The article will show them next to the model results, identified by this email.</p>;
+    return (
+      <p>
+        Thank you. Your answers are saved. The article will show them next to the model results,
+        identified by this email.
+      </p>
+    );
   }
 
-  if (step === 0) {
+  if (!framing) {
     return (
       <form className={styles.form} onSubmit={begin}>
         <p>
-          Six short hypothetical situations. For each one, pick the option you think is
-          better, then say how much better and how sure you are. Use an email address so
-          your answers can be shown with the results later.
+          Six short hypothetical situations. For each one, pick the option you think is better,
+          then say how much better and how sure you are. Use an email address so your answers can
+          be shown with the results later.
         </p>
         <div className={styles.field}>
           <label htmlFor="participant-email">Email</label>
@@ -145,81 +157,117 @@ export default function QuestionnaireForm() {
     );
   }
 
-  const options = dilemma.options
-    .slice()
-    .sort((left, right) => answer.optionOrder.indexOf(left.id) - answer.optionOrder.indexOf(right.id));
+  return (
+    <Questionnaire
+      items={questions.map((item) => ({
+        name: item.id,
+        required: true,
+        choices: orders[item.id].map((value) => ({ value })),
+      }))}
+      onItemChange={(item) => {
+        stamp(activeId.current);
+        activeId.current = item;
+      }}
+      onSubmit={finish}
+    >
+      <QuestionnaireProgress />
+      {questions.map((item) => (
+        <QuestionStep key={item.id} item={item} order={orders[item.id]} rating={ratings[item.id]} onRate={(rating) => {
+          setRatings((current) => ({ ...current, [item.id]: rating }));
+        }} />
+      ))}
+      {error ? <p className={styles.error}>{error}</p> : null}
+      <QuestionnaireActions>
+        <QuestionnairePrevious disabled={pending} />
+        <QuestionnaireNext disabled={pending} />
+        <QuestionnaireSubmit disabled={pending} />
+      </QuestionnaireActions>
+    </Questionnaire>
+  );
+}
+
+function QuestionStep({
+  item,
+  order,
+  rating,
+  onRate,
+}: {
+  item: Dilemma;
+  order: string[];
+  rating: Rating;
+  onRate: (rating: Rating) => void;
+}) {
+  const options = order.map((id) => item.options.find((option) => option.id === id)!);
 
   return (
-    <form className={styles.form} onSubmit={advance}>
-      <p className={styles.progress}>
-        {step} of {questions.length}
-      </p>
-      <h2>{dilemma.title}</h2>
-      <p className={styles.scenario}>{dilemma.scenario}</p>
-      <fieldset className={styles.choices}>
-        <legend>{dilemma.question}</legend>
-        {options.map((option) => (
-          <label className={styles.choice} key={option.id}>
-            <input
-              type="radio"
-              name={dilemma.id}
-              required
-              checked={answer.choiceId === option.id}
-              onChange={() => update({ choiceId: option.id })}
-            />
-            <span>{option.text}</span>
-          </label>
-        ))}
-      </fieldset>
+    <QuestionnaireItem name={item.id} required>
+      <QuestionnaireTitle>{item.title}</QuestionnaireTitle>
+      <QuestionnaireDescription>{item.scenario}</QuestionnaireDescription>
+      <p className={styles.prompt}>{item.question}</p>
+      <QuestionnaireChoices>
+        {options.map((option) => {
+          const choice = splitChoice(option.text);
+          return (
+            <QuestionnaireChoice key={option.id} value={option.id}>
+              <span className={questionnaireStyles.choiceTitle}>{choice.label}</span>
+              {choice.description ? (
+                <QuestionnaireChoiceDescription>{choice.description}</QuestionnaireChoiceDescription>
+              ) : null}
+            </QuestionnaireChoice>
+          );
+        })}
+      </QuestionnaireChoices>
+      <QuestionnaireError />
       <div className={styles.ratings}>
-        <div className={styles.rating}>
-          <label htmlFor="preference">How much better is that choice? {answer.preference}</label>
-          <input
-            id="preference"
-            type="range"
-            min={0}
-            max={100}
-            value={answer.preference}
-            onChange={(event) => update({ preference: Number(event.target.value) })}
-          />
-          <div className={styles.anchors}>
-            <span>About the same</span>
-            <span>Much better</span>
-          </div>
-        </div>
-        <div className={styles.rating}>
-          <label htmlFor="confidence">How sure are you? {answer.confidence}</label>
-          <input
-            id="confidence"
-            type="range"
-            min={0}
-            max={100}
-            value={answer.confidence}
-            onChange={(event) => update({ confidence: Number(event.target.value) })}
-          />
-          <div className={styles.anchors}>
-            <span>Not sure</span>
-            <span>Completely sure</span>
-          </div>
-        </div>
+        <RatingSlider
+          label="How much better is that choice?"
+          low="About the same"
+          high="Much better"
+          value={rating.preference}
+          onChange={(preference) => onRate({ ...rating, preference })}
+        />
+        <RatingSlider
+          label="How sure are you?"
+          low="Not sure"
+          high="Completely sure"
+          value={rating.confidence}
+          onChange={(confidence) => onRate({ ...rating, confidence })}
+        />
       </div>
-      {error ? <p className={styles.error}>{error}</p> : null}
-      <div className={styles.actions}>
-        <button
-          className="button"
-          type="button"
-          disabled={pending}
-          onClick={() => {
-            recordTime(step - 1);
-            setStep((current) => current - 1);
-          }}
-        >
-          Back
-        </button>
-        <button className="button" type="submit" disabled={pending}>
-          {step === questions.length ? "Finish" : "Next"}
-        </button>
+    </QuestionnaireItem>
+  );
+}
+
+function RatingSlider({
+  label,
+  low,
+  high,
+  value,
+  onChange,
+}: {
+  label: string;
+  low: string;
+  high: string;
+  value: number;
+  onChange: (value: number) => void;
+}) {
+  return (
+    <div className={styles.rating}>
+      <div className={styles.ratingLabel}>
+        <span>{label}</span>
+        <span>{value}</span>
       </div>
-    </form>
+      <Slider
+        min={0}
+        max={100}
+        step={1}
+        value={[value]}
+        onValueChange={(next) => onChange(next[0] ?? value)}
+      />
+      <div className={styles.anchors}>
+        <span>{low}</span>
+        <span>{high}</span>
+      </div>
+    </div>
   );
 }
