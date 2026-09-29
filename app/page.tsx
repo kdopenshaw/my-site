@@ -54,7 +54,7 @@ export default function Home() {
       <nav className={styles.homeDirectory} aria-label="Explore the site">
         <ul>
           <li>
-            <h4><Link href="/content">Content</Link></h4>
+            <h3><Link href="/content">Content</Link></h3>
             {posts.length > 0 && (
               <ul className={`${contentStyles.list} ${styles.previewList}`} aria-label="Latest content">
                 {posts.map((post) => (
@@ -71,7 +71,7 @@ export default function Home() {
             )}
           </li>
           <li>
-            <h4><Link href="/projects">Projects</Link></h4>
+            <h3><Link href="/projects">Projects</Link></h3>
             <ul className={`${contentStyles.list} ${styles.previewList}`} aria-label="Projects">
               {projects.slice(0, previewLimit).map((project) => (
                 <li key={project.href}>
@@ -83,9 +83,9 @@ export default function Home() {
             </ul>
           </li>
           <li>
-            <h4>
+            <h3>
               <Link href="/blacksmithing">Blacksmithing</Link>
-            </h4>
+            </h3>
           </li>
         </ul>
       </nav>

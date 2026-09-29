@@ -1,5 +1,6 @@
 .post > h1 {
   margin-bottom: 0;
+  text-wrap: pretty;
 }
 
 .list {
@@ -10,7 +11,7 @@
 
 .entry {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 10rem;
+  grid-template-columns: minmax(0, 1fr) max-content;
   align-items: baseline;
   column-gap: var(--spacing-sm);
 }
@@ -24,9 +25,8 @@
 .entryDate {
   color: var(--color-text-muted);
   font-family: var(--font-code);
-  font-size: var(--fs-caption);
-  font-variant-numeric: tabular-nums;
-  line-height: 1.5;
+  font-size: var(--fs-small);
+  line-height: var(--leading-body);
   white-space: nowrap;
 }
 
@@ -48,8 +48,7 @@
   margin-top: var(--spacing-xs);
   margin-bottom: var(--spacing-lg);
   color: var(--color-text-muted);
-  font-size: var(--fs-small);
-  font-variant-numeric: tabular-nums;
+  font-family: var(--font-code);
 }
 
 @media (max-width: 48rem) {

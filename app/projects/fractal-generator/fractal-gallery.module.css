@@ -149,7 +149,7 @@
   line-height: var(--leading-tight);
 }
 
-.metadataHeader time { color: var(--color-text-muted); font-size: var(--fs-caption); }
+.metadataHeader time { color: var(--color-text-muted); font-family: var(--font-code); font-size: var(--fs-body); }
 
 .metadataGrid {
   display: grid;

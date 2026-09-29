@@ -18,9 +18,9 @@
 
 ## Typography
 
-- Hanken Grotesk is the primary typeface for prose and interface text, including labels, metadata, and controls.
+- Source Serif 4 is the primary typeface for prose and interface text, including labels, metadata, and controls. Use the shared `--font-primary` token.
 - Geologica is the display typeface for headings, titles, and navigation links. Use the shared `--font-display` token.
-- Use Space Mono via the shared `--font-code` token for code, technical values, machine output, or content whose structure benefits from fixed-width characters.
+- Use Inconsolata via the shared `--font-code` token for code, technical values, machine output, or content whose structure benefits from fixed-width characters.
 - Do not introduce another branded font without an explicit design decision from the user.
 - Create hierarchy primarily with weight, size, line height, spacing, and color:
   - Body prose: 400.

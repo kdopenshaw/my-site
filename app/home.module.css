@@ -95,13 +95,11 @@
   gap: var(--spacing-xs);
 }
 
-.homeDirectory h4 {
+.homeDirectory h3 {
   margin-bottom: var(--spacing-sm);
-  font-family: var(--font-code);
-  font-size: var(--fs-small);
 }
 
-.homeDirectory h4 a {
+.homeDirectory h3 a {
   color: var(--color-primary);
   text-decoration: none;
 }
