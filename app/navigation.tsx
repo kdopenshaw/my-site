@@ -86,7 +86,7 @@ export default function Navigation() {
 
   return (
     <header className={`${styles.siteHeader} ${pathname === "/" ? styles.homeHeader : ""} ${hidden ? styles.headerHidden : ""}`}>
-      <div
+      {pathname !== "/dilemmas/questionnaire" && <div
         className={styles.menu}
         ref={menuRef}
         onMouseEnter={() => {
@@ -142,7 +142,7 @@ export default function Navigation() {
             </ul>
           </nav>
         )}
-      </div>
+      </div>}
       <ThemeToggle />
     </header>
   );

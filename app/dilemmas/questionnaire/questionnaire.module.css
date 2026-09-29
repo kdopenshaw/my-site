@@ -1,0 +1,119 @@
+.form {
+  display: grid;
+  gap: var(--spacing-md);
+  max-width: 42rem;
+}
+
+.field {
+  display: grid;
+  gap: var(--spacing-xs);
+}
+
+.field label {
+  font-family: var(--font-display);
+  font-size: var(--fs-small);
+  font-weight: 500;
+  color: var(--color-heading);
+}
+
+.field input {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-size: var(--fs-body);
+  font-weight: 400;
+}
+
+.field input:hover {
+  border-color: var(--color-primary);
+}
+
+.field input:focus-visible {
+  outline-offset: 2px;
+  border-color: var(--color-primary);
+}
+
+.progress {
+  color: var(--color-text-muted);
+  font-family: var(--font-display);
+  font-size: var(--fs-small);
+}
+
+.scenario {
+  margin: 0;
+}
+
+.choices {
+  display: grid;
+  gap: var(--spacing-xs);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.choice {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--spacing-xs);
+  align-items: start;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  background: var(--color-surface);
+  cursor: pointer;
+}
+
+.choice:has(input:checked) {
+  border-color: var(--color-primary);
+  background: var(--color-primary-subtle);
+}
+
+.choice input {
+  margin-top: 0.3rem;
+}
+
+.ratings {
+  display: grid;
+  gap: var(--spacing-sm);
+}
+
+.rating {
+  display: grid;
+  gap: var(--spacing-2xs);
+}
+
+.rating label {
+  font-family: var(--font-display);
+  font-size: var(--fs-small);
+}
+
+.anchors {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  color: var(--color-text-muted);
+  font-size: var(--fs-caption);
+}
+
+.actions {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.error {
+  margin: 0;
+  color: var(--color-loss);
+}
+
+.done {
+  display: grid;
+  gap: var(--spacing-sm);
+}
+
+.done li {
+  margin-bottom: var(--spacing-xs);
+}
