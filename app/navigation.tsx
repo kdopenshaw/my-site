@@ -18,12 +18,6 @@ const links = [
   { href: "/blacksmithing", label: "Blacksmithing" },
 ];
 
-function pageLabel(segment: string) {
-  return decodeURIComponent(segment)
-    .replace(/[-_]+/g, " ")
-    .replace(/\b\w/g, (letter) => letter.toUpperCase());
-}
-
 export default function Navigation() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -34,7 +28,6 @@ export default function Navigation() {
   const menuRef = useRef<HTMLDivElement>(null);
   const openedByHoverAt = useRef(0);
   const lastScrollY = useRef(0);
-  const segments = pathname.split("/").filter(Boolean);
 
   const isActive = (href: string) =>
     pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
@@ -132,35 +125,6 @@ export default function Navigation() {
             <ul>
               {links.map((link) => {
                 const active = isActive(link.href);
-
-                if (active && segments.length > 1) {
-                  return (
-                    <li key={link.href} className={styles.breadcrumbItem}>
-                      {segments.map((segment, index) => {
-                        const href = `/${segments.slice(0, index + 1).join("/")}`;
-                        const isCurrent = index === segments.length - 1;
-
-                        return (
-                          <span key={href} className={styles.breadcrumbPart}>
-                            {index > 0 && (
-                              <svg className={styles.breadcrumbSeparator} viewBox="0 0 16 16" aria-hidden="true">
-                                <path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                              </svg>
-                            )}
-                            <Link
-                              href={href}
-                              aria-current={isCurrent ? "page" : undefined}
-                              className={isCurrent ? styles.currentPage : styles.breadcrumbLink}
-                              onClick={closeAfterNavigation}
-                            >
-                              {index === 0 ? link.label : pageLabel(segment)}
-                            </Link>
-                          </span>
-                        );
-                      })}
-                    </li>
-                  );
-                }
 
                 return (
                   <li key={link.href}>

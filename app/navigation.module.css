@@ -137,13 +137,14 @@
   z-index: 20;
   top: calc(100% + 0.35rem);
   left: 50%;
-  width: min(17.5rem, calc(100vw - 2 * var(--spacing-sm)));
+  width: max-content;
+  max-width: min(17.5rem, calc(100vw - 2 * var(--spacing-sm)));
   translate: -50% 0;
-  border: 1px solid color-mix(in srgb, var(--color-border) 72%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-border) 45%, transparent);
   border-radius: 0.5rem;
-  background-color: color-mix(in srgb, var(--color-background) 68%, transparent);
-  -webkit-backdrop-filter: blur(24px) saturate(140%);
-  backdrop-filter: blur(24px) saturate(140%);
+  background: color-mix(in srgb, var(--color-background) 74%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(130%);
+  backdrop-filter: blur(14px) saturate(130%);
   padding: var(--spacing-2xs);
 }
 
@@ -167,8 +168,9 @@
 .menuItemActive {
   display: flex;
   align-items: baseline;
+  justify-content: center;
   gap: var(--spacing-xs);
-  padding: 0.45rem 0.75rem;
+  padding: 0.45rem 0.9rem;
   border-radius: 0.25rem;
   color: var(--color-heading);
   font-family: var(--font-display);
@@ -182,66 +184,9 @@
   color: var(--color-primary);
 }
 
-.menuItem:hover {
-  background: var(--color-surface);
-}
-
 .menuItemActive,
 .menuItemActive:hover {
   background: transparent;
-  color: var(--color-primary);
-}
-
-.breadcrumbItem {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  min-width: 0;
-  width: 100%;
-  padding: calc(var(--spacing-xs) / 1.5) var(--spacing-sm);
-  font-family: var(--font-display);
-  font-size: var(--fs-small);
-  font-weight: 500;
-}
-
-.breadcrumbPart {
-  display: inline-flex;
-  align-items: baseline;
-  min-width: 0;
-  max-width: 100%;
-}
-
-.breadcrumbSeparator {
-  width: 0.7em;
-  height: 0.7em;
-  margin-inline: var(--spacing-xs);
-  color: var(--color-text-muted);
-  flex: 0 0 auto;
-  align-self: center;
-}
-
-.breadcrumbLink,
-.currentPage {
-  color: var(--color-heading);
-  font-family: var(--font-display);
-  font-weight: 500;
-  text-decoration: none;
-}
-
-.breadcrumbLink:hover {
-  color: var(--color-primary);
-}
-
-.breadcrumbItem a[aria-current="page"] {
-  color: var(--color-primary);
-}
-
-.currentPage {
-  overflow-wrap: anywhere;
-  white-space: normal;
-}
-
-.currentPage:hover {
   color: var(--color-primary);
 }
 
@@ -261,6 +206,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .menuTrigger,
+  .menuDropdown,
   .themeToggle {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;

@@ -5,16 +5,14 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import contentStyles from "./content/content.module.css";
 import { formatDate, getContentPosts } from "./content/posts";
 import HomeExperience from "./home-experience";
 import styles from "./home.module.css";
 import { projects } from "./projects/projects";
 
-const previewLimit = 3;
-
 export default function Home() {
-  const posts = getContentPosts().slice(0, previewLimit);
+  const latestPost = getContentPosts()[0];
+  const latestProject = projects[0];
 
   return (
     <HomeExperience>
@@ -53,34 +51,28 @@ export default function Home() {
 
       <nav className={styles.homeDirectory} aria-label="Explore the site">
         <ul>
-          <li>
+          <li className={styles.directoryRow}>
             <h3><Link href="/content">Content</Link></h3>
-            {posts.length > 0 && (
-              <ul className={`${contentStyles.list} ${styles.previewList}`} aria-label="Latest content">
-                {posts.map((post) => (
-                  <li className={contentStyles.entry} key={post.slug}>
-                    <Link className={contentStyles.entryLink} href={`/content/${post.slug}`}>
-                      {post.metadata.title}
-                    </Link>
-                    <p className={contentStyles.entryDate}>
-                      {formatDate(post.metadata.publishedAt, false)}
-                    </p>
-                  </li>
-                ))}
-              </ul>
+            {latestPost && (
+              <>
+                <Link className={styles.latest} href={`/content/${latestPost.slug}`}>
+                  {latestPost.metadata.title}
+                </Link>
+                <time className={styles.latestDate} dateTime={latestPost.metadata.publishedAt}>
+                  {formatDate(latestPost.metadata.publishedAt, false)}
+                </time>
+              </>
             )}
           </li>
-          <li>
+          <li className={styles.directoryRow}>
             <h3><Link href="/projects">Projects</Link></h3>
-            <ul className={`${contentStyles.list} ${styles.previewList}`} aria-label="Projects">
-              {projects.slice(0, previewLimit).map((project) => (
-                <li key={project.href}>
-                  <Link className={contentStyles.entryLink} href={project.href}>
-                    {project.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            {latestProject && (
+              <>
+                <Link className={styles.latest} href={latestProject.href}>
+                  {latestProject.title}
+                </Link>
+              </>
+            )}
           </li>
           <li>
             <h3>
