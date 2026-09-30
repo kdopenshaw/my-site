@@ -18,7 +18,7 @@ import {
   QuestionnaireSubmit,
   QuestionnaireTitle,
 } from "@/components/ui/questionnaire";
-import { startQuestionnaire, submitQuestionnaire } from "./actions";
+import { setArticleNotification, startQuestionnaire, submitQuestionnaire } from "./actions";
 import { questionnaireStyles } from "@/components/ui/questionnaire";
 import { questionnaire, type Dilemma, type Framing } from "./questions";
 import styles from "./questionnaire.module.css";
@@ -48,6 +48,7 @@ export default function QuestionnaireForm() {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
+  const [notify, setNotify] = useState<boolean | null>(null);
   const shownAt = useRef(0);
   const activeId = useRef("");
   const times = useRef<Record<string, number>>({});
@@ -118,12 +119,41 @@ export default function QuestionnaireForm() {
     setDone(true);
   }
 
+  async function chooseNotification(wantsNotification: boolean) {
+    setPending(true);
+    setError("");
+    const result = await setArticleNotification(email, wantsNotification);
+    setPending(false);
+    if (!result.ok) {
+      setError("That preference could not be saved. Try again.");
+      return;
+    }
+    setNotify(wantsNotification);
+  }
+
   if (done) {
     return (
-      <p>
-        Thank you. Your answers are saved. The article will show them next to the model results,
-        identified by this email.
-      </p>
+      <div className={styles.form}>
+        <p>
+          Thank you, your answers are saved.
+          {notify === null
+            ? " Would you like to be notified once the article is published?"
+            : notify
+              ? " I'll email you when the article is published."
+              : " I won't email you about the article."}
+        </p>
+        {notify === null ? (
+          <div className={styles.actions}>
+            <button className="button" type="button" disabled={pending} onClick={() => chooseNotification(true)}>
+              Yes
+            </button>
+            <button className="button" type="button" disabled={pending} onClick={() => chooseNotification(false)}>
+              No
+            </button>
+          </div>
+        ) : null}
+        {error ? <p className={styles.error}>{error}</p> : null}
+      </div>
     );
   }
 

@@ -158,3 +158,32 @@ export async function submitQuestionnaire(
     client.release();
   }
 }
+
+export async function setArticleNotification(
+  email: string,
+  notify: boolean,
+): Promise<{ ok: true } | { ok: false; reason: "invalid" | "unavailable" }> {
+  const cleaned = cleanEmail(email);
+  const db = dilemmaDatabase();
+  if (!cleaned || typeof notify !== "boolean") return { ok: false, reason: "invalid" };
+  if (!db) return { ok: false, reason: "unavailable" };
+
+  try {
+    const updated = await db.query(
+      `update "ai-dilemmas".participants
+       set notify_when_published = $2
+       where lower(email) = lower($1)
+         and exists (
+           select 1 from "ai-dilemmas".human_results
+           where participant_id = "ai-dilemmas".participants.id
+         )
+       returning id`,
+      [cleaned, notify],
+    );
+    if (!updated.rowCount) return { ok: false, reason: "invalid" };
+    return { ok: true };
+  } catch (error) {
+    console.error("Failed to save article notification preference:", error);
+    return { ok: false, reason: "unavailable" };
+  }
+}
