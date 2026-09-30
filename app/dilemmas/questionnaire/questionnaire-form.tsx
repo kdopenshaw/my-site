@@ -131,7 +131,7 @@ export default function QuestionnaireForm() {
     return (
       <form className={styles.form} onSubmit={begin}>
         <p>
-          Please choose an answer for the following six short hypothetical situations. For each one, pick the option you think is better, then say how much better it is compared to the other option and how sure you are. Use an email address so your answers can compare your choices with the models, nobody else will see your answers.
+          Please choose an answer for the following six short hypothetical situations. For each one, pick the option you think is better, then say how much better it is compared to the other option and how sure you are in your choice. Use an email address so your answers can compare your choices with the models, nobody else will see your answers.
         </p>
         <div className={styles.field}>
           <label htmlFor="participant-email">Email</label>
@@ -225,7 +225,7 @@ function QuestionStep({
           onChange={(preference) => onRate({ ...rating, preference })}
         />
         <RatingSlider
-          label="How sure are you?"
+          label="How sure are you in your choice?"
           low="Not sure"
           high="Completely sure"
           value={rating.confidence}
