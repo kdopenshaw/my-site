@@ -131,9 +131,7 @@ export default function QuestionnaireForm() {
     return (
       <form className={styles.form} onSubmit={begin}>
         <p>
-          Six short hypothetical situations. For each one, pick the option you think is better,
-          then say how much better and how sure you are. Use an email address so your answers can
-          be shown with the results later.
+          Please choose an answer for the following six short hypothetical situations. For each one, pick the option you think is better, then say how much better it is compared to the other option and how sure you are. Use an email address so your answers can compare your choices with the models, nobody else will see your answers.
         </p>
         <div className={styles.field}>
           <label htmlFor="participant-email">Email</label>
