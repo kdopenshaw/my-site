@@ -5,15 +5,10 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { formatDate, getContentPosts } from "./content/posts";
 import HomeExperience from "./home-experience";
 import styles from "./home.module.css";
-import { projects } from "./projects/projects";
 
 export default function Home() {
-  const latestPost = getContentPosts()[0];
-  const latestProject = projects[0];
-
   return (
     <HomeExperience>
       <div className={styles.introductionCopy}>
@@ -51,33 +46,14 @@ export default function Home() {
 
       <nav className={styles.homeDirectory} aria-label="Explore the site">
         <ul>
-          <li className={styles.directoryRow}>
+          <li>
             <h3><Link href="/content">Content</Link></h3>
-            {latestPost && (
-              <>
-                <Link className={styles.latest} href={`/content/${latestPost.slug}`}>
-                  {latestPost.metadata.title}
-                </Link>
-                <time className={styles.latestDate} dateTime={latestPost.metadata.publishedAt}>
-                  {formatDate(latestPost.metadata.publishedAt, false)}
-                </time>
-              </>
-            )}
-          </li>
-          <li className={styles.directoryRow}>
-            <h3><Link href="/projects">Projects</Link></h3>
-            {latestProject && (
-              <>
-                <Link className={styles.latest} href={latestProject.href}>
-                  {latestProject.title}
-                </Link>
-              </>
-            )}
           </li>
           <li>
-            <h3>
-              <Link href="/blacksmithing">Blacksmithing</Link>
-            </h3>
+            <h3><Link href="/projects">Projects</Link></h3>
+          </li>
+          <li>
+            <h3><Link href="/blacksmithing">Blacksmithing</Link></h3>
           </li>
         </ul>
       </nav>
