@@ -1,6 +1,6 @@
 "use client";
 
-import { useId } from "react";
+import { useId, useState } from "react";
 import DiagramHelp from "./diagram-help";
 import type { ReactNode } from "react";
 
@@ -115,6 +115,7 @@ export function RangeField({
   help?: { label: string; src: string; text: string };
 }) {
   const id = useId();
+  const display = value.toFixed(digits).replace("-", "−");
   return (
     <div className={`${styles.rangeField} ${disabled ? styles.isDisabled : ""}`}>
       <div className={styles.rangeLabel}>
@@ -124,7 +125,18 @@ export function RangeField({
             <DiagramHelp label={help.label} diagrams={[{ src: help.src }]} help={help.text} />
           )}
         </div>
-        <output>{value.toFixed(digits).replace("-", "−")}</output>
+        {disabled ? (
+          <output>{display}</output>
+        ) : (
+          <EditableRangeValue
+            value={value}
+            display={display}
+            min={min}
+            max={max}
+            name={help?.label ?? "value"}
+            onChange={onChange}
+          />
+        )}
       </div>
       <input
         id={id}
@@ -138,6 +150,56 @@ export function RangeField({
         onChange={(event) => onChange(Number(event.target.value))}
       />
     </div>
+  );
+}
+
+function EditableRangeValue({
+  value,
+  display,
+  min,
+  max,
+  name,
+  onChange,
+}: {
+  value: number;
+  display: string;
+  min: number;
+  max: number;
+  name: string;
+  onChange: (value: number) => void;
+}) {
+  const [draft, setDraft] = useState<string | null>(null);
+
+  function commit(raw: string) {
+    const parsed = Number(raw.replace("−", "-"));
+    if (Number.isFinite(parsed)) onChange(Math.min(max, Math.max(min, parsed)));
+    setDraft(null);
+  }
+
+  if (draft !== null) {
+    return (
+      <input
+        className={`${styles.numberInput} ${styles.rangeValueInput}`}
+        type="text"
+        inputMode="decimal"
+        aria-label={`Edit ${name}`}
+        value={draft}
+        autoFocus
+        onFocus={(event) => event.currentTarget.select()}
+        onChange={(event) => setDraft(event.target.value)}
+        onBlur={() => commit(draft)}
+        onKeyDown={(event) => {
+          if (event.key === "Enter") event.currentTarget.blur();
+          if (event.key === "Escape") setDraft(null);
+        }}
+      />
+    );
+  }
+
+  return (
+    <button type="button" className={styles.rangeValue} onClick={() => setDraft(String(value))}>
+      {display}
+    </button>
   );
 }
 

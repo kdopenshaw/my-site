@@ -53,15 +53,10 @@ function hslToHex(hue: number, saturation: number, lightness: number) {
 }
 
 export function randomPalette(count: number) {
-  const hue = Math.floor(Math.random() * 360);
-  const direction = Math.random() > 0.5 ? 1 : -1;
-  const sweep = 35 + Math.floor(Math.random() * 146);
-
-  return Array.from({ length: count }, (_, index) => {
-    const position = index / (count - 1);
-    const stopHue = (hue + direction * sweep * position + 360) % 360;
-    const saturation = 52 + Math.round(28 * Math.sin(position * Math.PI));
-    const lightness = 7 + Math.round(position * 82);
-    return hslToHex(stopHue, saturation, lightness);
+  return Array.from({ length: Math.max(count, 2) }, () => {
+    const hue = Math.floor(Math.random() * 360);
+    const saturation = 20 + Math.floor(Math.random() * 81);
+    const lightness = 12 + Math.floor(Math.random() * 77);
+    return hslToHex(hue, saturation, lightness);
   });
 }

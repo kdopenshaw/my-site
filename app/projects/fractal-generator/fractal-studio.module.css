@@ -38,6 +38,8 @@
 }
 .orbitGroup {
   grid-area: orbit;
+  align-content: start;
+  min-height: 12.5rem;
 }
 .colorGroup {
   grid-area: color;
@@ -52,6 +54,13 @@
 .familyList {
   display: grid;
   gap: var(--spacing-2xs);
+}
+.savedHeading {
+  margin: var(--spacing-xs) 0 0;
+  color: var(--color-heading);
+  font: 400 var(--fs-caption)/1.4 var(--font-code);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 .familyOption {
   border-radius: var(--spacing-xs);
@@ -95,12 +104,21 @@
   gap: var(--spacing-xs);
   min-width: 0;
 }
+.constantIdle {
+  opacity: 0.55;
+}
+.constantNote {
+  margin: 0;
+  color: var(--color-text-muted);
+  font: 400 var(--fs-caption)/1.45 var(--font-primary);
+}
 .equationBar {
   grid-area: equation;
   display: grid;
   align-content: start;
   gap: var(--spacing-xs);
   min-width: 0;
+  min-height: 14.5rem;
   padding: var(--spacing-xs);
   border: 1px solid color-mix(in srgb, var(--color-border) 45%, transparent);
   border-radius: var(--spacing-xs);
@@ -141,6 +159,21 @@
   color: var(--color-accent);
 }
 
+.equationBar > .numberField:has(.stepper) {
+  grid-template-columns: minmax(0, 1fr) 6.5rem;
+  align-items: center;
+}
+.saveFamily {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--spacing-2xs);
+  align-items: center;
+}
+.saveFamily button {
+  height: 1.75rem;
+  padding-inline: var(--spacing-xs);
+  font-size: var(--fs-caption);
+}
 .equationLong {
   flex-wrap: wrap;
   gap: var(--spacing-2xs) 0.14em;
@@ -288,10 +321,26 @@
   justify-content: space-between;
   gap: var(--spacing-xs);
 }
-.rangeField output {
+.rangeField output,
+.rangeValue {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
   color: var(--color-heading);
   font: 400 var(--fs-small)/1.25 var(--font-primary);
   font-variant-numeric: tabular-nums;
+  cursor: text;
+}
+.rangeValue:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+.rangeValueInput {
+  width: 5rem;
+  min-height: 1.5rem;
+  padding-block: 0;
+  text-align: right;
 }
 .rangeSlider {
   width: 100%;
@@ -697,6 +746,9 @@ button.download {
   .familyList {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: start;
+  }
+  .savedHeading {
+    grid-column: 1 / -1;
   }
   .preview {
     grid-template-rows: minmax(14rem, 32vh) auto;

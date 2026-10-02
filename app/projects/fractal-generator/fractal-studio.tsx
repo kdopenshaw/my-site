@@ -25,13 +25,37 @@ const FAST_RENDER_WORK = 50_000_000;
 const MAX_RENDER_WORK = 200_000_000;
 const MIN_COLOR_STOPS = 2;
 const MAX_COLOR_STOPS = 8;
+const SAVED_FAMILIES_KEY = "fractal-generator-saved-families";
+
+type SavedFamily = {
+  id: string;
+  label: string;
+  parameters: FractalParameters;
+};
+
+function readSavedFamilies(): SavedFamily[] {
+  try {
+    const stored = window.localStorage.getItem(SAVED_FAMILIES_KEY);
+    if (!stored) return [];
+    const parsed = JSON.parse(stored) as SavedFamily[];
+    if (!Array.isArray(parsed)) return [];
+    return parsed.flatMap((entry) => {
+      if (!entry || typeof entry.id !== "string" || typeof entry.label !== "string" || !entry.parameters) return [];
+      return [{ ...entry, parameters: { ...entry.parameters, relax: entry.parameters.relax ?? 1 } }];
+    });
+  } catch {
+    return [];
+  }
+}
 
 export default function FractalStudio() {
   const [parameters, setParameters] = useState<FractalParameters>(() => ({
     ...PRESETS.mandelbrot.parameters,
     colors: [...PRESETS.mandelbrot.parameters.colors],
   }));
-  const [presetKey, setPresetKey] = useState<PresetKey>("mandelbrot");
+  const [presetKey, setPresetKey] = useState<string>("mandelbrot");
+  const [savedFamilies, setSavedFamilies] = useState<SavedFamily[]>([]);
+  const [familyName, setFamilyName] = useState("");
   const [isAspectLocked, setIsAspectLocked] = useState(true);
   const [status, setStatus] = useState("");
   const [renderError, setRenderError] = useState("");
@@ -57,6 +81,15 @@ export default function FractalStudio() {
   const isSlowRender = estimatedWork > FAST_RENDER_WORK && isWithinWorkLimit;
   const usesFixedConstant = parameters.family === "julia";
   const usesEscapeRadius = parameters.family !== "newton";
+  const activePreset = (PRESETS as Record<string, (typeof PRESETS)[PresetKey]>)[presetKey];
+  const activeSaved = savedFamilies.find((family) => family.id === presetKey);
+  const baseline = activePreset?.parameters ?? activeSaved?.parameters;
+  const canSaveFamily = Boolean(
+    baseline &&
+      (baseline.power !== parameters.power ||
+        (usesFixedConstant &&
+          (baseline.cReal !== parameters.cReal || baseline.cImag !== parameters.cImag))),
+  );
 
   const update = <K extends keyof FractalParameters>(key: K, value: FractalParameters[K]) => {
     setParameters((current) => ({ ...current, [key]: value }));
@@ -73,17 +106,44 @@ export default function FractalStudio() {
       return distance(entry[1].parameters) < distance(best[1].parameters) ? entry : best;
     }, null);
     if (closest) setPresetKey(closest[0]);
-    aspectRatioRef.current = next.width / Math.max(1, next.height);
-    setParameters(next);
+    const loaded = { ...next, relax: next.relax ?? 1 };
+    aspectRatioRef.current = loaded.width / Math.max(1, loaded.height);
+    setParameters(loaded);
     setStatus("Gallery settings loaded into the generator.");
-    void renderFractal(next);
+    void renderFractal(loaded);
     document.getElementById("fractal-studio")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const choosePreset = (key: PresetKey) => {
+  const applyFamily = (key: string, next: FractalParameters) => {
     setPresetKey(key);
-    aspectRatioRef.current = PRESETS[key].parameters.width / PRESETS[key].parameters.height;
-    setParameters({ ...PRESETS[key].parameters, colors: [...PRESETS[key].parameters.colors] });
+    setFamilyName("");
+    aspectRatioRef.current = next.width / next.height;
+    setParameters({ ...next, colors: [...next.colors] });
+  };
+
+  const choosePreset = (key: string) => {
+    const preset = (PRESETS as Record<string, (typeof PRESETS)[PresetKey]>)[key];
+    if (preset) {
+      applyFamily(key, preset.parameters);
+      return;
+    }
+    const saved = savedFamilies.find((family) => family.id === key);
+    if (saved) applyFamily(key, saved.parameters);
+  };
+
+  const saveFamily = () => {
+    const label = familyName.trim();
+    if (!label || !canSaveFamily) return;
+    const nextFamily: SavedFamily = {
+      id: crypto.randomUUID(),
+      label,
+      parameters: { ...parameters, colors: [...parameters.colors] },
+    };
+    const nextFamilies = [...savedFamilies, nextFamily];
+    setSavedFamilies(nextFamilies);
+    window.localStorage.setItem(SAVED_FAMILIES_KEY, JSON.stringify(nextFamilies));
+    setPresetKey(nextFamily.id);
+    setFamilyName("");
   };
 
   const updateRaster = (dimension: "width" | "height", value: number) => {
@@ -157,6 +217,7 @@ export default function FractalStudio() {
       iterations: String(nextParameters.iterations),
       escape_radius: String(nextParameters.escapeRadius),
       gamma: String(nextParameters.gamma),
+      relax: String(nextParameters.relax ?? 1),
       width: String(nextParameters.width),
       height: String(nextParameters.height),
       palette: nextParameters.palette === "custom" ? "ocean_reef" : nextParameters.palette,
@@ -261,6 +322,7 @@ export default function FractalStudio() {
     if (hasInitializedRef.current) return;
     hasInitializedRef.current = true;
 
+    setSavedFamilies(readSavedFamilies());
     const startingFractal = randomStartingFractal();
     setPresetKey(startingFractal.presetKey);
     aspectRatioRef.current = startingFractal.parameters.width / startingFractal.parameters.height;
@@ -285,7 +347,7 @@ export default function FractalStudio() {
           />
           <RadioGroup
             value={presetKey}
-            onValueChange={(key) => choosePreset(key as PresetKey)}
+            onValueChange={choosePreset}
             aria-labelledby="fractal-label-i"
             className={styles.familyList}
           >
@@ -301,6 +363,21 @@ export default function FractalStudio() {
                   </RadioGroupItem>
                 </div>
               ),
+            )}
+            {savedFamilies.length > 0 && (
+              <>
+                <p className={styles.savedHeading}>Saved</p>
+                {savedFamilies.map((family) => (
+                  <div
+                    key={family.id}
+                    className={`${styles.familyOption} ${presetKey === family.id ? styles.selectedFamily : ""}`}
+                  >
+                    <RadioGroupItem value={family.id} className={styles.familyChoice}>
+                      <span>{family.label}</span>
+                    </RadioGroupItem>
+                  </div>
+                ))}
+              </>
             )}
           </RadioGroup>
         </aside>
@@ -347,7 +424,21 @@ export default function FractalStudio() {
         <div className={styles.equationBar}>
           <span className={`${styles.fieldLabel} ${styles.equationLabel}`}>Iteration rule</span>
           <FractalEquation family={parameters.family} power={parameters.power} />
-          {usesFixedConstant && (
+          <NumberField
+            label="exponent p"
+            help={{
+              label: "exponent p",
+              src: "/fractals/help/exponent.svg",
+              text: "Sets the exponent in the recurrence. Larger powers change the rotational symmetry and number of major lobes.",
+            }}
+            value={parameters.power}
+            min={2}
+            max={8}
+            step={1}
+            stepper
+            onChange={(value) => update("power", value)}
+          />
+          {usesFixedConstant ? (
             <div className={styles.constantControls} role="group" aria-labelledby="fractal-label-iv">
               <ConfigLabel index="IV" title="Constant c" />
               <RangeField
@@ -379,26 +470,55 @@ export default function FractalStudio() {
                 onChange={(value) => update("cImag", value)}
               />
             </div>
+          ) : parameters.family === "newton" ? (
+            <div className={styles.constantControls} role="group" aria-labelledby="fractal-label-iv">
+              <ConfigLabel index="IV" title="Newton step" />
+              <RangeField
+                label="weight r"
+                help={{
+                  label: "weight r",
+                  src: "/fractals/help/orbit.svg",
+                  text: "Scales the Newton correction. 1 is the usual step toward a root. A lighter weight approaches more slowly. A heavier weight overshoots and tangles the boundaries between roots.",
+                }}
+                value={parameters.relax}
+                min={0.2}
+                max={2}
+                step={0.05}
+                digits={2}
+                onChange={(value) => update("relax", value)}
+              />
+            </div>
+          ) : (
+            <div className={`${styles.constantControls} ${styles.constantIdle}`} role="group" aria-labelledby="fractal-label-iv">
+              <ConfigLabel index="IV" title="Constant c" />
+              <p className={styles.constantNote}>Each point on the plane is its own c.</p>
+            </div>
+          )}
+          {canSaveFamily && (
+            <div className={styles.saveFamily}>
+              <input
+                className={styles.numberInput}
+                type="text"
+                value={familyName}
+                placeholder="Family name"
+                aria-label="Saved family name"
+                onChange={(event) => setFamilyName(event.target.value)}
+              />
+              <button
+                className="button-outline"
+                type="button"
+                disabled={!familyName.trim()}
+                onClick={saveFamily}
+              >
+                Save
+              </button>
+            </div>
           )}
         </div>
         <aside className={styles.controlPanel} aria-label="Fractal settings">
           <div role="group" aria-labelledby="fractal-label-v" className={`${styles.configGroup} ${styles.orbitGroup}`}>
             <ConfigLabel index="V" title="Orbit" />
             <div className={styles.orbitFields}>
-            <NumberField
-              label="exponent p"
-              help={{
-                label: "exponent p",
-                src: "/fractals/help/exponent.svg",
-                text: "Sets the exponent in the recurrence. Larger powers change the rotational symmetry and number of major lobes.",
-              }}
-              value={parameters.power}
-              min={2}
-              max={8}
-              step={1}
-              stepper
-              onChange={(value) => update("power", value)}
-            />
             <RangeField
               label="iterations"
               help={{

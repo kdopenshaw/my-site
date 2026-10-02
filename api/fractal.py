@@ -63,6 +63,7 @@ class FractalParameters:
     power: int = 2
     escape_radius: float = 2.0
     gamma: float = 1.0
+    relax: float = 1.0
     palette: str = "ocean_reef"
     colors: tuple[tuple[int, int, int], ...] = PALETTES["ocean_reef"]
 
@@ -146,6 +147,7 @@ def parse_parameters(path: str) -> FractalParameters:
         power=_integer(query, "power", 2, 2, 8),
         escape_radius=_number(query, "escape_radius", 2.0, 2.0, 10.0),
         gamma=_number(query, "gamma", 1.0, 0.5, 2.2),
+        relax=_number(query, "relax", 1.0, 0.2, 2.0),
         palette=palette,
         colors=colors,
     )
@@ -198,7 +200,7 @@ def _newton_color(
         derivative = power * z ** (power - 1)
         if abs(derivative) < 1e-12:
             break
-        z -= polynomial / derivative
+        z -= parameters.relax * polynomial / derivative
 
     return (4, 8, 20)
 

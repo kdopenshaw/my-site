@@ -15,6 +15,7 @@ export type FractalParameters = {
   iterations: number;
   escapeRadius: number;
   gamma: number;
+  relax: number;
   width: number;
   height: number;
   palette: string;
@@ -58,10 +59,11 @@ export const RESOLUTION_PRESETS = {
 type PaletteName = keyof typeof PALETTES;
 
 function parameters(
-  values: Omit<FractalParameters, "colors" | "palette"> & { palette: PaletteName },
+  values: Omit<FractalParameters, "colors" | "palette" | "relax"> & { palette: PaletteName; relax?: number },
 ): FractalParameters {
   return {
     ...values,
+    relax: values.relax ?? 1,
     colors: [...PALETTES[values.palette].colors],
   };
 }
