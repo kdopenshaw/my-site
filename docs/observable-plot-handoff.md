@@ -66,7 +66,7 @@ Merge site defaults under the caller’s options. The caller wins on conflict.
 - `style` is an object, merged key by key. Defaults:
   - `background`: `"transparent"` so light and dark page backgrounds show through
   - `color`: `plotColors.text`, which axes and ticks inherit through `currentColor`
-  - `fontFamily`: `"var(--font-primary)"` (Source Serif 4, set in `app/layout.tsx` and `app/globals.css`)
+  - `fontFamily`: `"var(--font-primary)"` (Source Sans 3, set in `app/layout.tsx` and `app/globals.css`)
   - `fontSize`: `"var(--fs-small)"`
 - If `options.style` is a string, ignore the string and keep the object defaults. Callers pass `style` as an object so the merge stays reliable.
 - Width is the mount node’s `clientWidth`. If that is 0, skip rendering. A `ResizeObserver` on the mount node redraws when the width changes. Do not hardcode 640, which is Plot’s default width.

@@ -39,8 +39,7 @@
   --shadow-control: 0 0.75rem 2.25rem rgb(13 27 42 / 10%);
 
   /* Typography */
-  --font-primary: var(--font-source-serif), "Iowan Old Style", Palatino, "Palatino Linotype",
-    Georgia, serif;
+  --font-primary: var(--font-ibm-plex-serif), Georgia, "Times New Roman", serif;
   --font-display: var(--font-geologica), var(--font-primary);
   --font-code: var(--font-inconsolata), "SFMono-Regular", Consolas,
     "Liberation Mono", monospace;
@@ -83,7 +82,7 @@
   --color-text: #cbbfb5;
   --color-text-muted: #a89d94;
 
-  --color-primary: #3da286; /* emerald green #3da286 */
+  --color-primary: #4cbba5; /* emerald green #3da286 */
   --color-primary-hover: #4dbc9d;
   --color-on-primary: #182738;
 
@@ -250,7 +249,7 @@ img {
   padding-bottom: var(--spacing-2xl);
 }
 
-/* Copper mark under a title. Heading sizes are defined in the h1–h6 rules above. */
+/* Mark under a title. Heading sizes are defined in the h1–h6 rules above.
 .heading-accent::after {
   display: block;
   width: 2.5rem;
@@ -260,6 +259,7 @@ img {
   background: var(--color-accent);
   content: "";
 }
+*/
 
 .image-grid {
   columns: var(--gallery-columns, 2);

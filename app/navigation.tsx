@@ -7,9 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./navigation.module.css";
 import ThemeToggle from "./theme-toggle";
 
-// The menu on every page. "use client" is required because open/closed
-// and the current URL only exist in the browser.
-// To add a page to the menu, add it to this list.
+// The four pages in the menu. To add one, add it here.
 
 const links = [
   { href: "/", label: "Home" },
@@ -22,12 +20,11 @@ export default function Navigation() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
-  // After a click, ignore hover until the pointer moves.
-  // Otherwise the menu reopens immediately under the cursor.
   const [hoverEnabled, setHoverEnabled] = useState(true);
   const menuRef = useRef<HTMLDivElement>(null);
   const openedByHoverAt = useRef(0);
   const lastScrollY = useRef(0);
+  const showMenu = pathname !== "/dilemmas/questionnaire";
 
   const isActive = (href: string) =>
     pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
@@ -37,6 +34,33 @@ export default function Navigation() {
     setHoverEnabled(false);
     window.addEventListener("pointermove", () => setHoverEnabled(true), { once: true });
   };
+
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!showMenu) return undefined;
+
+    const place = () => {
+      const menu = menuRef.current;
+      const column = document.querySelector("main .page-shell");
+      if (!menu || !column) {
+        if (menu) menu.style.left = "";
+        return;
+      }
+      const bounds = column.getBoundingClientRect();
+      if (bounds.width > window.innerWidth * 0.92) {
+        menu.style.left = "";
+        return;
+      }
+      menu.style.left = `${bounds.left}px`;
+    };
+
+    place();
+    window.addEventListener("resize", place);
+    return () => window.removeEventListener("resize", place);
+  }, [showMenu, pathname]);
 
   useEffect(() => {
     lastScrollY.current = window.scrollY;
@@ -86,63 +110,62 @@ export default function Navigation() {
 
   return (
     <header className={`${styles.siteHeader} ${pathname === "/" ? styles.homeHeader : ""} ${hidden ? styles.headerHidden : ""}`}>
-      {pathname !== "/dilemmas/questionnaire" && <div
-        className={styles.menu}
-        ref={menuRef}
-        onMouseEnter={() => {
-          if (!hoverEnabled) return;
-          openedByHoverAt.current = Date.now();
-          setOpen(true);
-        }}
-        onMouseLeave={() => {
-          openedByHoverAt.current = 0;
-          setOpen(false);
-        }}
-      >
-        <button
-          type="button"
-          className={styles.menuTrigger}
-          aria-expanded={open}
-          aria-controls="site-menu"
-          aria-label={open ? "Close navigation menu" : "Open navigation menu"}
-          onClick={() => {
-            // Moving onto the button already opens the menu, and that
-            // mouseenter happens before this click. Ignore that first click
-            // so it does not immediately close the menu.
-            const justOpenedByHover = Date.now() - openedByHoverAt.current < 400;
-            if (justOpenedByHover) {
-              openedByHoverAt.current = 0;
-              setOpen(true);
-              return;
-            }
-            setOpen((isOpen) => !isOpen);
+      {showMenu && (
+        <div
+          className={styles.menu}
+          ref={menuRef}
+          onMouseEnter={() => {
+            if (!hoverEnabled) return;
+            openedByHoverAt.current = Date.now();
+            setOpen(true);
+          }}
+          onMouseLeave={() => {
+            openedByHoverAt.current = 0;
+            setOpen(false);
           }}
         >
-          <span className={styles.burger} aria-hidden="true" />
-        </button>
-        {open && (
-          <nav id="site-menu" className={styles.menuDropdown} aria-label="Site">
-            <ul>
-              {links.map((link) => {
-                const active = isActive(link.href);
+          <button
+            type="button"
+            className={styles.menuTrigger}
+            aria-expanded={open}
+            aria-controls="site-menu"
+            aria-label={open ? "Close navigation menu" : "Open navigation menu"}
+            onClick={() => {
+              const justOpenedByHover = Date.now() - openedByHoverAt.current < 400;
+              if (justOpenedByHover) {
+                openedByHoverAt.current = 0;
+                setOpen(true);
+                return;
+              }
+              setOpen((isOpen) => !isOpen);
+            }}
+          >
+            <span className={styles.burger} aria-hidden="true" />
+          </button>
+          {open && (
+            <nav id="site-menu" className={styles.menuPanel} aria-label="Site">
+              <ul>
+                {links.map((link) => {
+                  const active = isActive(link.href);
 
-                return (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      aria-current={active ? "page" : undefined}
-                      className={active ? styles.menuItemActive : styles.menuItem}
-                      onClick={closeAfterNavigation}
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </nav>
-        )}
-      </div>}
+                  return (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        aria-current={active ? "page" : undefined}
+                        className={active ? styles.menuLinkActive : styles.menuLink}
+                        onClick={closeAfterNavigation}
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </nav>
+          )}
+        </div>
+      )}
       <ThemeToggle />
     </header>
   );

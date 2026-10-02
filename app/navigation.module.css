@@ -2,11 +2,8 @@
   position: sticky;
   top: 0;
   z-index: 30;
-  display: flex;
-  justify-content: center;
-  max-width: var(--content-width);
-  margin: 0 auto;
-  padding: var(--spacing-lg);
+  width: 100%;
+  min-height: calc(2.25rem + 2 * var(--spacing-lg));
   transition: transform 240ms ease;
 }
 
@@ -31,7 +28,7 @@
 
 .themeToggle {
   position: absolute;
-  right: var(--spacing-lg);
+  right: max(var(--spacing-lg), calc((100% - var(--content-width)) / 2 + var(--spacing-lg)));
   top: var(--spacing-lg);
   min-height: 2.25rem;
   width: 2.25rem;
@@ -66,7 +63,50 @@
 }
 
 .menu {
-  position: relative;
+  position: absolute;
+  top: max(var(--spacing-lg), env(safe-area-inset-top));
+  left: max(var(--spacing-sm), calc((100% - 36rem) / 2));
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.menuPanel {
+  display: flex;
+  align-items: center;
+  height: 2.25rem;
+  padding-inline: 0.35rem 0.7rem;
+  border-radius: 0.45rem;
+  background: color-mix(in srgb, var(--color-background) 74%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(130%);
+  backdrop-filter: blur(14px) saturate(130%);
+}
+
+.menuPanel ul {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.menuLink,
+.menuLinkActive {
+  color: var(--color-heading);
+  font-family: var(--font-display);
+  font-size: var(--fs-small);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.menuLink:hover,
+.menuLinkActive,
+.menuLinkActive:hover {
+  color: var(--color-primary);
 }
 
 .menuTrigger {
@@ -120,81 +160,20 @@
   top: 6px;
 }
 
-.menuTrigger[aria-expanded="true"] .burger {
-  background-color: transparent;
+.menuTrigger[aria-expanded="true"] .burger::before,
+.menuTrigger[aria-expanded="true"] .burger::after {
+  transform-origin: right center;
 }
 
 .menuTrigger[aria-expanded="true"] .burger::before {
-  transform: translateY(6px) rotate(45deg);
+  transform: translateY(6px) rotate(-40deg) scaleX(0.55);
 }
 
 .menuTrigger[aria-expanded="true"] .burger::after {
-  transform: translateY(-6px) rotate(-45deg);
-}
-
-.menuDropdown {
-  position: absolute;
-  z-index: 20;
-  top: calc(100% + 0.35rem);
-  left: 50%;
-  width: max-content;
-  max-width: min(17.5rem, calc(100vw - 2 * var(--spacing-sm)));
-  translate: -50% 0;
-  border: 1px solid color-mix(in srgb, var(--color-border) 45%, transparent);
-  border-radius: 0.5rem;
-  background: color-mix(in srgb, var(--color-background) 74%, transparent);
-  -webkit-backdrop-filter: blur(14px) saturate(130%);
-  backdrop-filter: blur(14px) saturate(130%);
-  padding: var(--spacing-2xs);
-}
-
-.menuDropdown::before {
-  position: absolute;
-  top: -0.5rem;
-  right: 0;
-  left: 0;
-  height: 0.5rem;
-  content: "";
-}
-
-.menuDropdown ul {
-  display: grid;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.menuItem,
-.menuItemActive {
-  display: flex;
-  align-items: baseline;
-  justify-content: center;
-  gap: var(--spacing-xs);
-  padding: 0.45rem 0.9rem;
-  border-radius: 0.25rem;
-  color: var(--color-heading);
-  font-family: var(--font-display);
-  font-size: var(--fs-small);
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.menuItem:hover,
-.menuItemActive {
-  color: var(--color-primary);
-}
-
-.menuItemActive,
-.menuItemActive:hover {
-  background: transparent;
-  color: var(--color-primary);
+  transform: translateY(-6px) rotate(40deg) scaleX(0.55);
 }
 
 @media (max-width: 48rem) {
-  .siteHeader {
-    padding-inline: 5%;
-  }
-
   .themeToggle {
     right: 5%;
   }
@@ -206,9 +185,15 @@
 
 @media (prefers-reduced-motion: reduce) {
   .menuTrigger,
-  .menuDropdown,
+  .menuPanel,
   .themeToggle {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
+  }
+
+  .burger,
+  .burger::before,
+  .burger::after {
+    transition: none;
   }
 }
