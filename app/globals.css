@@ -83,7 +83,7 @@
   --color-text-muted: #a89d94;
 
   --color-primary: #4cbba5; /* emerald green #3da286 */
-  --color-primary-hover: #4dbc9d;
+  --color-primary-hover: #359882;
   --color-on-primary: #182738;
 
   --color-accent: #e76f51;
@@ -96,12 +96,9 @@
   --shadow-control: 0 0.75rem 2.25rem rgb(0 0 0 / 16%);
 }
 
-/* Smaller headings on mobile and tablet. All other tokens keep their values above. */
+/* Equations step down on a narrow column. Page titles stay at --fs-h1. */
 @media (max-width: 48rem) {
   :root {
-    --fs-h1: 1.75rem;
-    --fs-h2: 1.25rem;
-    --fs-h3: 1.125rem;
     --fs-equation: 1.75rem;
   }
 }
@@ -247,6 +244,18 @@ img {
   margin: 0 auto;
   padding-top: var(--spacing-sm);
   padding-bottom: var(--spacing-2xl);
+}
+
+/* Mono page title for the home page and the content, projects, and blacksmithing indexes. */
+.page-kicker {
+  margin-bottom: var(--spacing-md);
+  color: var(--color-primary);
+  font-family: var(--font-code);
+  font-size: var(--fs-body);
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  line-height: 1.4;
+  text-transform: uppercase;
 }
 
 /* Mark under a title. Heading sizes are defined in the h1–h6 rules above.

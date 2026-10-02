@@ -33,7 +33,7 @@
 .entryLink {
   color: var(--color-heading);
   font-family: var(--font-display);
-  font-size: var(--fs-small);
+  font-size: var(--fs-body);
   font-weight: 400;
   letter-spacing: -0.025em;
   line-height: 1.5;

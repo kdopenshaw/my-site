@@ -7,7 +7,6 @@
   display: grid;
   width: 100%;
   min-height: 0;
-  margin-top: var(--spacing-xl);
   place-items: center;
   overflow: hidden;
   pointer-events: none;
@@ -16,18 +15,23 @@
 .fractalOpening {
   display: grid;
   justify-items: center;
-  padding: calc(2.25rem + var(--spacing-xl) + var(--spacing-lg)) var(--spacing-lg) 0;
+  padding: calc(2.25rem + var(--spacing-lg) + var(--spacing-xl)) var(--spacing-lg) 0;
 }
 
 .homeTitle {
-  margin: 0;
-  text-align: center;
-  font-family: -var(--font-code);
+  width: min(100%, 36rem);
+  margin: var(--spacing-xl) auto 0;
+  text-align: left;
 }
 
 .homeLead {
   width: min(100%, 36rem);
-  margin: 0 auto;
+  margin: var(--spacing-md) auto 0;
+  color: var(--color-text);
+  font-size: var(--fs-body);
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: var(--leading-body);
   text-align: left;
 }
 
@@ -47,8 +51,57 @@
 }
 
 .homeDirectory {
+  display: grid;
   width: min(100%, 36rem);
+  gap: var(--spacing-xl);
   margin: var(--spacing-xl) auto 0;
+}
+
+.sectionHeading {
+  margin: 0 0 var(--spacing-md);
+  color: var(--color-text-muted);
+}
+
+.sectionHeading a {
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-decoration: none;
+}
+
+.sectionHeading a:hover {
+  color: var(--color-primary-hover);
+}
+
+.pieceList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pieceList li + li {
+  margin-top: var(--spacing-sm);
+}
+
+.pieceList a {
+  color: var(--color-heading);
+  font-family: var(--font-display);
+  font-size: var(--fs-body);
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  line-height: 1.5;
+  text-decoration: none;
+}
+
+.pieceList a:hover {
+  color: var(--color-primary);
+}
+
+.sectionNote {
+  margin: 0;
+  color: var(--color-text);
+  font-size: var(--fs-body);
+  line-height: var(--leading-body);
 }
 
 .contact {
@@ -57,7 +110,7 @@
   margin: calc(var(--spacing-2xl) * 2) auto 0;
   padding-bottom: var(--spacing-lg);
   color: var(--color-text-muted);
-  font-size: var(--fs-caption);
+  font-size: var(--fs-small);
   line-height: var(--leading-body);
 }
 
@@ -68,28 +121,6 @@
 
 .contact a:hover {
   color: var(--color-heading);
-}
-
-.homeDirectory > ul {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--spacing-lg);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.homeDirectory h3 {
-  margin: 0;
-}
-
-.homeDirectory h3 a {
-  color: var(--color-heading);
-  text-decoration: none;
-}
-
-.homeDirectory h3 a:hover {
-  color: var(--color-primary);
 }
 
 .iconLinks {
@@ -144,7 +175,7 @@
 
 @media (max-width: 44rem) {
   .fractalOpening {
-    padding: calc(2.25rem + var(--spacing-xl) + var(--spacing-lg)) var(--spacing-md) 0;
+    padding: calc(2.25rem + var(--spacing-lg) + var(--spacing-xl)) var(--spacing-md) 0;
   }
 
   .introduction {

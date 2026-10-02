@@ -21,7 +21,7 @@ export default async function BlacksmithingPage() {
       className={`page-shell ${styles.page}`}
       aria-labelledby="blacksmithing-heading"
     >
-      <h1 className="heading-accent" id="blacksmithing-heading">Blacksmithing</h1>
+      <h1 className="page-kicker" id="blacksmithing-heading">Blacksmithing</h1>
 
       <div className={styles.intro}>
         <div className={styles.heroContent}>

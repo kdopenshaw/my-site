@@ -114,9 +114,12 @@
 }
 
 .menuLink:hover,
-.menuLinkActive,
-.menuLinkActive:hover {
+.menuLinkActive {
   color: var(--color-primary);
+}
+
+.menuLinkActive:hover {
+  color: var(--color-primary-hover);
 }
 
 .menuTrigger {

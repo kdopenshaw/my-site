@@ -5,39 +5,68 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { getContentPosts } from "./content/posts";
 import HomeFractal from "./home-fractal";
 import styles from "./home.module.css";
+import { projects } from "./projects/projects";
 
 export default function Home() {
+  const posts = getContentPosts().slice(0, 3);
+  const featuredProjects = projects.slice(0, 3);
+
   return (
     <div className={styles.homeExperience}>
-      <section className={styles.fractalOpening} aria-labelledby="home-heading">
-        <h1 className={styles.homeTitle} id="home-title">
-          Keith Openshaw
-        </h1>
-        <h2 className={styles.homeLead} id="home-heading">
-          A home for things I&apos;m building and thinking about.
-        </h2>
+      <section className={styles.fractalOpening} aria-label="Opening image">
         <div className={styles.fractalMedia} aria-hidden="true">
           <HomeFractal />
         </div>
       </section>
 
-      <section className={styles.introduction} id="introduction">
+      <section className={styles.introduction} id="introduction" aria-labelledby="home-title">
         <div className={styles.introductionContent}>
-          <nav className={styles.homeDirectory} aria-label="Explore the site">
-            <ul>
-              <li>
-                <h3><Link href="/content">Content</Link></h3>
-              </li>
-              <li>
-                <h3><Link href="/projects">Projects</Link></h3>
-              </li>
-              <li>
-                <h3><Link href="/blacksmithing">Blacksmithing</Link></h3>
-              </li>
-            </ul>
-          </nav>
+          <h1 className={`${styles.homeTitle} page-kicker`} id="home-title">
+            Keith Openshaw
+          </h1>
+          <p className={styles.homeLead}>
+            A home for things I&apos;m building and thinking about.
+          </p>
+          <div className={styles.homeDirectory}>
+            <section aria-labelledby="home-content">
+              <h2 className={`${styles.sectionHeading} page-kicker`} id="home-content">
+                <Link href="/content">Content</Link>
+              </h2>
+              <ul className={styles.pieceList}>
+                {posts.map((post) => (
+                  <li key={post.slug}>
+                    <Link href={`/content/${post.slug}`}>{post.metadata.title}</Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            <section aria-labelledby="home-projects">
+              <h2 className={`${styles.sectionHeading} page-kicker`} id="home-projects">
+                <Link href="/projects">Projects</Link>
+              </h2>
+              <ul className={styles.pieceList}>
+                {featuredProjects.map((project) => (
+                  <li key={project.href}>
+                    <Link href={project.href}>{project.title}</Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            <section aria-labelledby="home-blacksmithing">
+              <h2 className={`${styles.sectionHeading} page-kicker`} id="home-blacksmithing">
+                <Link href="/blacksmithing">Blacksmithing</Link>
+              </h2>
+              <p className={styles.sectionNote}>
+                I am a hobbyist blacksmith and woodworker, and have been designing
+                and selling custom pieces since 2018.
+              </p>
+            </section>
+          </div>
 
           <footer className={styles.contact}>
             <div className={styles.iconLinks}>

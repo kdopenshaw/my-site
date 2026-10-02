@@ -17,7 +17,7 @@ export default function ContentPage() {
 
   return (
     <section className="page-shell" aria-labelledby="content-heading">
-      <h1 className="heading-accent" id="content-heading">Content</h1>
+      <h1 className="page-kicker" id="content-heading">Content</h1>
 
       <ul className={styles.list} aria-label="Content" role="list">
         {posts.map((post) => (
