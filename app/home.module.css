@@ -21,18 +21,12 @@
 .homeTitle {
   width: min(100%, 36rem);
   margin: var(--spacing-xl) auto 0;
+  color: var(--color-heading);
   text-align: left;
 }
 
-.homeLead {
-  width: min(100%, 36rem);
-  margin: var(--spacing-md) auto 0;
-  color: var(--color-text);
-  font-size: var(--fs-body);
-  font-weight: 400;
-  letter-spacing: 0;
-  line-height: var(--leading-body);
-  text-align: left;
+.homeName {
+  color: var(--color-primary);
 }
 
 .introduction {

@@ -24,12 +24,10 @@ export default function Home() {
 
       <section className={styles.introduction} id="introduction" aria-labelledby="home-title">
         <div className={styles.introductionContent}>
-          <h1 className={`${styles.homeTitle} mono-label`} id="home-title">
-            Keith Openshaw
+          <h1 className={styles.homeTitle} id="home-title">
+            I&apos;m <span className={styles.homeName}>Keith Openshaw</span>, this is the
+            home for the things I&apos;m building and thinking about.
           </h1>
-          <p className={styles.homeLead}>
-            A home for things I&apos;m building and thinking about.
-          </p>
           <div className={styles.homeDirectory}>
             <section aria-labelledby="home-content">
               <h2 className={`${styles.sectionHeading} mono-label`} id="home-content">
