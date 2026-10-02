@@ -15,12 +15,14 @@ const FRACTALS = {
     still: "/fractals/julia-growth-dark-last.png",
     width: 1000,
     height: 1000,
+    crop: { x: 227, y: 140, width: 546, height: 720 },
   },
   light: {
     gif: "/fractals/julia_0.2841_0.01_20260921-154313_growth.gif",
     still: "/fractals/julia_0.2841_0.01_20260921-154313_growth_last.png",
     width: 610,
     height: 784,
+    crop: { x: 32, y: 32, width: 546, height: 720 },
   },
 };
 
@@ -277,13 +279,14 @@ export default function HomeFractal() {
     if (!canvas || !context) return;
 
     const image = FRACTALS[theme];
-    if (heldThemeRef.current === theme && canvas.width === image.width && canvas.height === image.height) {
+    const { crop } = image;
+    if (heldThemeRef.current === theme && canvas.width === crop.width && canvas.height === crop.height) {
       setPaintedTheme(theme);
       return;
     }
     // Assigning the same canvas size clears its bitmap, so only write a change.
-    if (canvas.width !== image.width) canvas.width = image.width;
-    if (canvas.height !== image.height) canvas.height = image.height;
+    if (canvas.width !== crop.width) canvas.width = crop.width;
+    if (canvas.height !== crop.height) canvas.height = crop.height;
     const controller = new AbortController();
     let active = true;
     let timeoutId = 0;
@@ -294,18 +297,18 @@ export default function HomeFractal() {
       timeoutId = window.setTimeout(resolve, ms);
     });
 
-    async function play(surface: HTMLCanvasElement, drawing: CanvasRenderingContext2D) {
+    async function play(drawing: CanvasRenderingContext2D) {
       const response = await fetch(image.gif, { signal: controller.signal });
       if (!response.ok) throw new Error("Unable to load the fractal animation");
       const bytes = await response.arrayBuffer();
       if (!active) return;
 
       const animation = readGif(bytes);
-      if (!animation || animation.width !== surface.width || animation.height !== surface.height) {
+      if (!animation || animation.width !== image.width || animation.height !== image.height) {
         throw new Error("The fractal animation did not decode completely");
       }
 
-      const bitmap = drawing.createImageData(surface.width, surface.height);
+      const bitmap = drawing.createImageData(animation.width, animation.height);
       let elapsed = 0;
       let origin = 0;
       for (let index = 0; index < animation.frames.length; index += 1) {
@@ -313,8 +316,8 @@ export default function HomeFractal() {
         const frame = animation.frames[index];
         const indexes = lzwDecode(frame.minCodeSize, frame.compressed, frame.width * frame.height);
         if (!indexes) throw new Error("The fractal animation did not decode completely");
-        paintFrame(bitmap.data, surface.width, frame, indexes);
-        drawing.putImageData(bitmap, 0, 0);
+        paintFrame(bitmap.data, animation.width, frame, indexes);
+        drawing.putImageData(bitmap, -crop.x, -crop.y);
         if (index === 0) {
           origin = performance.now();
           setPaintedTheme(theme);
@@ -330,7 +333,7 @@ export default function HomeFractal() {
       }
     }
 
-    play(canvas, context).catch(() => {
+    play(context).catch(() => {
       if (!active) return;
       setUseStill(true);
     });
@@ -353,16 +356,16 @@ export default function HomeFractal() {
           <img
             src={image.still}
             alt=""
-            width={image.width}
-            height={image.height}
-            className={`${theme === "dark" ? styles.darkFractalImage : ""} ${styles.fractalImageReady}`}
+            width={image.crop.width}
+            height={image.crop.height}
+            className={styles.fractalImageReady}
           />
         )}
         {theme && !showStill && (
           <canvas
             ref={canvasRef}
             aria-hidden="true"
-            className={`${theme === "dark" ? styles.darkFractalImage : ""} ${paintedTheme === theme ? styles.fractalImageReady : ""}`}
+            className={paintedTheme === theme ? styles.fractalImageReady : ""}
           />
         )}
       </div>
