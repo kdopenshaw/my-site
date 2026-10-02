@@ -8,7 +8,7 @@
    - Accent: accent, accent-text
    - Status: gain, loss
 
-   Shared classes (.page-shell, .heading-accent, .image-grid, .button) are at the bottom. */
+   Shared classes (.page-shell, .mono-label, .image-grid, .button) are at the bottom. */
 
 :root {
   /* Neutral. One slate for reading and for chrome. */
@@ -17,12 +17,12 @@
   --color-border: #e0e6eb;
   --color-heading: #0d1b2a;
   --color-text: #334155;
-  --color-text-muted: #5f7188;
+  --color-text-muted: #4e6e92;
 
   /* Primary. Emphasis for titles, links, selection, and filled controls.
-     Hover is the next step of this same hue. */
-  --color-primary: #2c5282;
-  --color-primary-hover: #1f3a5b;
+     Light mode follows the sky blue of the home fractal. Hover is the next step of this same hue. */
+  --color-primary: #17639e;
+  --color-primary-hover: #0e4a78;
   --color-primary-subtle: color-mix(in srgb, var(--color-primary) 12%, transparent);
   --color-on-primary: #ffffff;
 
@@ -82,7 +82,7 @@
   --color-text: #cbbfb5;
   --color-text-muted: #a89d94;
 
-  --color-primary: #4cbba5; /* emerald green #3da286 */
+  --color-primary: #4cbba5;
   --color-primary-hover: #359882;
   --color-on-primary: #182738;
 
