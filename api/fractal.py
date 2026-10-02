@@ -6,8 +6,11 @@ The form in app/fractals/fractal-studio.tsx calls GET /api/fractal.
 
 from __future__ import annotations
 
+import hashlib
+import hmac
 import json
 import math
+import os
 import re
 import struct
 import zlib
@@ -246,6 +249,15 @@ def generate_png(parameters: FractalParameters) -> bytes:
     return encode_png(parameters.width, parameters.height, render_rgb(parameters))
 
 
+def gallery_proof_secret() -> str | None:
+    return os.environ.get("GALLERY_RATE_LIMIT_SECRET") or os.environ.get("AWS_SECRET_ACCESS_KEY")
+
+
+def image_proof(image: bytes, secret: str) -> str:
+    """Bind a gallery upload to this exact PNG from the generator."""
+    return hmac.new(secret.encode("utf-8"), hashlib.sha256(image).digest(), hashlib.sha256).hexdigest()
+
+
 class handler(BaseHTTPRequestHandler):
     def do_GET(self) -> None:
         try:
@@ -260,6 +272,9 @@ class handler(BaseHTTPRequestHandler):
         self.send_header("Content-Length", str(len(image)))
         self.send_header("Cache-Control", "public, max-age=3600, s-maxage=86400")
         self.send_header("X-Fractal-Family", parameters.family)
+        secret = gallery_proof_secret()
+        if secret:
+            self.send_header("X-Fractal-Proof", image_proof(image, secret))
         self.end_headers()
         self.wfile.write(image)
 

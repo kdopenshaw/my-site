@@ -44,6 +44,7 @@ export default function FractalStudio() {
   const hasInitializedRef = useRef(false);
   const aspectRatioRef = useRef(parameters.width / parameters.height);
   const renderedParametersRef = useRef<FractalParameters | null>(null);
+  const renderedImageRef = useRef<{ blob: Blob; proof: string } | null>(null);
   const activeColors = colorsFor(parameters);
   const resolutionPresetKey =
     Object.entries(RESOLUTION_PRESETS).find(
@@ -59,6 +60,24 @@ export default function FractalStudio() {
 
   const update = <K extends keyof FractalParameters>(key: K, value: FractalParameters[K]) => {
     setParameters((current) => ({ ...current, [key]: value }));
+  };
+
+  const applyGallerySettings = (next: FractalParameters) => {
+    const matches = (Object.entries(PRESETS) as [PresetKey, (typeof PRESETS)[PresetKey]][]).filter(
+      ([, preset]) => preset.parameters.family === next.family,
+    );
+    const closest = matches.reduce<(typeof matches)[number] | null>((best, entry) => {
+      if (!best) return entry;
+      const distance = (preset: FractalParameters) =>
+        Math.abs(preset.power - next.power) + Math.abs(preset.cReal - next.cReal) + Math.abs(preset.cImag - next.cImag);
+      return distance(entry[1].parameters) < distance(best[1].parameters) ? entry : best;
+    }, null);
+    if (closest) setPresetKey(closest[0]);
+    aspectRatioRef.current = next.width / Math.max(1, next.height);
+    setParameters(next);
+    setStatus("Gallery settings loaded into the generator.");
+    void renderFractal(next);
+    document.getElementById("fractal-studio")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   const choosePreset = (key: PresetKey) => {
@@ -150,7 +169,9 @@ export default function FractalStudio() {
         const detail = await response.json().catch(() => null);
         throw new Error(detail?.error ?? "The fractal service is unavailable in this preview.");
       }
-      const bitmap = await createImageBitmap(await response.blob());
+      const proof = response.headers.get("X-Fractal-Proof");
+      const blob = await response.blob();
+      const bitmap = await createImageBitmap(blob);
       if (requestId !== requestRef.current) return;
       const canvas = canvasRef.current;
       const context = canvas?.getContext("2d");
@@ -160,6 +181,7 @@ export default function FractalStudio() {
       context.drawImage(bitmap, 0, 0);
       bitmap.close();
       renderedParametersRef.current = nextParameters;
+      renderedImageRef.current = proof ? { blob, proof } : null;
       setHasRenderedImage(true);
       setStatus("");
     } catch (error) {
@@ -201,23 +223,22 @@ export default function FractalStudio() {
   };
 
   const addToGallery = async () => {
-    const canvas = canvasRef.current;
     const renderedParameters = renderedParametersRef.current;
-    if (!canvas || !renderedParameters || isPublishing) return;
+    const renderedImage = renderedImageRef.current;
+    if (!renderedParameters || isPublishing) return;
+    if (!renderedImage) {
+      setStatus("Gallery images have to come from the fractal generator.");
+      return;
+    }
 
     setIsPublishing(true);
     setStatus("Preparing your gallery image…");
 
     try {
-      const blob = await new Promise<Blob>((resolve, reject) => {
-        canvas.toBlob((image) => {
-          if (image) resolve(image);
-          else reject(new Error("The rendered image could not be prepared."));
-        }, "image/png");
-      });
       const form = new FormData();
-      form.set("image", blob, `${renderedParameters.family}.png`);
+      form.set("image", renderedImage.blob, `${renderedParameters.family}.png`);
       form.set("metadata", JSON.stringify(renderedParameters));
+      form.set("proof", renderedImage.proof);
 
       const response = await fetch("/api/fractal-gallery", { method: "POST", body: form });
       const result = await response.json().catch(() => null);
@@ -254,7 +275,7 @@ export default function FractalStudio() {
 
   return (
     <>
-      <form className={styles.studio} onSubmit={render}>
+      <form id="fractal-studio" className={styles.studio} onSubmit={render}>
         <aside className={styles.familyRail} aria-label="Fractal family">
           <ConfigLabel
             index="I"
@@ -278,49 +299,6 @@ export default function FractalStudio() {
                     <img src={preset.thumbnail} alt="" width="40" height="32" />
                     <span>{preset.label}</span>
                   </RadioGroupItem>
-                  {presetKey === key && (
-                    <div className={styles.equationBar}>
-                      <span className={`${styles.fieldLabel} ${styles.equationLabel}`}>ITERATION RULE</span>
-                      <FractalEquation family={parameters.family} power={parameters.power} />
-                    </div>
-                  )}
-                  {presetKey === key && usesFixedConstant && (
-                    <div
-                      className={styles.constantControls}
-                      role="group"
-                      aria-labelledby="fractal-label-iv"
-                    >
-                      <ConfigLabel index="IV" title="Constant c" />
-                      <RangeField
-                        label="real"
-                        help={{
-                          label: "real",
-                          src: "/fractals/help/constant-real.svg",
-                          text: "Slides the Julia constant along the real axis. The set stays mirror-symmetric. Near zero it is almost a disk; farther left it pinches into the two-bulb basilica, then breaks apart into dust.",
-                        }}
-                        value={parameters.cReal}
-                        min={-2}
-                        max={2}
-                        step={0.001}
-                        digits={3}
-                        onChange={(value) => update("cReal", value)}
-                      />
-                      <RangeField
-                        label="imaginary"
-                        help={{
-                          label: "imaginary",
-                          src: "/fractals/help/constant-imaginary.svg",
-                          text: "Lifts c off the real axis. The horizontal mirror symmetry breaks and spirals appear. The opposite sign reflects the Julia set from top to bottom.",
-                        }}
-                        value={parameters.cImag}
-                        min={-2}
-                        max={2}
-                        step={0.001}
-                        digits={3}
-                        onChange={(value) => update("cImag", value)}
-                      />
-                    </div>
-                  )}
                 </div>
               ),
             )}
@@ -366,9 +344,47 @@ export default function FractalStudio() {
             </div>
           )}
         </div>
+        <div className={styles.equationBar}>
+          <span className={`${styles.fieldLabel} ${styles.equationLabel}`}>Iteration rule</span>
+          <FractalEquation family={parameters.family} power={parameters.power} />
+          {usesFixedConstant && (
+            <div className={styles.constantControls} role="group" aria-labelledby="fractal-label-iv">
+              <ConfigLabel index="IV" title="Constant c" />
+              <RangeField
+                label="real"
+                help={{
+                  label: "real",
+                  src: "/fractals/help/constant-real.svg",
+                  text: "Slides the Julia constant along the real axis. The set stays mirror-symmetric. Near zero it is almost a disk; farther left it pinches into the two-bulb basilica, then breaks apart into dust.",
+                }}
+                value={parameters.cReal}
+                min={-2}
+                max={2}
+                step={0.001}
+                digits={3}
+                onChange={(value) => update("cReal", value)}
+              />
+              <RangeField
+                label="imaginary"
+                help={{
+                  label: "imaginary",
+                  src: "/fractals/help/constant-imaginary.svg",
+                  text: "Lifts c off the real axis. The horizontal mirror symmetry breaks and spirals appear. The opposite sign reflects the Julia set from top to bottom.",
+                }}
+                value={parameters.cImag}
+                min={-2}
+                max={2}
+                step={0.001}
+                digits={3}
+                onChange={(value) => update("cImag", value)}
+              />
+            </div>
+          )}
+        </div>
         <aside className={styles.controlPanel} aria-label="Fractal settings">
-          <div role="group" aria-labelledby="fractal-label-v" className={styles.configGroup}>
+          <div role="group" aria-labelledby="fractal-label-v" className={`${styles.configGroup} ${styles.orbitGroup}`}>
             <ConfigLabel index="V" title="Orbit" />
+            <div className={styles.orbitFields}>
             <NumberField
               label="exponent p"
               help={{
@@ -435,6 +451,7 @@ export default function FractalStudio() {
               digits={1}
               onChange={(value) => update("gamma", value)}
             />
+            </div>
           </div>
           <div
             role="group"
@@ -464,7 +481,7 @@ export default function FractalStudio() {
             />
           </div>
 
-          <div role="group" aria-labelledby="fractal-label-vii" className={styles.configGroup}>
+          <div role="group" aria-labelledby="fractal-label-vii" className={`${styles.configGroup} ${styles.colorGroup}`}>
             <ConfigLabel
               index="VII"
               title="Color function"
@@ -559,7 +576,7 @@ export default function FractalStudio() {
               </div>
             </div>
           </div>
-          <div role="group" aria-labelledby="fractal-label-iii" className={styles.configGroup}>
+          <div role="group" aria-labelledby="fractal-label-iii" className={`${styles.configGroup} ${styles.resolutionGroup}`}>
             <div className={styles.rasterHeadingRow}>
               <ConfigLabel
                 index="III"
@@ -627,8 +644,7 @@ export default function FractalStudio() {
                 tests
               </output>
             </div>
-          </div>
-          <div className={styles.controlFooter}>
+            <div className={styles.controlFooter}>
             {status && (
               <output className={styles.renderStatus} aria-live="polite">
                 {status}
@@ -659,10 +675,11 @@ export default function FractalStudio() {
                 )}
               </button>
             </div>
+            </div>
           </div>
         </aside>
       </form>
-      <FractalGallery refreshKey={galleryRefreshKey} />
+      <FractalGallery refreshKey={galleryRefreshKey} onApplySettings={applyGallerySettings} />
     </>
   );
 }

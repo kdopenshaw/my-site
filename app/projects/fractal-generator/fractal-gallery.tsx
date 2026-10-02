@@ -41,28 +41,11 @@ function formatValue(value: number) {
   return Number(value.toPrecision(8)).toString();
 }
 
-function FractalMetadata({ fractal }: { fractal: GalleryFractal }) {
-  const parameters = fractal.parameters;
-  const rows: [string, string][] = [
-    ["Family", familyLabels[parameters.family]],
-    ["Power", String(parameters.power)],
-    ["Center (x, y)", `${formatValue(parameters.centerX)}, ${formatValue(parameters.centerY)}`],
-    ["Scale", formatValue(parameters.scale)],
-    ["Iterations", String(parameters.iterations)],
-    ["Escape radius", formatValue(parameters.escapeRadius)],
-    ["Gamma", formatValue(parameters.gamma)],
-    ["Constant c", `${formatValue(parameters.cReal)} ${parameters.cImag < 0 ? "−" : "+"} ${formatValue(Math.abs(parameters.cImag))}i`],
-    ["Resolution", `${parameters.width} × ${parameters.height} px`],
-    ["Palette", parameters.palette === "custom" ? "Custom" : parameters.palette.replaceAll("_", " ")],
-  ];
-
+function SettingGroup({ title, rows }: { title: string; rows: [string, string][] }) {
   return (
-    <section className={styles.metadata} aria-labelledby="fractal-metadata-title">
-      <div className={styles.metadataHeader}>
-        <h2 id="fractal-metadata-title">Fractal settings</h2>
-        <time dateTime={fractal.createdAt}>{new Date(fractal.createdAt).toLocaleDateString(undefined, { dateStyle: "medium" })}</time>
-      </div>
-      <dl className={styles.metadataGrid}>
+    <div className={styles.settingGroup}>
+      <p>{title}</p>
+      <dl>
         {rows.map(([label, value]) => (
           <div key={label}>
             <dt>{label}</dt>
@@ -70,19 +53,93 @@ function FractalMetadata({ fractal }: { fractal: GalleryFractal }) {
           </div>
         ))}
       </dl>
-      <div className={styles.colorSettings}>
-        <span>Color stops</span>
-        <div className={styles.colorStops}>
-          {parameters.colors.map((color, index) => (
-            <code key={`${color}-${index}`}><i style={{ backgroundColor: color }} />{color.toUpperCase()}</code>
-          ))}
-        </div>
-      </div>
-    </section>
+    </div>
   );
 }
 
-export default function FractalGallery({ refreshKey }: { refreshKey: number }) {
+function DownloadIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+      <path fill="currentColor" d="M8 1.5a.75.75 0 0 1 .75.75v6.19l1.72-1.72a.75.75 0 1 1 1.06 1.06l-3 3a.75.75 0 0 1-1.06 0l-3-3a.75.75 0 1 1 1.06-1.06l1.72 1.72V2.25A.75.75 0 0 1 8 1.5ZM3.25 12a.75.75 0 0 0 0 1.5h9.5a.75.75 0 0 0 0-1.5h-9.5Z" />
+    </svg>
+  );
+}
+
+function downloadHref(fractal: GalleryFractal) {
+  const filename = `${fractal.parameters.family}-${fractal.parameters.width}x${fractal.parameters.height}.png`;
+  const query = new URLSearchParams({ url: fractal.imageUrl, filename });
+  return `/api/fractal-gallery/download?${query}`;
+}
+
+function FractalSettingsRail({
+  fractal,
+  onApply,
+}: {
+  fractal: GalleryFractal;
+  onApply: (parameters: FractalParameters) => void;
+}) {
+  const parameters = fractal.parameters;
+  const constant = `${formatValue(parameters.cReal)} ${parameters.cImag < 0 ? "−" : "+"} ${formatValue(Math.abs(parameters.cImag))}i`;
+
+  return (
+    <aside className={styles.rail} aria-label="Fractal settings">
+      <div className={styles.railBody}>
+        <SettingGroup
+          title="Family"
+          rows={[
+            ["Family", familyLabels[parameters.family]],
+            ["Exponent p", String(parameters.power)],
+            ["Constant c", constant],
+          ]}
+        />
+        <SettingGroup
+          title="Orbit"
+          rows={[
+            ["Iterations", String(parameters.iterations)],
+            ["Escape radius", formatValue(parameters.escapeRadius)],
+            ["Gamma", formatValue(parameters.gamma)],
+          ]}
+        />
+        <SettingGroup
+          title="Complex plane"
+          rows={[
+            ["Center x", formatValue(parameters.centerX)],
+            ["Center y", formatValue(parameters.centerY)],
+            ["Scale", formatValue(parameters.scale)],
+          ]}
+        />
+        <div className={styles.colorSettings}>
+          <span>Color stops</span>
+          <div className={styles.colorStops}>
+            {parameters.colors.map((color, index) => (
+              <code key={`${color}-${index}`}><i style={{ backgroundColor: color }} />{color.toUpperCase()}</code>
+            ))}
+          </div>
+        </div>
+        <SettingGroup
+          title="Resolution"
+          rows={[["Size", `${parameters.width} × ${parameters.height} px`]]}
+        />
+      </div>
+      <footer className={styles.railFooter}>
+        <button className="button" type="button" onClick={() => onApply(parameters)}>
+          Use these settings
+        </button>
+        <a className={`button-outline ${styles.download}`} href={downloadHref(fractal)} download aria-label="Download image">
+          <DownloadIcon />
+        </a>
+      </footer>
+    </aside>
+  );
+}
+
+export default function FractalGallery({
+  refreshKey,
+  onApplySettings,
+}: {
+  refreshKey: number;
+  onApplySettings: (parameters: FractalParameters) => void;
+}) {
   const [seed, setSeed] = useState("");
   const [fractals, setFractals] = useState<GalleryFractal[]>([]);
   const [hasMore, setHasMore] = useState(true);
@@ -216,18 +273,26 @@ export default function FractalGallery({ refreshKey }: { refreshKey: number }) {
           onCancel={(event) => { event.preventDefault(); setSelectedIndex(null); }}
           onClick={(event) => { if (event.target === dialogRef.current) setSelectedIndex(null); }}
         >
-          <div className={styles.lightboxPanel}>
-            <header className={styles.lightboxToolbar}>
-              <p>{fractalAlt(selectedFractal)}</p>
-              <button type="button" onClick={() => setSelectedIndex(null)} aria-label="Close image">×</button>
-            </header>
+          <div
+            className={styles.lightboxStage}
+            onClick={(event) => { if (event.target === event.currentTarget) setSelectedIndex(null); }}
+          >
             <div className={styles.lightboxImage}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={selectedFractal.imageUrl} alt={fractalAlt(selectedFractal)} width={selectedFractal.width} height={selectedFractal.height} />
-              <button type="button" className={`${styles.lightboxArrow} ${styles.previous}`} onClick={() => setSelectedIndex((index) => index === null ? 0 : (index - 1 + fractals.length) % fractals.length)} aria-label="Previous fractal">‹</button>
-              <button type="button" className={`${styles.lightboxArrow} ${styles.next}`} onClick={() => setSelectedIndex((index) => index === null ? 0 : (index + 1) % fractals.length)} aria-label="Next fractal">›</button>
+              <div className={styles.lightboxFrame}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={selectedFractal.imageUrl} alt={fractalAlt(selectedFractal)} width={selectedFractal.width} height={selectedFractal.height} />
+                <button type="button" className={`${styles.lightboxArrow} ${styles.previous}`} onClick={() => setSelectedIndex((index) => index === null ? 0 : (index - 1 + fractals.length) % fractals.length)} aria-label="Previous fractal">‹</button>
+                <button type="button" className={styles.lightboxClose} onClick={() => setSelectedIndex(null)} aria-label="Close image">×</button>
+                <button type="button" className={`${styles.lightboxArrow} ${styles.next}`} onClick={() => setSelectedIndex((index) => index === null ? 0 : (index + 1) % fractals.length)} aria-label="Next fractal">›</button>
+              </div>
             </div>
-            <FractalMetadata fractal={selectedFractal} />
+            <FractalSettingsRail
+              fractal={selectedFractal}
+              onApply={(parameters) => {
+                onApplySettings({ ...parameters, colors: [...parameters.colors] });
+                setSelectedIndex(null);
+              }}
+            />
           </div>
         </dialog>
       )}

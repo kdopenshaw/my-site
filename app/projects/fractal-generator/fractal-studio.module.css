@@ -1,8 +1,16 @@
 /* A quiet shared workspace surface adapts to the site theme. */
 .studio {
   display: grid;
-  grid-template-columns: 13.5rem minmax(0, 1fr) 17.5rem;
-  gap: var(--spacing-sm);
+  grid-template-columns:
+    minmax(10rem, 0.85fr)
+    minmax(7.5rem, 0.55fr)
+    minmax(12rem, 1.15fr)
+    minmax(11rem, 0.9fr);
+  grid-template-areas:
+    "family preview preview preview"
+    "equation preview preview preview"
+    "orbit plane color resolution";
+  gap: var(--spacing-xs);
   align-items: stretch;
   padding: var(--spacing-xs);
   border: 1px solid color-mix(in srgb, var(--color-border) 55%, transparent);
@@ -17,14 +25,29 @@
   background: var(--color-surface);
 }
 .familyRail {
+  grid-area: family;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xs);
+  gap: var(--spacing-2xs);
+  align-self: start;
+  max-height: 14rem;
+  overflow: auto;
 }
 .controlPanel {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xs);
+  display: contents;
+}
+.orbitGroup {
+  grid-area: orbit;
+}
+.colorGroup {
+  grid-area: color;
+}
+.resolutionGroup {
+  grid-area: resolution;
+}
+.orbitFields {
+  display: grid;
+  gap: var(--spacing-2xs);
 }
 .familyList {
   display: grid;
@@ -41,8 +64,8 @@
   align-items: center;
   gap: var(--spacing-xs);
   width: 100%;
-  min-height: 2.75rem;
-  padding: var(--spacing-xs);
+  min-height: 2rem;
+  padding: var(--spacing-2xs) var(--spacing-xs);
   border: 0;
   border-radius: var(--spacing-xs);
   background: transparent;
@@ -62,20 +85,26 @@
   font-weight: 500;
 }
 .familyChoice img {
-  width: 2.5rem;
-  height: 2rem;
+  width: 1.75rem;
+  height: 1.4rem;
   object-fit: contain;
   border-radius: var(--spacing-2xs);
 }
 .constantControls {
   display: grid;
   gap: var(--spacing-xs);
-  padding: var(--spacing-xs);
+  min-width: 0;
 }
 .equationBar {
+  grid-area: equation;
   display: grid;
+  align-content: start;
   gap: var(--spacing-xs);
+  min-width: 0;
   padding: var(--spacing-xs);
+  border: 1px solid color-mix(in srgb, var(--color-border) 45%, transparent);
+  border-radius: var(--spacing-xs);
+  background: color-mix(in srgb, var(--color-surface) 55%, var(--color-background));
 }
 .equation {
   display: flex;
@@ -334,7 +363,8 @@
   opacity: 0.35;
   cursor: not-allowed;
 }
-.configGroup > .numberField:has(.stepper) {
+.configGroup > .numberField:has(.stepper),
+.orbitFields > .numberField:has(.stepper) {
   grid-template-columns: 1fr 6.5rem;
 }
 .numberRow {
@@ -345,7 +375,8 @@
 .numberRowTwo {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
-.configGroup > .numberField {
+.configGroup > .numberField,
+.orbitFields > .numberField {
   grid-template-columns: 1fr 4rem;
   align-items: center;
 }
@@ -550,7 +581,6 @@
 .controlFooter {
   display: grid;
   gap: var(--spacing-xs);
-  margin-top: auto;
 }
 .renderStatus,
 .workWarning {
@@ -600,22 +630,26 @@ button.download {
   }
 }
 .preview {
+  grid-area: preview;
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-rows: minmax(12rem, 1fr) auto;
   gap: var(--spacing-xs);
   min-width: 0;
+  min-height: 0;
 }
 .canvasFrame {
   position: relative;
   display: grid;
   place-items: center;
-  min-height: 28rem;
+  min-height: 0;
+  height: 100%;
   overflow: hidden;
 }
 .canvasFrame canvas {
   display: block;
   width: 100%;
-  max-height: 36rem;
+  height: 100%;
+  max-height: 100%;
   object-fit: contain;
 }
 .canvasLoading {
@@ -635,19 +669,13 @@ button.download {
   gap: var(--spacing-xs);
   justify-content: flex-end;
 }
-@media (max-width: 68rem) {
+@media (max-width: 64rem) {
   .studio {
-    grid-template-columns: 12.5rem minmax(0, 1fr);
-  }
-  .controlPanel {
-    grid-column: 1 / -1;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--spacing-xs);
-    align-items: start;
-  }
-  .controlFooter {
-    grid-column: 1 / -1;
+    grid-template-columns: minmax(10rem, 0.85fr) minmax(7rem, 0.55fr) minmax(12rem, 1.15fr) minmax(9rem, 0.9fr);
+    grid-template-areas:
+      "family preview preview preview"
+      "equation preview preview preview"
+      "orbit plane color resolution";
   }
   .controlActions {
     width: min(100%, 22rem);
@@ -657,20 +685,21 @@ button.download {
 @media (max-width: 40rem) {
   .studio {
     grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "preview"
+      "family"
+      "equation"
+      "orbit"
+      "plane"
+      "color"
+      "resolution";
   }
   .familyList {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: start;
   }
-  .equationBar {
-    padding-top: var(--spacing-xs);
-  }
-  .canvasFrame {
-    min-height: 16rem;
-  }
-  .controlPanel {
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--spacing-xs);
+  .preview {
+    grid-template-rows: minmax(14rem, 32vh) auto;
   }
   .controlActions {
     width: 100%;
@@ -857,28 +886,19 @@ button.download {
 }
 
 .configGroup.planeGroup {
-  grid-template-columns: minmax(0, 1fr) 7.5rem;
-  grid-template-rows: auto auto 1fr;
-  column-gap: var(--spacing-xs);
+  grid-area: plane;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  align-content: start;
   row-gap: var(--spacing-2xs);
-  align-items: start;
 }
-.planeGroup > .configLabel {
-  grid-column: 1;
-  grid-row: 1;
-}
-.planeGroup > .planeHint {
-  grid-column: 1;
-  grid-row: 2;
-}
+.planeGroup > .configLabel,
+.planeGroup > .planeHint,
 .planeGroup > .planeReadout {
-  grid-column: 1;
-  grid-row: 3;
-  overflow-wrap: anywhere;
+  justify-self: start;
 }
 .planeGroup > .planeGrid {
-  grid-column: 2;
-  grid-row: 1 / 4;
+  width: min(100%, 6.5rem);
   margin: 0;
 }
 

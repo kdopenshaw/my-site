@@ -1,7 +1,7 @@
 import struct
 import unittest
 
-from api.fractal import FAMILIES, PALETTES, ParameterError, generate_png, parse_parameters
+from api.fractal import FAMILIES, PALETTES, ParameterError, generate_png, image_proof, parse_parameters
 
 
 class FractalFunctionTests(unittest.TestCase):
@@ -11,6 +11,9 @@ class FractalFunctionTests(unittest.TestCase):
 
         self.assertEqual(image[:8], b"\x89PNG\r\n\x1a\n")
         self.assertEqual(struct.unpack(">II", image[16:24]), (64, 64))
+        self.assertEqual(image_proof(image, "secret"), image_proof(image, "secret"))
+        self.assertNotEqual(image_proof(image, "secret"), image_proof(image + b"x", "secret"))
+        self.assertNotEqual(image_proof(image, "secret"), image_proof(image, "other"))
 
     def test_julia_parameters_are_parsed(self):
         parameters = parse_parameters(

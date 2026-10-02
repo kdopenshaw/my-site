@@ -1,11 +1,7 @@
 .page {
-  width: min(calc(100% - 2 * var(--spacing-sm)), 76rem);
+  width: min(calc(100% - 2 * var(--spacing-sm)), 62rem);
   margin: 0 auto var(--spacing-lg);
   padding-top: var(--spacing-sm);
-}
-
-.page > h1 {
-  margin-bottom: var(--spacing-sm);
 }
 
 @media (max-width: 30rem) {

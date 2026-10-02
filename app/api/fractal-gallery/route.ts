@@ -2,7 +2,7 @@
 // GET returns one page of images. POST stores a PNG and its parameters.
 // Database and storage credentials stay on the server (see the README).
 
-import { createHash, randomUUID } from "node:crypto";
+import { createHash, createHmac, randomUUID, timingSafeEqual } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { galleryDatabase, galleryStorage, getGalleryConfig } from "./backend";
 import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
@@ -122,6 +122,13 @@ function pngDimensions(bytes: Uint8Array) {
   return { width: view.getUint32(16), height: view.getUint32(20) };
 }
 
+function validImageProof(image: Uint8Array, proof: string, secret: string) {
+  if (!/^[0-9a-f]{64}$/i.test(proof)) return false;
+  const expected = createHmac("sha256", secret).update(createHash("sha256").update(image).digest()).digest();
+  const provided = Buffer.from(proof, "hex");
+  return provided.length === expected.length && timingSafeEqual(provided, expected);
+}
+
 function clientAddress(request: NextRequest) {
   return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
     || request.headers.get("x-real-ip")
@@ -199,8 +206,10 @@ export async function POST(request: NextRequest) {
     const form = await request.formData();
     const file = form.get("image");
     const rawMetadata = form.get("metadata");
+    const proof = form.get("proof");
 
-    if (!(file instanceof File) || typeof rawMetadata !== "string" || rawMetadata.length > 10_000) {
+    if (!(file instanceof File) || typeof rawMetadata !== "string" || rawMetadata.length > 10_000
+      || typeof proof !== "string") {
       return NextResponse.json({ error: "A fractal image and its settings are required." }, { status: 400 });
     }
     if (file.type !== "image/png" || file.size === 0 || file.size > MAX_IMAGE_BYTES) {
@@ -221,6 +230,12 @@ export async function POST(request: NextRequest) {
     const dimensions = pngDimensions(bytes);
     if (!dimensions || dimensions.width !== parsedMetadata.width || dimensions.height !== parsedMetadata.height) {
       return NextResponse.json({ error: "The image dimensions do not match the rendered fractal." }, { status: 400 });
+    }
+    if (!validImageProof(bytes, proof, config.rateLimitSecret)) {
+      return NextResponse.json(
+        { error: "Gallery images have to come from the fractal generator." },
+        { status: 400 },
+      );
     }
 
     if (!await claimUpload(config.rateLimitSecret, request)) {
