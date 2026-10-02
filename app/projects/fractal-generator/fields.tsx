@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useId, useLayoutEffect, useRef, useState } from "react";
 import DiagramHelp from "./diagram-help";
 import type { ReactNode } from "react";
 
@@ -100,6 +100,7 @@ export function RangeField({
   min,
   max,
   digits = 0,
+  maxDigits,
   disabled = false,
   onChange,
   help,
@@ -110,12 +111,14 @@ export function RangeField({
   min: number;
   max: number;
   digits?: number;
+  maxDigits?: number;
   disabled?: boolean;
   onChange: (value: number) => void;
   help?: { label: string; src: string; text: string };
 }) {
   const id = useId();
-  const display = value.toFixed(digits).replace("-", "−");
+  const precision = maxDigits ?? digits;
+  const display = formatDecimal(value, digits, precision);
   return (
     <div className={`${styles.rangeField} ${disabled ? styles.isDisabled : ""}`}>
       <div className={styles.rangeLabel}>
@@ -133,6 +136,7 @@ export function RangeField({
             display={display}
             min={min}
             max={max}
+            precision={precision}
             name={help?.label ?? "value"}
             onChange={onChange}
           />
@@ -153,11 +157,20 @@ export function RangeField({
   );
 }
 
+function formatDecimal(value: number, minDigits: number, maxDigits: number) {
+  const rounded = Number(value.toFixed(maxDigits));
+  const [whole, fraction = ""] = rounded.toFixed(maxDigits).split(".");
+  const kept = fraction.replace(/0+$/, "").padEnd(minDigits, "0");
+  const text = kept ? `${whole}.${kept}` : whole;
+  return text.replace("-", "−");
+}
+
 function EditableRangeValue({
   value,
   display,
   min,
   max,
+  precision,
   name,
   onChange,
 }: {
@@ -165,41 +178,51 @@ function EditableRangeValue({
   display: string;
   min: number;
   max: number;
+  precision: number;
   name: string;
   onChange: (value: number) => void;
 }) {
-  const [draft, setDraft] = useState<string | null>(null);
+  const fieldRef = useRef<HTMLSpanElement>(null);
+  const [editing, setEditing] = useState(false);
+
+  useLayoutEffect(() => {
+    const field = fieldRef.current;
+    if (!field || editing || field.textContent === display) return;
+    field.textContent = display;
+  }, [display, editing]);
 
   function commit(raw: string) {
-    const parsed = Number(raw.replace("−", "-"));
-    if (Number.isFinite(parsed)) onChange(Math.min(max, Math.max(min, parsed)));
-    setDraft(null);
-  }
-
-  if (draft !== null) {
-    return (
-      <input
-        className={`${styles.numberInput} ${styles.rangeValueInput}`}
-        type="text"
-        inputMode="decimal"
-        aria-label={`Edit ${name}`}
-        value={draft}
-        autoFocus
-        onFocus={(event) => event.currentTarget.select()}
-        onChange={(event) => setDraft(event.target.value)}
-        onBlur={() => commit(draft)}
-        onKeyDown={(event) => {
-          if (event.key === "Enter") event.currentTarget.blur();
-          if (event.key === "Escape") setDraft(null);
-        }}
-      />
-    );
+    const parsed = Number(raw.replace("−", "-").trim());
+    if (Number.isFinite(parsed)) {
+      const rounded = Number(parsed.toFixed(precision));
+      onChange(Math.min(max, Math.max(min, rounded)));
+    }
+    setEditing(false);
   }
 
   return (
-    <button type="button" className={styles.rangeValue} onClick={() => setDraft(String(value))}>
-      {display}
-    </button>
+    <span
+      ref={fieldRef}
+      className={styles.rangeValue}
+      role="textbox"
+      aria-label={`Edit ${name}`}
+      contentEditable
+      suppressContentEditableWarning
+      spellCheck={false}
+      onFocus={() => setEditing(true)}
+      onBlur={(event) => commit(event.currentTarget.textContent ?? "")}
+      onKeyDown={(event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          event.currentTarget.blur();
+        }
+        if (event.key === "Escape") {
+          event.preventDefault();
+          event.currentTarget.textContent = display;
+          event.currentTarget.blur();
+        }
+      }}
+    />
   );
 }
 

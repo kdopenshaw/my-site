@@ -27,11 +27,11 @@ export default async function BlacksmithingPage() {
         <div className={styles.heroContent}>
           <p>
             I am a hobbyist blacksmith and woodworker, and have been designing
-            and selling custom pieces since 2018. I have made everything from
-            rings out of skateboard ply to wine racks and a katana.
+            and selling custom pieces since 2018. Some of my favorite projects include
+            rings made from skateboard and a katana.
           </p>
           <p>
-            A lot of my work can be found on my Instagram{" "}
+            A lot of my work can be found on my the pinterest board below or my Instagram{" "}
             <a href="https://www.instagram.com/cetsteel/">@cetsteel</a>, follow
             along to check out what projects I am currently working on!
           </p>

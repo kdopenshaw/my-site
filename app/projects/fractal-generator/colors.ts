@@ -52,11 +52,40 @@ function hslToHex(hue: number, saturation: number, lightness: number) {
   return rgbToHex((red + match) * 255, (green + match) * 255, (blue + match) * 255);
 }
 
+// Standard hue intervals from a single base color. Analogous is a short arc;
+// the others are the usual complementary, split-complementary, triadic, and square sets.
+const HUE_HARMONIES = [
+  [0],
+  [0, 180],
+  [0, 150, 210],
+  [0, 120, 240],
+  [0, 90, 180, 270],
+] as const;
+
+function randomInt(span: number) {
+  return Math.floor(Math.random() * span);
+}
+
 export function randomPalette(count: number) {
-  return Array.from({ length: Math.max(count, 2) }, () => {
-    const hue = Math.floor(Math.random() * 360);
-    const saturation = 20 + Math.floor(Math.random() * 81);
-    const lightness = 12 + Math.floor(Math.random() * 77);
-    return hslToHex(hue, saturation, lightness);
+  const stops = Math.max(count, 2);
+  const base = randomInt(360);
+  const harmony = HUE_HARMONIES[randomInt(HUE_HARMONIES.length)];
+  const analogousSweep = 24 + randomInt(42);
+  const saturation = 50 + randomInt(31);
+  const lightStart = 16 + randomInt(24);
+  const lightEnd = 64 + randomInt(24);
+  const reverse = Math.random() > 0.5;
+
+  return Array.from({ length: stops }, (_, index) => {
+    const hue =
+      harmony.length === 1
+        ? base + (index / (stops - 1)) * analogousSweep
+        : base + harmony[index % harmony.length] + randomInt(15) - 7;
+    const position = reverse ? 1 - index / (stops - 1) : index / (stops - 1);
+    return hslToHex(
+      (hue + 360) % 360,
+      Math.min(90, Math.max(42, saturation + randomInt(13) - 6)),
+      lightStart + (lightEnd - lightStart) * position,
+    );
   });
 }

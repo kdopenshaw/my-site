@@ -326,21 +326,14 @@
   margin: 0;
   padding: 0;
   border: 0;
+  outline: none;
   background: transparent;
   color: var(--color-heading);
   font: 400 var(--fs-small)/1.25 var(--font-primary);
   font-variant-numeric: tabular-nums;
+  caret-color: var(--color-heading);
   cursor: text;
-}
-.rangeValue:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-}
-.rangeValueInput {
-  width: 5rem;
-  min-height: 1.5rem;
-  padding-block: 0;
-  text-align: right;
+  white-space: nowrap;
 }
 .rangeSlider {
   width: 100%;

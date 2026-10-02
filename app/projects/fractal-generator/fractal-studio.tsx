@@ -453,6 +453,7 @@ export default function FractalStudio() {
                 max={2}
                 step={0.001}
                 digits={3}
+                maxDigits={5}
                 onChange={(value) => update("cReal", value)}
               />
               <RangeField
@@ -467,6 +468,7 @@ export default function FractalStudio() {
                 max={2}
                 step={0.001}
                 digits={3}
+                maxDigits={5}
                 onChange={(value) => update("cImag", value)}
               />
             </div>
