@@ -1,0 +1,23 @@
+---
+title: "Learning to Build Software by Accident"
+publishedAt: "2026-09-30"
+---
+
+In college I took an intro C++ class and a single class on data analytics. I enjoyed them, but my math and econ classes were heavily exam based, so I never used those skills and didn't think much of them. I didn't expect that two years out of undergrad, building software would be a primary part of my job, and that I would have to get a CS education the hard way.
+
+After graduating I took a job at Column, a developer infrastructure bank, on the payment operations team, with the promise that I'd get to build operational automations. Payment ops at most banks is extremely inefficient: legacy tech, manual processes, and lots of people doing the same repetitive work by hand. Our mandate was to build a better bank, and for my team, that meant a better operational engine. During the day I became an expert at typical bank operations: answering customer requests, investigating transfer statuses, and escalating issues to engineering. At night I hacked away at improving our tooling and processes, and automated away everything I could.
+
+I have built a lot of software over the last two years. Depending on the season and operational workload, often more than half of my day was spent building. Nobody had the time to teach me, and my hours were too long to make coding courses at night realistic, so mostly, I learned by doing. AI helped, but back then it was better at answering questions and writing snippets than taking a whole project off my hands. I had to put the pieces together and figure out why they broke.
+
+The most interesting thing is that I have had to learn a lot of foundational subjects accidentally. When I had an idea, I would charge blindly at the problem, the way I intuitively thought it should be solved. This would get me pretty far, and then I'd get stuck on one recurring bug or behavior that no amount of "just fix it" chats would silence. When I hit a wall like this, I would usually investigate how other engineers historically handled this kind of issue, and almost invariably I would realize there is an established concept or pattern for handling this exact problem.
+
+In my first month, I wrote a lot of basic SQL to answer customer questions. I had no idea what indexes were or how to write efficient queries, because I had no need to. But when I started making dashboards for other people I quickly learned if the queries behind my dashboard weren't fast, people wouldn't use it. So I learned to read query plans, use indexes, and write good sql to solve a very real pain point.
+
+Working with our finance team, I was tasked with calculating daily purchase prices of loans using files a partner uploaded to our S3 bucket. To me, this was a unique problem, and my first version imported their file into a Google Sheet every day with an Apps Script. As we extended to multiple partners with different configs and files that were too big for a single Google Sheet, I realized that I was building something extremely common: an ETL pipeline, and that there were already plenty of good solutions to this exact problem.
+
+The most frustrating was the way I learned the value of relational database models. When I first started to create my own tables, my intuition was to minimize the number of tables and use json fields to store relationships. I thought this would make things simpler, but it quickly became an issue when I wanted to do a complicated aggregation. And even worse, when I tried to comprehend or make any changes to the many-to-many relationships of my objects I felt like my brain was going to explode. So, in desperation I tried to find a better way, only to realize the relational database model exists to prevent the exact problems I had run into.
+
+In the same way, I have learned countless lessons naturally by building, and gained a true appreciation for why these foundational concepts exist. Instead of learning from a textbook, I have gained a lot of experience from making the mistakes myself. That experience has also changed how I start. As AI has gotten better and more integrated into how I build, I now ask, “How have other people solved this in production? Show me examples.” I still learn by building, but I look for the existing patterns earlier.
+
+A friend of mine described engineering as learning to recognize patterns of problems. Across different systems, familiar problems appear in unfamiliar forms, but the same solutions often apply. Experience is recognizing these patterns and knowing the tools already exist to solve them. Today, I've seen lots of them (sometimes painfully) in my quest to build a better ops engine. Most of them, it turns out, already had names. I just had to find them by accident.
+
