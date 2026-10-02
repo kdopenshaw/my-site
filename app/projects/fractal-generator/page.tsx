@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function FractalsPage() {
   return (
     <div className={styles.page}>
-      <h1 className="heading-accent">Fractal Generator</h1>
+      <h1>Fractal Generator</h1>
       <FractalStudio />
     </div>
   );

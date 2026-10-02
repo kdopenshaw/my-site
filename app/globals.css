@@ -238,7 +238,7 @@ img {
   max-width: 100%;
 }
 
-/* Shared composition: page shells, heading accents, buttons, and image grids. */
+/* Shared composition: page shells, mono labels, buttons, and image grids. */
 .page-shell {
   width: min(calc(100% - 2 * var(--spacing-sm)), var(--page-width, 36rem));
   margin: 0 auto;
@@ -246,10 +246,10 @@ img {
   padding-bottom: var(--spacing-2xl);
 }
 
-/* Mono page title for the home page and the content, projects, and blacksmithing indexes. */
-.page-kicker {
+/* Uppercase mono label. Color comes from the heading: h1 stays primary,
+   and a section heading can set its own color. */
+.mono-label {
   margin-bottom: var(--spacing-md);
-  color: var(--color-primary);
   font-family: var(--font-code);
   font-size: var(--fs-body);
   font-weight: 400;
@@ -257,18 +257,6 @@ img {
   line-height: 1.4;
   text-transform: uppercase;
 }
-
-/* Mark under a title. Heading sizes are defined in the h1–h6 rules above.
-.heading-accent::after {
-  display: block;
-  width: 2.5rem;
-  height: 3px;
-  margin-top: var(--spacing-xs);
-  border-radius: 999px;
-  background: var(--color-accent);
-  content: "";
-}
-*/
 
 .image-grid {
   columns: var(--gallery-columns, 2);

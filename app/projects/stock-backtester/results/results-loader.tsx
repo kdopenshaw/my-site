@@ -24,7 +24,7 @@ export default function ResultsLoader({ payload, backHref }: { payload: string; 
   return <>
     {result ? <Results key={payload} result={result} /> : <>
       <header className={styles.pageHeader}>
-        <h1 className="heading-accent">Backtesting Results</h1>
+        <h1>Backtesting Results</h1>
         <TradingNavigation />
       </header>
       {error ? <div role="alert"><p>{error}</p>{error.startsWith("Not enough historical prices") ? <Link className="button-outline" href={backHref}>Back</Link> : <button type="button" className="button-outline" onClick={() => setAttempt((n) => n + 1)}>Try again</button>}</div> : <p role="status">Loading historical prices and calculating trades…</p>}

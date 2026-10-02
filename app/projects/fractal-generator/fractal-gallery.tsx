@@ -177,7 +177,7 @@ export default function FractalGallery({ refreshKey }: { refreshKey: number }) {
   return (
     <section className={styles.gallery} aria-labelledby="fractal-gallery-title">
       <header className={styles.galleryHeader}>
-        <h2 className="heading-accent" id="fractal-gallery-title">Fractal gallery</h2>
+        <h2 id="fractal-gallery-title">Fractal gallery</h2>
         {fractals.length > 0 && <span>{fractals.length} shown</span>}
       </header>
 

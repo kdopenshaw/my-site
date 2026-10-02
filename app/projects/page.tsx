@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function ProjectsPage() {
   return (
     <section className="page-shell" aria-labelledby="projects-heading">
-      <h1 className="page-kicker" id="projects-heading">Projects</h1>
+      <h1 className="mono-label" id="projects-heading">Projects</h1>
       <ul className={styles.list} aria-label="Projects" role="list">
         {projects.map((project, index) => (
           <li key={project.href}>

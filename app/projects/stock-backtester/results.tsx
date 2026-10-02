@@ -80,7 +80,7 @@ export default function Results({ result }: { result: BacktestResult }) {
   return (
     <section aria-labelledby="results-heading">
       <header className={styles.pageHeader}>
-        <h1 className="heading-accent" id="results-heading">Backtesting Results for {p.symbols.join(", ")}</h1>
+        <h1 id="results-heading">Backtesting Results for {p.symbols.join(", ")}</h1>
         <TradingNavigation strategy={p.strategy} />
       </header>
       <p className={styles.muted}>{p.strategy.toUpperCase()} ({p.period} sessions) · {p.start} to {p.end} · Alpaca {result.feed.toUpperCase()} · Split-adjusted prices</p>

@@ -24,7 +24,7 @@ export default function Home() {
 
       <section className={styles.introduction} id="introduction" aria-labelledby="home-title">
         <div className={styles.introductionContent}>
-          <h1 className={`${styles.homeTitle} page-kicker`} id="home-title">
+          <h1 className={`${styles.homeTitle} mono-label`} id="home-title">
             Keith Openshaw
           </h1>
           <p className={styles.homeLead}>
@@ -32,7 +32,7 @@ export default function Home() {
           </p>
           <div className={styles.homeDirectory}>
             <section aria-labelledby="home-content">
-              <h2 className={`${styles.sectionHeading} page-kicker`} id="home-content">
+              <h2 className={`${styles.sectionHeading} mono-label`} id="home-content">
                 <Link href="/content">Content</Link>
               </h2>
               <ul className={styles.pieceList}>
@@ -45,7 +45,7 @@ export default function Home() {
             </section>
 
             <section aria-labelledby="home-projects">
-              <h2 className={`${styles.sectionHeading} page-kicker`} id="home-projects">
+              <h2 className={`${styles.sectionHeading} mono-label`} id="home-projects">
                 <Link href="/projects">Projects</Link>
               </h2>
               <ul className={styles.pieceList}>
@@ -58,7 +58,7 @@ export default function Home() {
             </section>
 
             <section aria-labelledby="home-blacksmithing">
-              <h2 className={`${styles.sectionHeading} page-kicker`} id="home-blacksmithing">
+              <h2 className={`${styles.sectionHeading} mono-label`} id="home-blacksmithing">
                 <Link href="/blacksmithing">Blacksmithing</Link>
               </h2>
               <p className={styles.sectionNote}>

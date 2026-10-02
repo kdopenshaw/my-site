@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function DilemmaQuestionnairePage() {
   return (
     <section className="page-shell" aria-labelledby="questionnaire-heading">
-      <h1 className="heading-accent" id="questionnaire-heading">
+      <h1 id="questionnaire-heading">
         Dilemma questionnaire
       </h1>
       <QuestionnaireForm />

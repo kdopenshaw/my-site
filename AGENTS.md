@@ -19,8 +19,8 @@
 ## Typography
 
 - IBM Plex Serif is the primary typeface for prose and interface text, including labels, metadata, and controls. Use the shared `--font-primary` token.
-- Geologica is the display typeface for headings, titles, and navigation links. Use the shared `--font-display` token.
-- Use Inconsolata via the shared `--font-code` token for code, technical values, machine output, or content whose structure benefits from fixed-width characters.
+- Geologica is the display typeface for navigation, article and project titles, and list links. Use the shared `--font-display` token.
+- Use Inconsolata via the shared `--font-code` token for code, technical values, machine output, and the uppercase index labels (`.mono-label`).
 - Do not introduce another branded font without an explicit design decision from the user.
 - Create hierarchy primarily with weight, size, line height, spacing, and color:
   - Body prose: 400.
@@ -29,7 +29,7 @@
   - Section headings: 500.
   - Page headings: 600.
 - Use the fixed `rem` font-size tokens in `app/globals.css`, with larger headings adjusted in the shared `48rem` mobile/tablet breakpoint. Do not add heading-size clamps or arbitrary page-specific font sizes when an existing token or semantic element is suitable.
-- Page titles are `h1` and use `--fs-h1`. The `h2`, `h3`, and `h4` elements use their matching size tokens everywhere, including article prose. Do not add title-size aliases or override heading typography in component styles; component styles may adjust heading margins for layout.
+- Article and project titles are `h1` and use `--fs-h1` with the display face. Index labels (home, content, projects, blacksmithing) use `.mono-label`: Inconsolata, body size, uppercase. The `h2`, `h3`, and `h4` elements use their matching size tokens everywhere, including article prose. Do not add title-size aliases or override heading typography in component styles; component styles may adjust heading margins for layout.
 - The Content index is a list of links, and fractal controls are named form groups. Style their links and labels directly with the body, small, and caption tokens rather than using heading elements for their appearance.
 - Keep large headings tightly led and slightly tracked; keep body copy open and comfortable. Preserve `--leading-tight`, `--leading-body`, and the `--measure` reading width.
 - Use semantic HTML headings in order. Do not choose heading tags for their visual size.
@@ -40,7 +40,7 @@
 - Neutrals are one family: `background`, `surface`, `border`, `heading`, `text`, and `text-muted`.
 - Primary is the emphasis color for page titles, links, the current navigation item, selected controls, and filled buttons. Use `primary-hover` for the hover step, `primary-subtle` for a faint wash, and `on-primary` for text on a solid primary fill. Focus rings use primary.
 - Navigation links use the heading color at rest and primary when active or hovered. Do not underline navigation links.
-- Copper is the accent. Use `accent` for the sparse mark and `accent-text` when copper is read as text.
+- Copper is the accent. Use `accent` for marks and `accent-text` when copper is read as text.
 - `gain` and `loss` are status colors for values and errors.
 - Muted text must remain readable. Preserve sufficient contrast for dates, labels, captions, and disabled states.
 

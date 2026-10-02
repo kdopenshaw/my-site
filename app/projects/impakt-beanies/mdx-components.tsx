@@ -51,7 +51,7 @@ function ProjectHero({ children }: ChildrenProps) {
   return (
     <header className={styles.hero}>
       <div>
-        <h1 className="heading-accent">Impakt Beanies</h1>
+        <h1>Impakt Beanies</h1>
         {children}
       </div>
       <ProjectImage
