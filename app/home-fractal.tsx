@@ -232,11 +232,7 @@ function paintFrame(pixels: Uint8ClampedArray, canvasWidth: number, frame: GifFr
   }
 }
 
-type HomeFractalProps = {
-  onPlaybackComplete?: () => void;
-};
-
-export default function HomeFractal({ onPlaybackComplete }: HomeFractalProps) {
+export default function HomeFractal() {
   const [theme, setTheme] = useState<Theme | null>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [useStill, setUseStill] = useState(false);
@@ -283,7 +279,6 @@ export default function HomeFractal({ onPlaybackComplete }: HomeFractalProps) {
     const image = FRACTALS[theme];
     if (heldThemeRef.current === theme && canvas.width === image.width && canvas.height === image.height) {
       setPaintedTheme(theme);
-      onPlaybackComplete?.();
       return;
     }
     // Assigning the same canvas size clears its bitmap, so only write a change.
@@ -326,7 +321,6 @@ export default function HomeFractal({ onPlaybackComplete }: HomeFractalProps) {
         }
         if (index === animation.frames.length - 1) {
           heldThemeRef.current = theme;
-          onPlaybackComplete?.();
           break;
         }
         elapsed += frame.delay;
@@ -347,7 +341,7 @@ export default function HomeFractal({ onPlaybackComplete }: HomeFractalProps) {
       finishWait();
       controller.abort();
     };
-  }, [onPlaybackComplete, reducedMotion, theme, useStill]);
+  }, [reducedMotion, theme, useStill]);
 
   const image = FRACTALS[theme ?? "light"];
   const showStill = Boolean(theme) && (reducedMotion || useStill);

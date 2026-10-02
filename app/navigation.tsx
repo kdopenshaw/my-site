@@ -21,7 +21,7 @@ export default function Navigation() {
   const [open, setOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [hoverEnabled, setHoverEnabled] = useState(true);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLElement>(null);
   const openedByHoverAt = useRef(0);
   const lastScrollY = useRef(0);
   const showMenu = pathname !== "/dilemmas/questionnaire";
@@ -38,29 +38,6 @@ export default function Navigation() {
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
-
-  useEffect(() => {
-    if (!showMenu) return undefined;
-
-    const place = () => {
-      const menu = menuRef.current;
-      const column = document.querySelector("main .page-shell");
-      if (!menu || !column) {
-        if (menu) menu.style.left = "";
-        return;
-      }
-      const bounds = column.getBoundingClientRect();
-      if (bounds.width > window.innerWidth * 0.92) {
-        menu.style.left = "";
-        return;
-      }
-      menu.style.left = `${bounds.left}px`;
-    };
-
-    place();
-    window.addEventListener("resize", place);
-    return () => window.removeEventListener("resize", place);
-  }, [showMenu, pathname]);
 
   useEffect(() => {
     lastScrollY.current = window.scrollY;
@@ -89,10 +66,6 @@ export default function Navigation() {
   useEffect(() => {
     if (!open) return undefined;
 
-    if (pathname === "/") {
-      window.dispatchEvent(new Event("homepage-navigation-open"));
-    }
-
     const closeOnOutsideClick = (event: PointerEvent) => {
       if (!menuRef.current?.contains(event.target as Node)) setOpen(false);
     };
@@ -106,13 +79,16 @@ export default function Navigation() {
       document.removeEventListener("pointerdown", closeOnOutsideClick);
       document.removeEventListener("keydown", closeOnEscape);
     };
-  }, [open, pathname]);
+  }, [open]);
 
   return (
     <header className={`${styles.siteHeader} ${pathname === "/" ? styles.homeHeader : ""} ${hidden ? styles.headerHidden : ""}`}>
       {showMenu && (
-        <div
+        <nav
+          id="site-menu"
           className={styles.menu}
+          aria-label="Site"
+          data-open={open || undefined}
           ref={menuRef}
           onMouseEnter={() => {
             if (!hoverEnabled) return;
@@ -124,6 +100,26 @@ export default function Navigation() {
             setOpen(false);
           }}
         >
+          {open && (
+            <ul className={`${styles.menuSide} ${styles.menuSideLeft}`}>
+              {links.slice(0, 2).map((link) => {
+                const active = isActive(link.href);
+
+                return (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      aria-current={active ? "page" : undefined}
+                      className={active ? styles.menuLinkActive : styles.menuLink}
+                      onClick={closeAfterNavigation}
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
           <button
             type="button"
             className={styles.menuTrigger}
@@ -143,28 +139,26 @@ export default function Navigation() {
             <span className={styles.burger} aria-hidden="true" />
           </button>
           {open && (
-            <nav id="site-menu" className={styles.menuPanel} aria-label="Site">
-              <ul>
-                {links.map((link) => {
-                  const active = isActive(link.href);
+            <ul className={`${styles.menuSide} ${styles.menuSideRight}`}>
+              {links.slice(2).map((link) => {
+                const active = isActive(link.href);
 
-                  return (
-                    <li key={link.href}>
-                      <Link
-                        href={link.href}
-                        aria-current={active ? "page" : undefined}
-                        className={active ? styles.menuLinkActive : styles.menuLink}
-                        onClick={closeAfterNavigation}
-                      >
-                        {link.label}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </nav>
+                return (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      aria-current={active ? "page" : undefined}
+                      className={active ? styles.menuLinkActive : styles.menuLink}
+                      onClick={closeAfterNavigation}
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
           )}
-        </div>
+        </nav>
       )}
       <ThemeToggle />
     </header>
