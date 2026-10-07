@@ -15,38 +15,43 @@ export default function ProjectsPage() {
     <section className="page-shell" aria-labelledby="projects-heading">
       <h1 className="mono-label" id="projects-heading">Projects</h1>
       <ul className={styles.list} aria-label="Projects" role="list">
-        {projects.map((project, index) => (
-          <li key={project.href}>
-            <Link className={styles.entry} href={project.href}>
-              <span className={styles.media}>
-                <Image
-                  className={`${styles.image} ${"imageDark" in project ? styles.imageLight : ""}`}
-                  src={project.image}
-                  alt={project.imageAlt}
-                  fill
-                  priority={index < 3}
-                  sizes="4.5rem"
-                />
-                {"imageDark" in project && (
+        {projects.map((project, index) => {
+          const imageDark = project.imageDark;
+          const imageDarkAlt = project.imageDarkAlt;
+
+          return (
+            <li key={project.href}>
+              <Link className={styles.entry} href={project.href}>
+                <span className={styles.media}>
                   <Image
-                    className={`${styles.image} ${styles.imageDark}`}
-                    src={project.imageDark}
-                    alt={project.imageDarkAlt}
+                    className={`${styles.image} ${imageDark ? styles.imageLight : ""}`}
+                    src={project.image}
+                    alt={project.imageAlt}
                     fill
+                    priority={index < 3}
                     sizes="4.5rem"
                   />
-                )}
-              </span>
-              <span className={styles.copy}>
-                <span className={styles.titleRow}>
-                  <span className={styles.title}>{project.title}</span>
-                  <span className={styles.kind}>{project.kind}</span>
+                  {imageDark && imageDarkAlt && (
+                    <Image
+                      className={`${styles.image} ${styles.imageDark}`}
+                      src={imageDark}
+                      alt={imageDarkAlt}
+                      fill
+                      sizes="4.5rem"
+                    />
+                  )}
                 </span>
-                <span className={styles.description}>{project.description}</span>
-              </span>
-            </Link>
-          </li>
-        ))}
+                <span className={styles.copy}>
+                  <span className={styles.titleRow}>
+                    <span className={styles.title}>{project.title}</span>
+                    <span className={styles.kind}>{project.kind}</span>
+                  </span>
+                  <span className={styles.description}>{project.description}</span>
+                </span>
+              </Link>
+            </li>
+          );
+        })}
       </ul>
     </section>
   );

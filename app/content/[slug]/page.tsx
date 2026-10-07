@@ -7,6 +7,7 @@ import type { Metadata } from "next";
 
 import CustomMdx from "../mdx";
 import { formatDate, getContentPosts } from "../posts";
+import SiteLinks from "../../site-links";
 
 export function generateStaticParams() {
   return getContentPosts().map((post) => ({ slug: post.slug }));
@@ -49,6 +50,9 @@ export default async function ContentPost({ params }: ContentPostPageProps) {
         {formatDate(post.metadata.publishedAt)}
       </p>
       <CustomMdx source={post.content} />
+      <footer className={styles.footer}>
+        <SiteLinks />
+      </footer>
     </section>
   );
 }

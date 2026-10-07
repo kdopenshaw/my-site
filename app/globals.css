@@ -120,6 +120,8 @@ html[data-theme="dark"] {
 }
 
 body {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
   background: var(--color-background);
   color: var(--color-text);
@@ -239,7 +241,16 @@ img {
 }
 
 /* Shared composition: page shells, mono labels, buttons, and image grids. */
+main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
 .page-shell {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
   width: min(calc(100% - 2 * var(--spacing-sm)), var(--page-width, 36rem));
   margin: 0 auto;
   padding-top: var(--spacing-sm);

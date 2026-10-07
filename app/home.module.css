@@ -117,21 +117,8 @@
   color: var(--color-heading);
 }
 
-.iconLinks {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
+.contactIcons {
   margin-bottom: var(--spacing-xs);
-}
-
-.iconLink {
-  display: inline-flex;
-  border-radius: 0.25rem;
-  color: var(--color-heading);
-}
-
-.iconLink img {
-  clip-path: inset(1px round 2px);
 }
 
 .fractal {

@@ -1,0 +1,26 @@
+.iconLinks {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.iconLink {
+  display: inline-flex;
+  border-radius: 0.25rem;
+  color: var(--color-heading);
+}
+
+.linkedin {
+  clip-path: inset(1px round 2px);
+}
+
+.goodreads {
+  width: 30px;
+  height: 30px;
+  background: currentColor;
+  mask: url("/goodreads.png") center / contain no-repeat;
+}
+
+.iconLink:hover {
+  color: var(--color-primary);
+}

@@ -44,6 +44,11 @@
   color: var(--color-primary);
 }
 
+.footer {
+  margin-top: auto;
+  padding-top: var(--spacing-2xl);
+}
+
 .postDate {
   margin-top: var(--spacing-xs);
   margin-bottom: var(--spacing-lg);

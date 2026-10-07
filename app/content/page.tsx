@@ -6,6 +6,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 import { formatDate, getContentPosts } from "./posts";
+import SiteLinks from "../site-links";
 
 export const metadata: Metadata = {
   title: "Content | Keith Openshaw",
@@ -31,6 +32,10 @@ export default function ContentPage() {
           </li>
         ))}
       </ul>
+
+      <footer className={styles.footer}>
+        <SiteLinks />
+      </footer>
     </section>
   );
 }
