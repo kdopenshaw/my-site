@@ -33,7 +33,6 @@
   display: grid;
   align-items: stretch;
   justify-items: center;
-  min-height: 100svh;
   padding: 0 var(--spacing-lg);
   background: var(--color-background);
 }
