@@ -12,6 +12,16 @@ export const projects = [
     imageDarkAlt: "Green spirals of a Julia set on a black background",
   },
   {
+    href: "https://github.com/kdopenshaw/kai",
+    title: "Kai",
+    kind: "tool",
+    description:
+      "A macOS menu bar app that explains highlighted text with a local language model.",
+    external: true,
+    image: "github",
+    imageAlt: "GitHub",
+  },
+  {
     href: "/projects/impakt-beanies",
     title: "Impakt Beanies",
     kind: "product",

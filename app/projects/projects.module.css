@@ -32,6 +32,14 @@
   object-fit: cover;
 }
 
+.mark {
+  position: absolute;
+  inset: 0.85rem;
+  width: auto;
+  height: auto;
+  color: var(--color-heading);
+}
+
 .imageDark {
   display: none;
 }

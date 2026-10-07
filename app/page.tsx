@@ -49,7 +49,13 @@ export default function Home() {
               <ul className={styles.pieceList}>
                 {featuredProjects.map((project) => (
                   <li key={project.href}>
-                    <Link href={project.href}>{project.title}</Link>
+                    {"external" in project && project.external ? (
+                      <a href={project.href} target="_blank" rel="noopener noreferrer">
+                        {project.title}
+                      </a>
+                    ) : (
+                      <Link href={project.href}>{project.title}</Link>
+                    )}
                   </li>
                 ))}
               </ul>
