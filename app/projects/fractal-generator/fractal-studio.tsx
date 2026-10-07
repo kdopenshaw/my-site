@@ -48,6 +48,14 @@ function readSavedFamilies(): SavedFamily[] {
   }
 }
 
+function writeSavedFamilies(families: SavedFamily[]) {
+  try {
+    window.localStorage.setItem(SAVED_FAMILIES_KEY, JSON.stringify(families));
+  } catch {
+    // Storage can be unavailable; the in-memory list still works for this visit.
+  }
+}
+
 export default function FractalStudio() {
   const [parameters, setParameters] = useState<FractalParameters>(() => ({
     ...PRESETS.mandelbrot.parameters,
@@ -139,11 +147,16 @@ export default function FractalStudio() {
       label,
       parameters: { ...parameters, colors: [...parameters.colors] },
     };
-    const nextFamilies = [...savedFamilies, nextFamily];
-    setSavedFamilies(nextFamilies);
-    window.localStorage.setItem(SAVED_FAMILIES_KEY, JSON.stringify(nextFamilies));
+    setSavedFamilies((current) => {
+      const nextFamilies = [...current, nextFamily];
+      writeSavedFamilies(nextFamilies);
+      return nextFamilies;
+    });
     setPresetKey(nextFamily.id);
     setFamilyName("");
+    window.requestAnimationFrame(() => {
+      document.querySelector(`.${styles.savedHeading}`)?.scrollIntoView({ block: "nearest" });
+    });
   };
 
   const updateRaster = (dimension: "width" | "height", value: number) => {
@@ -318,11 +331,14 @@ export default function FractalStudio() {
   };
 
   useEffect(() => {
+    setSavedFamilies(readSavedFamilies());
+  }, []);
+
+  useEffect(() => {
     // React runs effects twice in development. Only request the first image once.
     if (hasInitializedRef.current) return;
     hasInitializedRef.current = true;
 
-    setSavedFamilies(readSavedFamilies());
     const startingFractal = randomStartingFractal();
     setPresetKey(startingFractal.presetKey);
     aspectRatioRef.current = startingFractal.parameters.width / startingFractal.parameters.height;
@@ -364,9 +380,16 @@ export default function FractalStudio() {
                 </div>
               ),
             )}
-            {savedFamilies.length > 0 && (
-              <>
-                <p className={styles.savedHeading}>Saved</p>
+          </RadioGroup>
+          {savedFamilies.length > 0 && (
+            <>
+              <p className={styles.savedHeading}>Saved</p>
+              <RadioGroup
+                value={presetKey}
+                onValueChange={choosePreset}
+                aria-label="Saved fractal families"
+                className={styles.familyList}
+              >
                 {savedFamilies.map((family) => (
                   <div
                     key={family.id}
@@ -377,9 +400,9 @@ export default function FractalStudio() {
                     </RadioGroupItem>
                   </div>
                 ))}
-              </>
-            )}
-          </RadioGroup>
+              </RadioGroup>
+            </>
+          )}
         </aside>
         <div className={styles.preview}>
           <div className={styles.canvasFrame} aria-busy={isRendering}>
@@ -505,6 +528,11 @@ export default function FractalStudio() {
                 placeholder="Family name"
                 aria-label="Saved family name"
                 onChange={(event) => setFamilyName(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key !== "Enter") return;
+                  event.preventDefault();
+                  saveFamily();
+                }}
               />
               <button
                 className="button-outline"

@@ -17,22 +17,33 @@ export default function ProjectsPage() {
       <ul className={styles.list} aria-label="Projects" role="list">
         {projects.map((project, index) => (
           <li key={project.href}>
-            <Link className={styles.entry} href={project.href} aria-label={project.title}>
-              <div className={styles.copy}>
-                <span className={styles.title}>{project.title}</span>
-                <p className={styles.description}>{project.description}</p>
-              </div>
-              {project.image && (
+            <Link className={styles.entry} href={project.href}>
+              <span className={styles.media}>
                 <Image
-                  className={styles.thumbnail}
+                  className={`${styles.image} ${"imageDark" in project ? styles.imageLight : ""}`}
                   src={project.image}
-                  alt=""
-                  width={160}
-                  height={160}
-                  priority={index === 0}
-                  sizes="88px"
+                  alt={project.imageAlt}
+                  fill
+                  priority={index < 3}
+                  sizes="4.5rem"
                 />
-              )}
+                {"imageDark" in project && (
+                  <Image
+                    className={`${styles.image} ${styles.imageDark}`}
+                    src={project.imageDark}
+                    alt={project.imageDarkAlt}
+                    fill
+                    sizes="4.5rem"
+                  />
+                )}
+              </span>
+              <span className={styles.copy}>
+                <span className={styles.titleRow}>
+                  <span className={styles.title}>{project.title}</span>
+                  <span className={styles.kind}>{project.kind}</span>
+                </span>
+                <span className={styles.description}>{project.description}</span>
+              </span>
             </Link>
           </li>
         ))}

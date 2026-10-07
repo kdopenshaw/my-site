@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import MarketOverview from "./market-overview";
 import styles from "./backtester.module.css";
-export const metadata: Metadata = { title: "Technical Threshold Backtesting | Keith Openshaw", description: "Backtest RSI and SMA threshold strategies against historical market data." };
+export const metadata: Metadata = { title: "Technical Trade Backtesting Simulator | Keith Openshaw", description: "Backtest RSI and SMA threshold strategies against historical market data." };
 export default function StockBacktesterPage() {
   return <>
-    <h1 id="stock-backtester-heading">Technical Threshold Backtesting</h1>
+    <h1 id="stock-backtester-heading">Technical Trade Backtesting Simulator</h1>
     <section className={styles.section}>
       <h2>About</h2>
       <p>This is trading application I built in 2021 to investigate the effectiveness of technical trading strategies. It uses the alpaca API to get historical stock prices and backtest technical strategies using default or customer parameters. It focuses on the two most common technical indicators: relative strength index (RSI) and simple moving average (SMA).</p>

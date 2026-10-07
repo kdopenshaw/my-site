@@ -277,7 +277,10 @@ export default function FractalGallery({
             className={styles.lightboxStage}
             onClick={(event) => { if (event.target === event.currentTarget) setSelectedIndex(null); }}
           >
-            <div className={styles.lightboxImage}>
+            <div
+              className={styles.lightboxImage}
+              onClick={(event) => { if (event.target === event.currentTarget) setSelectedIndex(null); }}
+            >
               <div className={styles.lightboxFrame}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={selectedFractal.imageUrl} alt={fractalAlt(selectedFractal)} width={selectedFractal.width} height={selectedFractal.height} />

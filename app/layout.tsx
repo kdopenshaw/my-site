@@ -1,4 +1,4 @@
-import { Geologica, IBM_Plex_Serif, Inconsolata } from "next/font/google";
+import { Geologica, Inconsolata, Source_Serif_4 } from "next/font/google";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
@@ -14,11 +14,11 @@ const geologica = Geologica({
   variable: "--font-geologica",
 });
 
-const ibmPlexSerif = IBM_Plex_Serif({
+const sourceSerif = Source_Serif_4({
   weight: ["400", "500", "600"],
   style: ["normal", "italic"],
   subsets: ["latin"],
-  variable: "--font-ibm-plex-serif",
+  variable: "--font-source-serif",
 });
 
 const inconsolata = Inconsolata({
@@ -36,7 +36,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
   return (
     <html
       lang="en"
-      className={`${geologica.variable} ${ibmPlexSerif.variable} ${inconsolata.variable}`}
+      className={`${geologica.variable} ${sourceSerif.variable} ${inconsolata.variable}`}
       suppressHydrationWarning
     >
       <head>

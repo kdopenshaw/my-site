@@ -30,7 +30,7 @@
   flex-direction: column;
   gap: var(--spacing-2xs);
   align-self: start;
-  max-height: 14rem;
+  max-height: 18rem;
   overflow: auto;
 }
 .controlPanel {

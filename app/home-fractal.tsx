@@ -252,6 +252,9 @@ export default function HomeFractal() {
     setTrackedPlayback(playbackKey);
     setUseStill(false);
     setPaintedTheme(null);
+    // Drop the completed-theme lock so a mid-play swap starts the other GIF
+    // from frame one instead of keeping the current bitmap.
+    heldThemeRef.current = null;
   }
 
   useEffect(() => {
@@ -284,9 +287,9 @@ export default function HomeFractal() {
       setPaintedTheme(theme);
       return;
     }
-    // Assigning the same canvas size clears its bitmap, so only write a change.
-    if (canvas.width !== crop.width) canvas.width = crop.width;
-    if (canvas.height !== crop.height) canvas.height = crop.height;
+    // Always rewrite size so a theme swap with the same crop clears the old frames.
+    canvas.width = crop.width;
+    canvas.height = crop.height;
     const controller = new AbortController();
     let active = true;
     let timeoutId = 0;
