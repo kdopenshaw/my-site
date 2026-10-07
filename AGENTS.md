@@ -18,7 +18,7 @@
 
 ## Typography
 
-- IBM Plex Serif is the primary typeface for prose and interface text, including labels, metadata, and controls. Use the shared `--font-primary` token.
+- Source Serif 4 is the primary typeface for prose and interface text, including labels, metadata, and controls. Use the shared `--font-primary` token.
 - Geologica is the display typeface for navigation, article and project titles, and list links. Use the shared `--font-display` token.
 - Use Inconsolata via the shared `--font-code` token for code, technical values, machine output, and the uppercase index labels (`.mono-label`).
 - Do not introduce another branded font without an explicit design decision from the user.
