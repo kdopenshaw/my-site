@@ -44,9 +44,20 @@
   color: var(--color-primary);
 }
 
-.footer {
-  margin-top: auto;
-  padding-top: var(--spacing-2xl);
+.backLink {
+  margin: var(--spacing-xl) 0 0;
+}
+
+.backLink a {
+  font-family: var(--font-display);
+  font-size: var(--fs-small);
+  letter-spacing: -0.02em;
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+
+.backLink a:hover {
+  color: var(--color-primary);
 }
 
 .postDate {

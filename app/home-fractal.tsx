@@ -18,11 +18,11 @@ const FRACTALS = {
     crop: { x: 227, y: 140, width: 546, height: 720 },
   },
   light: {
-    gif: "/fractals/julia_0.2841_0.01_20260921-154313_growth.gif",
-    still: "/fractals/julia_0.2841_0.01_20260921-154313_growth_last.png",
-    width: 610,
-    height: 784,
-    crop: { x: 32, y: 32, width: 546, height: 720 },
+    gif: "/fractals/julia-growth-light.gif",
+    still: "/fractals/julia-growth-light-last.png",
+    width: 1000,
+    height: 1000,
+    crop: { x: 227, y: 140, width: 546, height: 720 },
   },
 };
 
@@ -36,6 +36,10 @@ type GifFrame = {
   minCodeSize: number;
   compressed: Uint8Array;
   palette: Uint8Array;
+  // Index into palette that should stay clear. Null when the frame is opaque.
+  transparentIndex: number | null;
+  // GIF disposal after this frame is shown. 2 restores its rect to transparent.
+  disposal: number;
 };
 type GifAnimation = { width: number; height: number; frames: GifFrame[] };
 
@@ -66,6 +70,8 @@ function readGif(buffer: ArrayBuffer): GifAnimation | null {
 
   const frames: GifFrame[] = [];
   let pending = 100;
+  let pendingTransparent: number | null = null;
+  let pendingDisposal = 0;
 
   while (offset < bytes.length) {
     const marker = bytes[offset];
@@ -76,9 +82,12 @@ function readGif(buffer: ArrayBuffer): GifAnimation | null {
       const label = bytes[offset];
       offset += 1;
       if (label === 0xf9 && offset + 4 < bytes.length && bytes[offset] === 4) {
+        const packed = bytes[offset + 1];
         const centiseconds = bytes[offset + 2] | (bytes[offset + 3] << 8);
         // A stored delay of 0 is defined as 100ms by browsers.
         pending = centiseconds === 0 ? 100 : centiseconds * 10;
+        pendingDisposal = (packed >> 2) & 0x07;
+        pendingTransparent = packed & 0x01 ? bytes[offset + 4] : null;
       }
       offset = skipBlocks(bytes, offset);
       if (offset > bytes.length) return null;
@@ -139,8 +148,12 @@ function readGif(buffer: ArrayBuffer): GifAnimation | null {
       minCodeSize,
       compressed,
       palette,
+      transparentIndex: pendingTransparent,
+      disposal: pendingDisposal,
     });
     pending = 100;
+    pendingTransparent = null;
+    pendingDisposal = 0;
   }
 
   return null;
@@ -219,12 +232,28 @@ function lzwDecode(minCodeSize: number, data: Uint8Array, pixelCount: number) {
   return out === pixelCount ? output : null;
 }
 
-function paintFrame(pixels: Uint8ClampedArray, canvasWidth: number, frame: GifFrame, indexes: Uint8Array) {
-  const { palette, left, top, width, height } = frame;
+function clearFrameRect(pixels: Uint8ClampedArray, canvasWidth: number, frame: GifFrame) {
+  const { left, top, width, height } = frame;
   for (let y = 0; y < height; y += 1) {
     const row = (top + y) * canvasWidth + left;
     for (let x = 0; x < width; x += 1) {
-      const color = indexes[y * width + x] * 3;
+      const pixel = (row + x) * 4;
+      pixels[pixel] = 0;
+      pixels[pixel + 1] = 0;
+      pixels[pixel + 2] = 0;
+      pixels[pixel + 3] = 0;
+    }
+  }
+}
+
+function paintFrame(pixels: Uint8ClampedArray, canvasWidth: number, frame: GifFrame, indexes: Uint8Array) {
+  const { palette, left, top, width, height, transparentIndex } = frame;
+  for (let y = 0; y < height; y += 1) {
+    const row = (top + y) * canvasWidth + left;
+    for (let x = 0; x < width; x += 1) {
+      const index = indexes[y * width + x];
+      if (transparentIndex !== null && index === transparentIndex) continue;
+      const color = index * 3;
       const pixel = (row + x) * 4;
       pixels[pixel] = palette[color];
       pixels[pixel + 1] = palette[color + 1];
@@ -314,13 +343,18 @@ export default function HomeFractal() {
       const bitmap = drawing.createImageData(animation.width, animation.height);
       let elapsed = 0;
       let origin = 0;
+      let previous: GifFrame | null = null;
       for (let index = 0; index < animation.frames.length; index += 1) {
         if (!active) return;
+        if (previous?.disposal === 2) {
+          clearFrameRect(bitmap.data, animation.width, previous);
+        }
         const frame = animation.frames[index];
         const indexes = lzwDecode(frame.minCodeSize, frame.compressed, frame.width * frame.height);
         if (!indexes) throw new Error("The fractal animation did not decode completely");
         paintFrame(bitmap.data, animation.width, frame, indexes);
         drawing.putImageData(bitmap, -crop.x, -crop.y);
+        previous = frame;
         if (index === 0) {
           origin = performance.now();
           setPaintedTheme(theme);

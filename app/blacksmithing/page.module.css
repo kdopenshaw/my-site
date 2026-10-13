@@ -1,7 +1,3 @@
-.page {
-  --page-width: 44rem;
-}
-
 .intro {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 9rem;

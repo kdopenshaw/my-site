@@ -31,7 +31,7 @@ function ProjectImage({
         : "";
 
   return (
-    <figure className={`${styles.mediaFigure} ${variantClass}`}>
+    <figure className={`${styles.mediaFigure} ${variantClass} ${variant === "process" ? "" : "wide"}`.trim()}>
       <Image
         className={styles.mediaImage}
         src={src}
@@ -141,7 +141,7 @@ function ProcessStep({
   children,
 }: ProcessStepProps) {
   return (
-    <section className={styles.processStep}>
+    <section className={`${styles.processStep} wide`}>
       <div className={styles.processCopy}>
         <span className={styles.stepNumber}>{number}</span>
         <h3>{title}</h3>
@@ -177,7 +177,7 @@ function FundingItem({ event, award }: FundingItemProps) {
 
 function ProjectGallery({ children }: ChildrenProps) {
   return (
-    <section className={styles.gallery} aria-label="Competition photographs">
+    <section className={`${styles.gallery} wide`} aria-label="Competition photographs">
       {children}
     </section>
   );

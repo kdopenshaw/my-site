@@ -7,10 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./navigation.module.css";
 import ThemeToggle from "./theme-toggle";
 
-// The four pages in the menu. To add one, add it here.
-
-const links = [
-  { href: "/", label: "Home" },
+const LINKS = [
   { href: "/content", label: "Content" },
   { href: "/projects", label: "Projects" },
   { href: "/blacksmithing", label: "Blacksmithing" },
@@ -19,148 +16,100 @@ const links = [
 export default function Navigation() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [hidden, setHidden] = useState(false);
-  const [hoverEnabled, setHoverEnabled] = useState(true);
-  const menuRef = useRef<HTMLElement>(null);
-  const openedByHoverAt = useRef(0);
-  const lastScrollY = useRef(0);
-  const showMenu = pathname !== "/dilemmas/questionnaire";
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   const isActive = (href: string) =>
-    pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
-
-  const closeAfterNavigation = () => {
-    setOpen(false);
-    setHoverEnabled(false);
-    window.addEventListener("pointermove", () => setHoverEnabled(true), { once: true });
-  };
+    pathname === href || pathname.startsWith(`${href}/`);
 
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
 
   useEffect(() => {
-    lastScrollY.current = window.scrollY;
-    setHidden(false);
-
-    if (pathname === "/") return undefined;
-
-    const updateVisibility = () => {
-      const currentScrollY = Math.max(window.scrollY, 0);
-
-      if (open || currentScrollY <= 1) {
-        setHidden(false);
-      } else if (currentScrollY > lastScrollY.current + 4) {
-        setHidden(true);
-      } else if (currentScrollY < lastScrollY.current - 4) {
-        setHidden(false);
-      }
-
-      lastScrollY.current = currentScrollY;
+    const media = window.matchMedia("(min-width: 48rem)");
+    const closeOnDesktop = () => {
+      if (media.matches) setOpen(false);
     };
 
-    window.addEventListener("scroll", updateVisibility, { passive: true });
-    return () => window.removeEventListener("scroll", updateVisibility);
-  }, [open, pathname]);
+    media.addEventListener("change", closeOnDesktop);
+    return () => media.removeEventListener("change", closeOnDesktop);
+  }, []);
 
   useEffect(() => {
     if (!open) return undefined;
 
-    const closeOnOutsideClick = (event: PointerEvent) => {
-      if (!menuRef.current?.contains(event.target as Node)) setOpen(false);
-    };
     const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
+      if (event.key !== "Escape") return;
+      setOpen(false);
+      menuButtonRef.current?.focus();
     };
 
-    document.addEventListener("pointerdown", closeOnOutsideClick);
     document.addEventListener("keydown", closeOnEscape);
-    return () => {
-      document.removeEventListener("pointerdown", closeOnOutsideClick);
-      document.removeEventListener("keydown", closeOnEscape);
-    };
+    return () => document.removeEventListener("keydown", closeOnEscape);
   }, [open]);
 
   return (
-    <header className={`${styles.siteHeader} ${pathname === "/" ? styles.homeHeader : ""} ${hidden ? styles.headerHidden : ""}`}>
-      {showMenu && (
-        <nav
-          id="site-menu"
-          className={styles.menu}
-          aria-label="Site"
-          data-open={open || undefined}
-          ref={menuRef}
-          onMouseEnter={() => {
-            if (!hoverEnabled) return;
-            openedByHoverAt.current = Date.now();
-            setOpen(true);
-          }}
-          onMouseLeave={() => {
-            openedByHoverAt.current = 0;
-            setOpen(false);
-          }}
-        >
-          {open && (
-            <ul className={`${styles.menuSide} ${styles.menuSideLeft}`}>
-              {links.slice(0, 2).map((link) => {
-                const active = isActive(link.href);
+    <header className={styles.siteHeader}>
+      <div className={styles.bar}>
+        <Link href="/" className={styles.name}>Keith Openshaw</Link>
 
-                return (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      aria-current={active ? "page" : undefined}
-                      className={active ? styles.menuLinkActive : styles.menuLink}
-                      onClick={closeAfterNavigation}
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                );
-              })}
+        <div className={styles.right}>
+          <nav aria-label="Site" className={styles.desktopNav}>
+            <ul className={styles.links}>
+              {LINKS.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className={styles.link}
+                    aria-current={isActive(link.href) ? "page" : undefined}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
-          )}
+          </nav>
+
+          <ThemeToggle />
+
           <button
+            ref={menuButtonRef}
             type="button"
-            className={styles.menuTrigger}
+            className={styles.menuButton}
             aria-expanded={open}
-            aria-controls="site-menu"
-            aria-label={open ? "Close navigation menu" : "Open navigation menu"}
-            onClick={() => {
-              const justOpenedByHover = Date.now() - openedByHoverAt.current < 400;
-              if (justOpenedByHover) {
-                openedByHoverAt.current = 0;
-                setOpen(true);
-                return;
-              }
-              setOpen((isOpen) => !isOpen);
-            }}
+            aria-controls="mobile-menu"
+            aria-label={open ? "Close menu" : "Open menu"}
+            onClick={() => setOpen((isOpen) => !isOpen)}
           >
-            <span className={styles.burger} aria-hidden="true" />
+            {open ? (
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 6l12 12M18 6L6 18" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 7h16M4 12h16M4 17h16" />
+              </svg>
+            )}
           </button>
-          {open && (
-            <ul className={`${styles.menuSide} ${styles.menuSideRight}`}>
-              {links.slice(2).map((link) => {
-                const active = isActive(link.href);
+        </div>
+      </div>
 
-                return (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      aria-current={active ? "page" : undefined}
-                      className={active ? styles.menuLinkActive : styles.menuLink}
-                      onClick={closeAfterNavigation}
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-        </nav>
-      )}
-      <ThemeToggle />
+      <nav id="mobile-menu" aria-label="Site menu" className={styles.mobileMenu} hidden={!open}>
+        <ul>
+          {LINKS.map((link) => (
+            <li key={link.href}>
+              <Link
+                href={link.href}
+                className={styles.mobileLink}
+                aria-current={isActive(link.href) ? "page" : undefined}
+                onClick={() => setOpen(false)}
+              >
+                {link.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
     </header>
   );
 }

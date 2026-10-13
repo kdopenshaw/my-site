@@ -2,12 +2,12 @@
 // generateStaticParams tells Next.js which filenames exist at build time.
 
 import styles from "../content.module.css";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 import CustomMdx from "../mdx";
 import { formatDate, getContentPosts } from "../posts";
-import SiteLinks from "../../site-links";
 
 export function generateStaticParams() {
   return getContentPosts().map((post) => ({ slug: post.slug }));
@@ -50,9 +50,7 @@ export default async function ContentPost({ params }: ContentPostPageProps) {
         {formatDate(post.metadata.publishedAt)}
       </p>
       <CustomMdx source={post.content} />
-      <footer className={styles.footer}>
-        <SiteLinks />
-      </footer>
+      <p className={styles.backLink}><Link href="/content">← All content</Link></p>
     </section>
   );
 }

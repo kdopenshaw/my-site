@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 
 import "./globals.css";
 import Navigation from "./navigation";
+import SiteFooter from "./site-footer";
 
 // next/font downloads these at build time and exposes them as CSS variables.
 // globals.css connects those variables to --font-primary, --font-display, and --font-code.
@@ -49,6 +50,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
       <body>
         <Navigation />
         <main>{children}</main>
+        <SiteFooter />
       </body>
     </html>
   );

@@ -1,24 +1,37 @@
 .iconLinks {
   display: flex;
   align-items: center;
-  gap: var(--spacing-xs);
+  gap: var(--spacing-sm);
 }
 
 .iconLink {
   display: inline-flex;
   border-radius: 0.25rem;
-  color: var(--color-heading);
+  color: var(--color-text-muted);
 }
 
-.linkedin {
-  clip-path: inset(1px round 2px);
+.iconLink svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+.goodreads,
+.substack {
+  width: 20px;
+  height: 20px;
+  background: currentColor;
 }
 
 .goodreads {
-  width: 30px;
-  height: 30px;
-  background: currentColor;
+  -webkit-mask: url("/goodreads.png") center / contain no-repeat;
   mask: url("/goodreads.png") center / contain no-repeat;
+}
+
+.substack {
+  -webkit-mask: url("/substack.png") center / contain no-repeat;
+  mask: url("/substack.png") center / contain no-repeat;
 }
 
 .iconLink:hover {

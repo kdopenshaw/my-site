@@ -49,7 +49,7 @@
 }
 
 .feature h3 {
-  color: var(--color-primary);
+  color: var(--color-heading);
 }
 
 .feature p,
@@ -141,6 +141,12 @@
   display: block;
   width: 100%;
   height: auto;
+}
+
+.heroMedia,
+.mockup {
+  width: auto;
+  max-width: none;
 }
 
 .heroMedia {

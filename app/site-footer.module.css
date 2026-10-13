@@ -1,0 +1,26 @@
+.footer {
+  width: min(calc(100% - 2 * var(--spacing-sm)), 36rem);
+  margin: var(--spacing-2xl) auto 0;
+  padding-top: var(--spacing-md);
+  padding-bottom: var(--spacing-xl);
+  border-top: 1px solid var(--color-border);
+  display: grid;
+  gap: var(--spacing-sm);
+}
+
+.contact {
+  margin: 0;
+  font-family: var(--font-primary);
+  font-size: var(--fs-small);
+  color: var(--color-text-muted);
+}
+
+.contact a {
+  color: var(--color-heading);
+  text-decoration: none;
+}
+
+.contact a:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}

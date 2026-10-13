@@ -8,7 +8,6 @@ import { getContentPosts } from "./content/posts";
 import HomeFractal from "./home-fractal";
 import styles from "./home.module.css";
 import { projects } from "./projects/projects";
-import SiteLinks from "./site-links";
 
 export default function Home() {
   const posts = getContentPosts().slice(0, 3);
@@ -71,23 +70,6 @@ export default function Home() {
               </p>
             </section>
           </div>
-
-          <footer className={styles.contact}>
-            <div className={styles.contactIcons}>
-              <SiteLinks />
-            </div>
-            Contact me:
-            <br />
-            <a href="mailto:kopensha@gmail.com">kopensha@gmail.com</a>
-            <br />
-            <a
-              href="https://www.linkedin.com/in/keith-openshaw/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              linkedin
-            </a>
-          </footer>
         </div>
       </section>
     </div>

@@ -44,7 +44,7 @@ export default function PinterestBoard({
   }, [hasMore, pins.length]);
 
   return (
-    <section aria-labelledby="pinterest-board-title">
+    <section className="wide" aria-labelledby="pinterest-board-title">
       <header className={styles.header}>
         <div className={styles.identity}>
           {/* eslint-disable-next-line @next/next/no-img-element */}

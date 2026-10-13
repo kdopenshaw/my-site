@@ -12,22 +12,21 @@
 
 :root {
   /* Neutral. One slate for reading and for chrome. */
-  --color-background: #ffffff;
-  --color-surface: #f2f5f8;
-  --color-border: #e0e6eb;
-  --color-heading: #0d1b2a;
-  --color-text: #334155;
-  --color-text-muted: #4e6e92;
+  --color-background: #FAF8F5;
+  --color-surface: #F2EEE8;
+  --color-border: #E7E1D9;
+  --color-heading: #2B2622;
+  --color-text: #4A423B;
+  --color-text-muted: #7D7268;
 
-  /* Primary. Emphasis for titles, links, selection, and filled controls.
-     Light mode follows the sky blue of the home fractal. Hover is the next step of this same hue. */
-  --color-primary: #17639e;
-  --color-primary-hover: #0e4a78;
+  /* Primary. One forge orange, shared with --color-accent. */
+  --color-primary: #C2410C;
+  --color-primary-hover: #9A3412;
   --color-primary-subtle: color-mix(in srgb, var(--color-primary) 12%, transparent);
-  --color-on-primary: #ffffff;
+  --color-on-primary: #FFFFFF;
 
-  /* Accent. Copper, used sparingly. accent-text is the step that is read. */
-  --color-accent: #e76f51;
+  /* Accent follows primary in both themes. */
+  --color-accent: var(--color-primary);
   --color-accent-text: var(--color-accent);
 
   /* Status. Values and errors. */
@@ -71,22 +70,20 @@
   --content-width: 1400px;
 }
 
-/* The featured Julia animation has a #333333 canvas; matching the page
-   background here lets the image meet the page without a visible edge.
-   Unlisted tokens inherit from :root. Primary-subtle follows primary. */
+/* Unlisted tokens inherit from :root. Primary-subtle follows primary. */
 :root[data-theme="dark"] {
-  --color-background: #333333;
-  --color-surface: #2d2b2a;
-  --color-border: #68605a;
-  --color-heading: #e3d9cf;
-  --color-text: #cbbfb5;
-  --color-text-muted: #a89d94;
+  --color-background: #1F1C1A;
+  --color-surface: #292522;
+  --color-border: #3A3531;
+  --color-heading: #EDE6DD;
+  --color-text: #CFC5BA;
+  --color-text-muted: #9A8F84;
 
-  --color-primary: #4cbba5;
-  --color-primary-hover: #359882;
-  --color-on-primary: #182738;
+  --color-primary: #EE8A4A;
+  --color-primary-hover: #F5A56E;
+  --color-on-primary: #1F1C1A;
 
-  --color-accent: #e76f51;
+  --color-accent: var(--color-primary);
   --color-accent-text: var(--color-accent);
 
   --color-gain: #5dbe86;
@@ -113,6 +110,7 @@ html {
   background: var(--color-background);
   color-scheme: light;
   scroll-behavior: smooth;
+  scrollbar-gutter: stable;
 }
 
 html[data-theme="dark"] {
@@ -147,7 +145,7 @@ h6 {
 
 h1 {
   margin-bottom: var(--spacing-lg);
-  color: var(--color-primary);
+  color: var(--color-heading);
   font-size: var(--fs-h1);
   font-weight: 600;
   letter-spacing: -0.03em;
@@ -257,8 +255,8 @@ main {
   padding-bottom: var(--spacing-2xl);
 }
 
-/* Uppercase mono label. Color comes from the heading: h1 stays primary,
-   and a section heading can set its own color. */
+/* Uppercase mono label. Page titles (h1) stay the accent; section
+   headings set their own color. */
 .mono-label {
   margin-bottom: var(--spacing-md);
   font-family: var(--font-code);
@@ -267,6 +265,19 @@ main {
   letter-spacing: 0.16em;
   line-height: 1.4;
   text-transform: uppercase;
+}
+
+h1.mono-label {
+  color: var(--color-primary);
+}
+
+/* Break out of the 36rem text column to 48rem, centered.
+   Use only on a block-level element whose parent is the 36rem column. */
+figure.wide,
+section.wide {
+  width: auto;
+  max-width: none;
+  margin-inline: calc((100% - min(48rem, 100vw - 2 * var(--spacing-sm))) / 2);
 }
 
 .image-grid {
