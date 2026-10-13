@@ -1,6 +1,7 @@
 .homeExperience {
   position: relative;
   background: var(--color-background);
+  padding-bottom: var(--spacing-2xl);
 }
 
 .fractalMedia {

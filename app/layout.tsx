@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 
 import "./globals.css";
 import Navigation from "./navigation";
+import SiteChrome from "./site-chrome";
 import SiteFooter from "./site-footer";
 
 // next/font downloads these at build time and exposes them as CSS variables.
@@ -48,9 +49,9 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
         />
       </head>
       <body>
-        <Navigation />
-        <main>{children}</main>
-        <SiteFooter />
+        <SiteChrome nav={<Navigation />} footer={<SiteFooter />}>
+          {children}
+        </SiteChrome>
       </body>
     </html>
   );

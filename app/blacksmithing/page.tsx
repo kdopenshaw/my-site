@@ -28,10 +28,10 @@ export default async function BlacksmithingPage() {
           <p>
             I am a hobbyist blacksmith and woodworker, and have been designing
             and selling custom pieces since 2018. Some of my favorite projects include
-            rings made from skateboard and a katana.
+            rings made from skateboards and a katana.
           </p>
           <p>
-            A lot of my work can be found on my the pinterest board below or my Instagram{" "}
+            A lot of my work can be found on the Pinterest board below or my Instagram{" "}
             <a href="https://www.instagram.com/cetsteel/">@cetsteel</a>, follow
             along to check out what projects I am currently working on!
           </p>

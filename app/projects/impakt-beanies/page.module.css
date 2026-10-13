@@ -102,6 +102,11 @@
   align-items: center;
   gap: var(--spacing-xl);
   margin-top: var(--spacing-xl);
+  /* Push the row's content back to the text column's left edge.
+     = (wide width - text width) / 2, which becomes 0 on narrow screens. */
+  padding-inline-start: calc(
+    (min(48rem, 100vw - 2 * var(--spacing-sm)) - min(36rem, 100vw - 2 * var(--spacing-sm))) / 2
+  );
 }
 
 .processCopy {
