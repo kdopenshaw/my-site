@@ -1,0 +1,104 @@
+---
+title: "A Banker's Case for Regulating AI"
+publishedAt: "2026-10-22"
+summary: "Banking already solved the problem of leaving safety to the honor system. AI should take the same lesson: required evaluations, examinations, and enforcement."
+---
+
+![The columns and pediment of Old Stone Bank, photographed from below](/writing/old-stone-bank.jpg)
+
+A year ago, if you had asked me about AI safety or regulation, I probably would have scoffed. But now, I'm creating acronyms.
+
+I spend a lot of time building agents and AI tooling, but for a while I wasn't concerned about model safety. I always figured that at some point model capabilities would hit a ceiling, and the intelligence would plateau. But the pace never slowed down.
+
+Then the Hugging Face incident happened, OpenAI agents solved frontier math problems, and my agents got REALLY good at whatever I threw at them. On many occasions they proposed creative and sometimes very manipulative solutions to get past the restrictions I placed on them. So I (admittedly late) got pretty concerned.
+
+This is about when Dario published his essay [We Must Pace the Frontier](https://darioamodei.com/post/we-must-pace-the-frontier). While I was pleased to see Anthropic commit to "embedded evaluators", it left me with two major questions:
+
+1. How do we convince companies to agree to the same evaluation standard?
+2. What stops them from ignoring the evaluations if the outcomes are inconvenient for them?
+
+I’d like to believe companies will slow down and prioritize evaluation because it’s the right thing to do, but history doesn’t give me much confidence. Curiosity, shareholders, and the desire to win tend to be stronger motivators. So I don’t think we can count on widespread conscience and foresight to make voluntary pacing work. Companies taking a responsible approach today will kick safety to the curb the moment they genuinely fear falling behind. That’s why I doubt the voluntary initiatives we’re seeing now will have much meaningful impact.
+
+Unfortunately, it seems like the only way for pacing to work is to have safety standards be required for companies building and distributing models. The obvious way to do this is to establish a real regulatory authority backed by the government. This idea is pretty unsettling to me given what the Department of War did to Anthropic. But, I also know there's a regulatory model that works in my industry: banking.
+
+Dario points to banking as precedent and says regulation is the most effective way to pace, but he stops short of saying who would enforce it. He even admits that giving a standards body "real teeth will be a challenge." That's the gap I want to fill. A regulatory agency built on regular evaluation and standards is what keeps the US banking industry safe, and the same framework could be used to address the growing need for AI safety.
+
+## How the OCC keeps the economy safe
+
+I've spent the last two years working in banking, and the standards of the regulators operate at every level of a bank. Nationally chartered banks are regulated by the OCC, whose mission is:
+
+> To ensure that national banks and federal savings associations operate in a safe and sound manner, provide fair access to financial services, treat customers fairly, and comply with applicable laws and regulations.
+
+To accomplish this, the OCC conducts regular bank examinations for regulators to inspect whether a bank is operating safely and soundly and complying with the law. They are given the power to hold regular meetings, make data requests, review records, test controls, and ask staff how decisions actually get made. The OCC also has the authority to take enforcement action over unsafe or unsound practices and violations of law. If examiners find a problem, they can make the bank fix it or impose devastating fines. Just look at what happened to Bank of America earlier this month, when the OCC hit it with the largest penalty in the agency's history: [OCC Imposes $750 Million Assessment Against Bank of America for Deficient BSA/AML Compliance](https://occ.gov/news-issuances/news-releases/2026/nr-occ-2026-89.html)
+
+This level of oversight is necessary because banks expose the entire economy to the risk they take. If one bank screws up really badly, the damage can spread to other banks, businesses, and people who had nothing to do with the original decisions. We saw this play out during the global financial crisis. **The people taking the risk aren't necessarily the only people who pay for it.**
+
+AI has the same problem. If a company releases an overly powerful model without adequate safeguards, cybercriminals will use it to expose vulnerabilities and attack critical financial and internet infrastructure.
+
+So let's adjust the OCC model for protecting financial infrastructure to create an organization that protects consumers and internet infrastructure from AI.
+
+## The Regulators for AI
+
+Let's call our organization the Model Regulatory Authority (MRA). It would be responsible for regulating any US company releasing models above a certain capability level.
+
+Before we give it any power, let's start by defining what it should do. Right now, the main concerns of AI safety are:
+
+- Misuse of powerful AI by bad actors - intentional cyberattacks, bioterrorism
+- Accidental misaligned agent behavior - agents conducting cyberattacks, swarms, and infrastructure takeover to accomplish other goals
+
+We can generalize this into a mission statement (templated off of the OCC's), like the following:
+
+> To ensure that artificial intelligence models are aligned with humanity's interests and do not take any actions that directly harm others or cause destruction to society & infrastructure, or that can easily be redirected to do so.
+
+To accomplish this goal, the MRA needs to define safe/unsafe behavior and hold every company to that standard. And to do this, it would have three direct responsibilities:
+
+1. **Standardize evaluations** into a clear pass/fail safety test for model releases
+2. **Conduct regular examinations** of model development, incidents, and innovation
+3. **Enforce safe behavior**
+
+#### 1. Standardize evaluations
+
+This one is intuitive — the MRA should establish a common set of evaluations that every model company has to pass.
+
+Right now, evals are already widely used, but how each company acts on the results is a black box. The threshold for concern is more of an art than a science, and obviously varies by company.
+
+The MRA would put together a suite of model evaluations, aggregated from the existing evaluation vendors in the market, that grows as new models and applications hit the market. Part of this suite would measure raw capabilities, which sets the capability level that decides which companies fall under the MRA in the first place.
+
+Evals should be company-agnostic and fast enough to avoid unnecessary delays in model deployment. A company should have to pass the evaluations before releasing a model. That doesn’t settle every safety question, but it gives every company a minimum bar it has to clear. If the model or its safeguards change significantly, it has to clear that bar again.
+
+#### 2. Conduct regular examinations
+
+The MRA should conduct regular, embedded exams like the OCC does in banking.
+
+Evaluators would "move in" to the company and work full time to assess the safety of the company’s models, products, and research practices. They would return regularly, with the length and frequency of exams depending on the size of the company and the risks involved.
+
+During exams, model companies would give the agency access to safety-related internal records, eval results, and people needed to see how the models are actually being developed and tested. The regulators would establish a standard set of criteria to go through with each company.
+
+A key aspect of the exam would be assessing misalignment incidents, such as the ones OpenAI is reporting in their [framework for reporting AI misalignment](https://openai.com/index/model-misalignment-reporting-framework/). This is a great idea, but fails as a real safety initiative because it leaves OpenAI with the discretion to choose what incidents to report on and what details to include. Instead, every company releasing models should be required to keep a record of misalignment incidents and disclose them to the regulatory body. The standards for identifying, recording, and disclosing these need to be consistent across companies.
+
+A typical exam might cover the following things:
+
+- Data requests & review — review the state of the models and technology, including eval scores.
+- Risks and misalignment incidents — take a close look at what happened and what steps were taken to mitigate the risks.
+- New products & roadmap — what new products and AI applications are planned, and how have their safety implications been thought through?
+- Corrective actions — if the agency finds something concerning, it should tell the company what it needs to fix, give it a deadline, and come back to check whether the fix actually worked.
+
+#### 3. Enforce safe behavior
+
+This is the diciest subject, but it's essential for the MRA to have any effect. It needs the power to hold companies accountable if they ignore safety standards or evaluation results. Without it, we’re right back to asking companies nicely to do the right thing.
+
+The harder question is how we should give it this power, which leads to how I think the MRA should be structured.
+
+Banking regulators like the OCC are part of the government, but the MRA should not be. Instead, it should be a nonprofit that every AI company releasing models above that capability level is required by law to join.
+
+Keeping it out of government does four things. It keeps safety decisions from answering directly to whoever holds political power, which matters after what happened to Anthropic. It lets the MRA hire people who actually understand the technology. It lets it move at the speed of the industry instead of the speed of government. And it can be funded by fees from its members, like FINRA is, so it can pay what it takes to compete with the frontier labs for talent. We can’t ask it to oversee the industry and then fund it like an afterthought.
+
+Members of the MRA agree to follow its rules, and each gets an opportunity to help shape those rules. A designated federal agency would oversee the MRA’s rules and enforcement decisions, with the law spelling out its authority and responsibilities. (This is the structure of FINRA and the SEC.)
+
+So if a company releases a model that failed the evaluation standard, the MRA can fine it for this behavior or restrict its activity. This decision is enforced by the US government.
+
+This way, we leave the model evaluations to the experts in the tech industry. AI companies help shape the rules because they know the technology better than anyone else. But they don't get to use the MRA to make life harder for their competitors. We keep the oversight of anti-competitive tactics and the regulation of the behavior of that evaluation body in the hands of the government.
+
+---
+
+Honestly, I still have serious concerns about regulating AI. Regulatory capture, corruption, and red tape are all real risks that throttle innovation, and I don't love the idea of adding more bureaucracy to anything. But it feels like a necessary evil, because the alternative is trusting every AI company to slow down on its own, right when slowing down is the hardest thing to do. Banking figured out a long time ago that you don't leave safety up to the honor system. AI shouldn't either.

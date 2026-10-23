@@ -16,6 +16,7 @@ const FRACTALS = {
     width: 1000,
     height: 1000,
     crop: { x: 227, y: 140, width: 546, height: 720 },
+    playbackRate: 1.3,
   },
   light: {
     gif: "/fractals/julia-growth-light.gif",
@@ -23,6 +24,7 @@ const FRACTALS = {
     width: 1000,
     height: 1000,
     crop: { x: 227, y: 140, width: 546, height: 720 },
+    playbackRate: 1,
   },
 };
 
@@ -363,7 +365,7 @@ export default function HomeFractal() {
           heldThemeRef.current = theme;
           break;
         }
-        elapsed += frame.delay;
+        elapsed += frame.delay / image.playbackRate;
         const remaining = elapsed - (performance.now() - origin);
         if (!active) return;
         if (remaining > 0) await wait(remaining);
