@@ -29,8 +29,8 @@
   - Section headings: 500.
   - Page headings: 600.
 - Use the fixed `rem` font-size tokens in `app/globals.css`, with larger headings adjusted in the shared `48rem` mobile/tablet breakpoint. Do not add heading-size clamps or arbitrary page-specific font sizes when an existing token or semantic element is suitable.
-- Article and project titles are `h1` and use `--fs-h1` with the display face. Index labels (home, content, projects, blacksmithing) use `.mono-label`: Inconsolata, body size, uppercase. The `h2`, `h3`, and `h4` elements use their matching size tokens everywhere, including article prose. Do not add title-size aliases or override heading typography in component styles; component styles may adjust heading margins for layout.
-- The Content index is a list of links, and fractal controls are named form groups. Style their links and labels directly with the body, small, and caption tokens rather than using heading elements for their appearance.
+- Article and project titles are `h1` and use `--fs-h1` with the display face. Index labels (home, writing, projects, blacksmithing) use `.mono-label`: Inconsolata, body size, uppercase. The `h2`, `h3`, and `h4` elements use their matching size tokens everywhere, including article prose. Do not add title-size aliases or override heading typography in component styles; component styles may adjust heading margins for layout.
+- The Writing index is a list of links, and fractal controls are named form groups. Style their links and labels directly with the body, small, and caption tokens rather than using heading elements for their appearance.
 - Keep large headings tightly led and slightly tracked; keep body copy open and comfortable. Preserve `--leading-tight`, `--leading-body`, and the `--measure` reading width.
 - Use semantic HTML headings in order. Do not choose heading tags for their visual size.
 
@@ -49,7 +49,7 @@
 - Use the global spacing scale rather than arbitrary pixel values.
 - Keep general layouts inside `--content-width`; keep reading and index pages substantially narrower.
 - Favor generous whitespace and clear alignment over containers and separators.
-- Use consistent baselines for metadata and titles. The Content index uses an inline date/title row on larger screens and stacks on small screens.
+- Use consistent baselines for metadata and titles. The Writing index uses an inline date/title row on larger screens and stacks on small screens.
 - Prefer reusable global layout primitives for patterns shared across pages. Page-specific styles should describe composition, not redefine typography or colors.
 
 ## Components and interaction
@@ -73,4 +73,4 @@
 - Keep a page's components in that page's folder. Files next to `app/layout.tsx` are the shell shared by every page. Add `"use client"` only when a file needs state, events, or browser APIs.
 - Extend existing semantic tokens before inventing new ones. If a new token is necessary, name it by purpose rather than by a single page or component.
 - Avoid inline presentation styles unless a value is genuinely dynamic.
-- When changing the design system, check both `/` and `/content` so shared changes remain coherent.
+- When changing the design system, check both `/` and `/writing` so shared changes remain coherent.
