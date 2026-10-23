@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 // Reads every .mdx file in ./posts.
-// The filename is the URL: posts/my-note.mdx → /content/my-note
+// The filename is the URL: posts/my-note.mdx → /writing/my-note
 //
 // Each file starts with this block:
 // ---
@@ -11,27 +11,27 @@ import path from "node:path";
 // summary: "Optional sentence for link previews"
 // ---
 
-export interface ContentMetadata {
+export interface PostMetadata {
   title: string;
   summary?: string;
   publishedAt: string;
   [key: string]: string | undefined;
 }
 
-export interface ContentPost {
-  metadata: ContentMetadata;
+export interface Post {
+  metadata: PostMetadata;
   slug: string;
   content: string;
 }
 
 function parseFrontmatter(fileContent: string): {
-  metadata: ContentMetadata;
+  metadata: PostMetadata;
   content: string;
 } {
   const frontmatterMatch = fileContent.match(/---\s*([\s\S]*?)\s*---/);
 
   if (!frontmatterMatch) {
-    throw new Error("Content files must begin with frontmatter.");
+    throw new Error("Writing files must begin with frontmatter.");
   }
 
   const metadata: Record<string, string> = {};
@@ -55,12 +55,12 @@ function parseFrontmatter(fileContent: string): {
 
   if (!metadata.title || !metadata.publishedAt) {
     throw new Error(
-      "Content frontmatter must include title and publishedAt.",
+      "Writing frontmatter must include title and publishedAt.",
     );
   }
 
   return {
-    metadata: metadata as ContentMetadata,
+    metadata: metadata as PostMetadata,
     content: fileContent.replace(frontmatterMatch[0], "").trim(),
   };
 }
@@ -73,8 +73,8 @@ function readMdxFile(filePath: string) {
   return parseFrontmatter(fs.readFileSync(filePath, "utf-8"));
 }
 
-export function getContentPosts() {
-  const directory = path.join(process.cwd(), "app", "content", "posts");
+export function getPosts() {
+  const directory = path.join(process.cwd(), "app", "writing", "posts");
 
   return getMdxFiles(directory)
     .map((file) => {

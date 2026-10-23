@@ -1,27 +1,27 @@
-// One article. URL: /content/[the filename of the .mdx file]
+// One article. URL: /writing/[the filename of the .mdx file]
 // generateStaticParams tells Next.js which filenames exist at build time.
 
-import styles from "../content.module.css";
+import styles from "../writing.module.css";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 import CustomMdx from "../mdx";
-import { formatDate, getContentPosts } from "../posts";
+import { formatDate, getPosts } from "../posts";
 
 export function generateStaticParams() {
-  return getContentPosts().map((post) => ({ slug: post.slug }));
+  return getPosts().map((post) => ({ slug: post.slug }));
 }
 
-interface ContentPostPageProps {
+interface WritingPostPageProps {
   params: Promise<{ slug: string }>;
 }
 
 export async function generateMetadata({
   params,
-}: ContentPostPageProps): Promise<Metadata> {
+}: WritingPostPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = getContentPosts().find((item) => item.slug === slug);
+  const post = getPosts().find((item) => item.slug === slug);
 
   if (!post) return {};
 
@@ -37,9 +37,9 @@ export async function generateMetadata({
   };
 }
 
-export default async function ContentPost({ params }: ContentPostPageProps) {
+export default async function WritingPost({ params }: WritingPostPageProps) {
   const { slug } = await params;
-  const post = getContentPosts().find((item) => item.slug === slug);
+  const post = getPosts().find((item) => item.slug === slug);
 
   if (!post) notFound();
 
@@ -50,7 +50,7 @@ export default async function ContentPost({ params }: ContentPostPageProps) {
         {formatDate(post.metadata.publishedAt)}
       </p>
       <CustomMdx source={post.content} />
-      <p className={styles.backLink}><Link href="/content">← All content</Link></p>
+      <p className={styles.backLink}><Link href="/writing">← All writing</Link></p>
     </section>
   );
 }

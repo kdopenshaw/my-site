@@ -4,13 +4,13 @@
 
 import Link from "next/link";
 
-import { getContentPosts } from "./content/posts";
+import { getPosts } from "./writing/posts";
 import HomeFractal from "./home-fractal";
 import styles from "./home.module.css";
 import { projects } from "./projects/projects";
 
 export default function Home() {
-  const posts = getContentPosts().slice(0, 3);
+  const posts = getPosts().slice(0, 3);
   const featuredProjects = projects.slice(0, 3);
 
   return (
@@ -28,14 +28,14 @@ export default function Home() {
             home for the things I&apos;m building and thinking about.
           </h1>
           <div className={styles.homeDirectory}>
-            <section aria-labelledby="home-content">
-              <h2 className={`${styles.sectionHeading} mono-label`} id="home-content">
-                <Link href="/content">Content</Link>
+            <section aria-labelledby="home-writing">
+              <h2 className={`${styles.sectionHeading} mono-label`} id="home-writing">
+                <Link href="/writing">Writing</Link>
               </h2>
               <ul className={styles.pieceList}>
                 {posts.map((post) => (
                   <li key={post.slug}>
-                    <Link href={`/content/${post.slug}`}>{post.metadata.title}</Link>
+                    <Link href={`/writing/${post.slug}`}>{post.metadata.title}</Link>
                   </li>
                 ))}
               </ul>

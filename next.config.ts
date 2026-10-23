@@ -4,6 +4,20 @@ import type { NextConfig } from "next";
 const nextConfig = (phase: string): NextConfig => ({
   // Keep `next build` from replacing files used by the running dev server.
   distDir: phase === PHASE_DEVELOPMENT_SERVER ? ".next-dev" : ".next",
+  async redirects() {
+    return [
+      {
+        source: "/content",
+        destination: "/writing",
+        permanent: true,
+      },
+      {
+        source: "/content/:path*",
+        destination: "/writing/:path*",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

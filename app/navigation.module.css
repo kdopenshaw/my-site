@@ -43,7 +43,6 @@
 }
 
 .link {
-  position: relative;
   font-family: var(--font-code);
   font-size: 0.8125rem;
   font-weight: 400;
@@ -61,18 +60,6 @@
 
 .link[aria-current="page"] {
   color: var(--color-heading);
-}
-
-.link[aria-current="page"]::before {
-  content: "";
-  position: absolute;
-  left: -13px;
-  top: 50%;
-  width: 5px;
-  height: 5px;
-  margin-top: -3px;
-  border-radius: 50%;
-  background: var(--color-primary);
 }
 
 .themeToggle,
@@ -155,7 +142,6 @@
   .mobileLink {
     display: flex;
     align-items: center;
-    gap: 10px;
     min-height: 2.75rem;
     font-family: var(--font-display);
     font-size: 1.0625rem;
@@ -166,13 +152,5 @@
 
   .mobileLink[aria-current="page"] {
     color: var(--color-primary);
-  }
-
-  .mobileLink[aria-current="page"]::after {
-    content: "";
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--color-primary);
   }
 }

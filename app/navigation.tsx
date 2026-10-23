@@ -8,7 +8,7 @@ import styles from "./navigation.module.css";
 import ThemeToggle from "./theme-toggle";
 
 const LINKS = [
-  { href: "/content", label: "Content" },
+  { href: "/writing", label: "Writing" },
   { href: "/projects", label: "Projects" },
   { href: "/blacksmithing", label: "Blacksmithing" },
 ];
