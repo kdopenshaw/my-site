@@ -12,12 +12,16 @@
 }
 
 .prose h1,
-.prose h2,
-.prose h3,
 .prose h4,
 .prose h5,
 .prose h6 {
   margin-top: var(--spacing-md);
+  margin-bottom: var(--spacing-xs);
+}
+
+.prose h2,
+.prose h3 {
+  margin-top: var(--spacing-xl);
   margin-bottom: var(--spacing-xs);
 }
 
