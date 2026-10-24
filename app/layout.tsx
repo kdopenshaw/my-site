@@ -1,6 +1,7 @@
 import { Geologica, Inconsolata, Source_Serif_4 } from "next/font/google";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { Analytics } from "@vercel/analytics/next";
 
 import "./globals.css";
 import Navigation from "./navigation";
@@ -52,6 +53,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
         <SiteChrome nav={<Navigation />} footer={<SiteFooter />}>
           {children}
         </SiteChrome>
+        <Analytics />
       </body>
     </html>
   );
