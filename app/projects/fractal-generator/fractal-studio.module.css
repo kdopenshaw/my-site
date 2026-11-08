@@ -674,10 +674,8 @@ button.download {
 .preview {
   grid-area: preview;
   display: grid;
-  grid-template-rows: minmax(12rem, 1fr) auto;
-  gap: var(--spacing-xs);
   min-width: 0;
-  min-height: 0;
+  min-height: 12rem;
 }
 .canvasFrame {
   position: relative;
@@ -686,6 +684,43 @@ button.download {
   min-height: 0;
   height: 100%;
   overflow: hidden;
+}
+.previewActions {
+  position: absolute;
+  top: var(--spacing-xs);
+  right: var(--spacing-xs);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2xs);
+}
+.previewAction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2xs);
+  min-height: 1.5rem;
+  padding: 0 0.5rem;
+  border: 0;
+  border-radius: var(--spacing-2xs);
+  background: color-mix(in srgb, var(--color-heading) 88%, transparent);
+  color: var(--color-background);
+  font: 500 var(--fs-caption)/1 var(--font-display);
+  cursor: pointer;
+}
+.previewAction:hover:not(:disabled) {
+  background: var(--color-heading);
+}
+.previewAction:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+.previewAction:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.previewAction svg {
+  display: block;
 }
 .canvasFrame canvas {
   display: block;
@@ -704,12 +739,6 @@ button.download {
 .canvasSpinner {
   width: 1.75rem;
   height: 1.75rem;
-}
-.previewActions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-xs);
-  justify-content: flex-end;
 }
 @media (max-width: 64rem) {
   .studio {
@@ -744,7 +773,7 @@ button.download {
     grid-column: 1 / -1;
   }
   .preview {
-    grid-template-rows: minmax(14rem, 32vh) auto;
+    min-height: 14rem;
   }
   .controlActions {
     width: 100%;
@@ -758,7 +787,8 @@ button.download {
   .colorTools button,
   .colorSwatch,
   button.generate,
-  button.download {
+  button.download,
+  .previewAction {
     min-height: 2.75rem;
   }
   .rangeSlider {

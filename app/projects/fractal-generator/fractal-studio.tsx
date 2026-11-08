@@ -126,7 +126,14 @@ export default function FractalStudio() {
     setPresetKey(key);
     setFamilyName("");
     aspectRatioRef.current = next.width / next.height;
-    setParameters({ ...next, colors: [...next.colors] });
+    setParameters((current) => {
+      const keepCustom = current.palette === "custom";
+      return {
+        ...next,
+        palette: keepCustom ? "custom" : next.palette,
+        colors: keepCustom ? [...current.colors] : [...next.colors],
+      };
+    });
   };
 
   const choosePreset = (key: string) => {
@@ -139,21 +146,48 @@ export default function FractalStudio() {
     if (saved) applyFamily(key, saved.parameters);
   };
 
-  const saveFamily = () => {
+  const saveFamily = async () => {
     const label = familyName.trim();
     if (!label || !canSaveFamily) return;
-    const nextFamily: SavedFamily = {
-      id: crypto.randomUUID(),
-      label,
-      parameters: { ...parameters, colors: [...parameters.colors] },
-    };
-    setSavedFamilies((current) => {
-      const nextFamilies = [...current, nextFamily];
-      writeSavedFamilies(nextFamilies);
-      return nextFamilies;
-    });
-    setPresetKey(nextFamily.id);
-    setFamilyName("");
+    const payload = { label, parameters: { ...parameters, colors: [...parameters.colors] } };
+
+    try {
+      const response = await fetch("/api/fractal-families", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const result = await response.json().catch(() => null);
+      if (!response.ok) throw new Error(result?.error ?? "The family could not be saved.");
+      const nextFamily = result.item as SavedFamily;
+      setSavedFamilies((current) => {
+        const nextFamilies = [nextFamily, ...current.filter((family) => family.id !== nextFamily.id)];
+        writeSavedFamilies(nextFamilies);
+        return nextFamilies;
+      });
+      setPresetKey(nextFamily.id);
+      setFamilyName("");
+      setStatus("Saved for everyone using the generator.");
+    } catch (error) {
+      const nextFamily: SavedFamily = {
+        id: crypto.randomUUID(),
+        label,
+        parameters: payload.parameters,
+      };
+      setSavedFamilies((current) => {
+        const nextFamilies = [nextFamily, ...current];
+        writeSavedFamilies(nextFamilies);
+        return nextFamilies;
+      });
+      setPresetKey(nextFamily.id);
+      setFamilyName("");
+      setStatus(
+        error instanceof Error
+          ? `${error.message} Saved in this browser for now.`
+          : "Saved in this browser for now.",
+      );
+    }
+
     window.requestAnimationFrame(() => {
       document.querySelector(`.${styles.savedHeading}`)?.scrollIntoView({ block: "nearest" });
     });
@@ -331,7 +365,21 @@ export default function FractalStudio() {
   };
 
   useEffect(() => {
-    setSavedFamilies(readSavedFamilies());
+    const local = readSavedFamilies();
+    setSavedFamilies(local);
+
+    void (async () => {
+      try {
+        const response = await fetch("/api/fractal-families");
+        const result = await response.json().catch(() => null);
+        if (!response.ok || !Array.isArray(result?.items)) return;
+        const remote = result.items as SavedFamily[];
+        setSavedFamilies(remote);
+        writeSavedFamilies(remote);
+      } catch {
+        // Keep the browser list if the shared list is unavailable.
+      }
+    })();
   }, []);
 
   useEffect(() => {
@@ -406,6 +454,33 @@ export default function FractalStudio() {
         </aside>
         <div className={styles.preview}>
           <div className={styles.canvasFrame} aria-busy={isRendering}>
+            {hasRenderedImage && (
+              <div className={styles.previewActions} aria-label="Rendered fractal actions">
+                <button
+                  className={styles.previewAction}
+                  type="button"
+                  disabled={isRendering}
+                  onClick={downloadFractal}
+                  aria-label="Download fractal"
+                  title="Download"
+                >
+                  <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+                    <path
+                      fill="currentColor"
+                      d="M8 1.25a.75.75 0 0 1 .75.75v6.19l1.72-1.72a.75.75 0 1 1 1.06 1.06l-3 3a.75.75 0 0 1-1.06 0l-3-3a.75.75 0 0 1 1.06-1.06l1.72 1.72V2A.75.75 0 0 1 8 1.25Zm-4.5 9.5a.75.75 0 0 1 .75.75v1.25h7.5V11.5a.75.75 0 0 1 1.5 0v2a.75.75 0 0 1-.75.75h-9a.75.75 0 0 1-.75-.75v-2a.75.75 0 0 1 .75-.75Z"
+                    />
+                  </svg>
+                </button>
+                <button
+                  className={styles.previewAction}
+                  type="button"
+                  onClick={() => void addToGallery()}
+                  disabled={isRendering || isPublishing}
+                >
+                  {isPublishing ? "Adding…" : "Add to gallery"}
+                </button>
+              </div>
+            )}
             <canvas ref={canvasRef} aria-label="Generated fractal" />
             {renderError && !isRendering && (
               <div className={styles.canvasMessage} data-has-image={hasRenderedImage} role="status">
@@ -423,26 +498,6 @@ export default function FractalStudio() {
               </div>
             )}
           </div>
-          {hasRenderedImage && (
-            <div className={styles.previewActions} aria-label="Rendered fractal actions">
-              <button
-                className="button-outline"
-                type="button"
-                disabled={isRendering}
-                onClick={downloadFractal}
-              >
-                Download ↓
-              </button>
-              <button
-                className="button"
-                type="button"
-                onClick={() => void addToGallery()}
-                disabled={isRendering || isPublishing}
-              >
-                {isPublishing ? "Adding…" : "Add to gallery"}
-              </button>
-            </div>
-          )}
         </div>
         <div className={styles.equationBar}>
           <span className={`${styles.fieldLabel} ${styles.equationLabel}`}>Iteration rule</span>
@@ -531,14 +586,14 @@ export default function FractalStudio() {
                 onKeyDown={(event) => {
                   if (event.key !== "Enter") return;
                   event.preventDefault();
-                  saveFamily();
+                  void saveFamily();
                 }}
               />
               <button
                 className="button-outline"
                 type="button"
                 disabled={!familyName.trim()}
-                onClick={saveFamily}
+                onClick={() => void saveFamily()}
               >
                 Save
               </button>
@@ -727,6 +782,38 @@ export default function FractalStudio() {
             </div>
           </div>
           <div role="group" aria-labelledby="fractal-label-iii" className={`${styles.configGroup} ${styles.resolutionGroup}`}>
+            <div className={styles.controlFooter}>
+            {status && (
+              <output className={styles.renderStatus} aria-live="polite">
+                {status}
+              </output>
+            )}
+            {isSlowRender && (
+              <p className={styles.workWarning}>This combination may take longer to render.</p>
+            )}
+            {!isWithinWorkLimit && (
+              <p className={styles.workWarning}>
+                Reduce resolution or iterations to stay below 200M tests.
+              </p>
+            )}
+            <div className={styles.controlActions}>
+              <button
+                className={`button ${styles.generate} ${isRendering ? styles.isRendering : ""}`}
+                type="submit"
+                disabled={isRendering || !isWithinWorkLimit}
+                aria-label={isRendering ? "Generating fractal" : undefined}
+              >
+                {isRendering ? (
+                  <span className={styles.generatingIndicator} aria-hidden="true" />
+                ) : (
+                  <>
+                    <span>Generate fractal</span>
+                    <b aria-hidden="true">↗</b>
+                  </>
+                )}
+              </button>
+            </div>
+            </div>
             <div className={styles.rasterHeadingRow}>
               <ConfigLabel
                 index="III"
@@ -793,38 +880,6 @@ export default function FractalStudio() {
                 {(pixelCount / 1_000_000).toFixed(2)} MP · {(estimatedWork / 1_000_000).toFixed(1)}M
                 tests
               </output>
-            </div>
-            <div className={styles.controlFooter}>
-            {status && (
-              <output className={styles.renderStatus} aria-live="polite">
-                {status}
-              </output>
-            )}
-            {isSlowRender && (
-              <p className={styles.workWarning}>This combination may take longer to render.</p>
-            )}
-            {!isWithinWorkLimit && (
-              <p className={styles.workWarning}>
-                Reduce resolution or iterations to stay below 200M tests.
-              </p>
-            )}
-            <div className={styles.controlActions}>
-              <button
-                className={`button ${styles.generate} ${isRendering ? styles.isRendering : ""}`}
-                type="submit"
-                disabled={isRendering || !isWithinWorkLimit}
-                aria-label={isRendering ? "Generating fractal" : undefined}
-              >
-                {isRendering ? (
-                  <span className={styles.generatingIndicator} aria-hidden="true" />
-                ) : (
-                  <>
-                    <span>Generate fractal</span>
-                    <b aria-hidden="true">↗</b>
-                  </>
-                )}
-              </button>
-            </div>
             </div>
           </div>
         </aside>

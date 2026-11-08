@@ -140,3 +140,57 @@ revoke all on function public.fractal_gallery_claim_upload(text)
   from public;
 grant execute on function public.fractal_gallery_claim_upload(text)
   to current_user;
+
+create table if not exists public.fractal_families (
+  id uuid primary key default gen_random_uuid(),
+  label text not null check (char_length(btrim(label)) between 1 and 40),
+  parameters jsonb not null check (jsonb_typeof(parameters) = 'object'),
+  created_at timestamptz not null default now()
+);
+
+create index if not exists fractal_families_created_at_idx
+  on public.fractal_families (created_at desc);
+
+alter table public.fractal_families enable row level security;
+revoke all on table public.fractal_families from public;
+grant select, insert on table public.fractal_families to current_user;
+
+create or replace function public.fractal_families_claim_save(p_request_hash text)
+returns boolean
+language plpgsql
+volatile
+security invoker
+set search_path = ''
+as $$
+declare
+  recent_saves integer;
+begin
+  if p_request_hash !~ '^[0-9a-f]{64}$' then
+    return false;
+  end if;
+
+  perform pg_advisory_xact_lock(hashtextextended(p_request_hash, 0));
+
+  delete from fractal_gallery_private.uploads
+  where created_at < now() - interval '1 day';
+
+  select count(*)
+  into recent_saves
+  from fractal_gallery_private.uploads
+  where request_hash = p_request_hash
+    and created_at > now() - interval '15 minutes';
+
+  if recent_saves >= 6 then
+    return false;
+  end if;
+
+  insert into fractal_gallery_private.uploads (request_hash)
+  values (p_request_hash);
+  return true;
+end;
+$$;
+
+revoke all on function public.fractal_families_claim_save(text)
+  from public;
+grant execute on function public.fractal_families_claim_save(text)
+  to current_user;

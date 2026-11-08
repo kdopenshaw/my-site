@@ -143,27 +143,29 @@ export default function FractalGallery({
   const [seed, setSeed] = useState("");
   const [fractals, setFractals] = useState<GalleryFractal[]>([]);
   const [hasMore, setHasMore] = useState(true);
-  const [cursor, setCursor] = useState<GalleryResponse["nextCursor"]>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const inFlightRef = useRef(false);
+  const cursorRef = useRef<GalleryResponse["nextCursor"]>(null);
+  const hasMoreRef = useRef(true);
   const selectedFractal = selectedIndex === null ? null : fractals[selectedIndex] ?? null;
 
   useEffect(() => {
     setSeed(crypto.randomUUID());
     setFractals([]);
     setHasMore(true);
-    setCursor(null);
+    cursorRef.current = null;
+    hasMoreRef.current = true;
     setMessage("");
     setSelectedIndex(null);
     inFlightRef.current = false;
   }, [refreshKey]);
 
   const loadMore = useCallback(async () => {
-    if (!seed || inFlightRef.current || !hasMore) return;
+    if (!seed || inFlightRef.current || !hasMoreRef.current) return;
 
     inFlightRef.current = true;
     setIsLoading(true);
@@ -171,9 +173,10 @@ export default function FractalGallery({
 
     try {
       const query = new URLSearchParams({ seed, limit: String(FRACTALS_PER_PAGE) });
-      if (cursor) {
-        query.set("afterOrder", cursor.orderKey);
-        query.set("afterId", cursor.id);
+      const pageCursor = cursorRef.current;
+      if (pageCursor) {
+        query.set("afterOrder", pageCursor.orderKey);
+        query.set("afterId", pageCursor.id);
       }
       const response = await fetch(`/api/fractal-gallery?${query}`, { cache: "no-store" });
       const result = await response.json().catch(() => null) as GalleryResponse | { error?: string } | null;
@@ -183,17 +186,19 @@ export default function FractalGallery({
       }
 
       const page = result as GalleryResponse;
+      cursorRef.current = page.nextCursor;
+      hasMoreRef.current = page.nextCursor !== null;
       setFractals((current) => [...current, ...page.items]);
-      setCursor(page.nextCursor);
       setHasMore(page.nextCursor !== null);
     } catch (error) {
+      hasMoreRef.current = false;
       setHasMore(false);
       setMessage(error instanceof Error ? error.message : "The gallery could not be loaded.");
     } finally {
       inFlightRef.current = false;
       setIsLoading(false);
     }
-  }, [cursor, hasMore, seed]);
+  }, [seed]);
 
   useEffect(() => {
     if (seed && fractals.length === 0 && hasMore && !isLoading) void loadMore();
@@ -204,10 +209,10 @@ export default function FractalGallery({
     if (!target || !hasMore) return undefined;
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) void loadMore();
-    }, { rootMargin: "480px 0px" });
+    }, { rootMargin: "800px 0px" });
     observer.observe(target);
     return () => observer.disconnect();
-  }, [hasMore, loadMore]);
+  }, [fractals.length, hasMore, loadMore]);
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -261,7 +266,7 @@ export default function FractalGallery({
         {!isLoading && message && <p>{message}</p>}
         {!isLoading && !message && fractals.length === 0 && !hasMore && <p>The gallery is waiting for its first fractal.</p>}
         {!isLoading && hasMore && fractals.length > 0 && (
-          <button className="button-outline" type="button" onClick={() => void loadMore()}>Load 8 more</button>
+          <button className="button-outline" type="button" onClick={() => void loadMore()}>Load more</button>
         )}
       </div>
 
