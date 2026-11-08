@@ -19,9 +19,9 @@
   --color-text: #4A423B;
   --color-text-muted: #7D7268;
 
-  /* Primary. One forge orange, shared with --color-accent. */
-  --color-primary: #C2410C;
-  --color-primary-hover: #9A3412;
+  /* Primary. Cerulean on light (from the light fractal), teal on dark. */
+  --color-primary: #287A9E;
+  --color-primary-hover: #1E6180;
   --color-primary-subtle: color-mix(in srgb, var(--color-primary) 12%, transparent);
   --color-on-primary: #FFFFFF;
 
@@ -79,8 +79,8 @@
   --color-text: #CFC5BA;
   --color-text-muted: #9A8F84;
 
-  --color-primary: #EE8A4A;
-  --color-primary-hover: #F5A56E;
+  --color-primary: #4CBBA5;
+  --color-primary-hover: #6FCFBC;
   --color-on-primary: #1F1C1A;
 
   --color-accent: var(--color-primary);
