@@ -374,6 +374,17 @@ export default function FractalStudio() {
         const result = await response.json().catch(() => null);
         if (!response.ok || !Array.isArray(result?.items)) return;
         const remote = result.items as SavedFamily[];
+        const remoteLabels = new Set(remote.map((family) => family.label.trim().toLowerCase()));
+        for (const family of local) {
+          if (remoteLabels.has(family.label.trim().toLowerCase())) continue;
+          const saveResponse = await fetch("/api/fractal-families", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ label: family.label, parameters: family.parameters }),
+          });
+          const saved = await saveResponse.json().catch(() => null);
+          if (saveResponse.ok && saved?.item) remote.unshift(saved.item as SavedFamily);
+        }
         setSavedFamilies(remote);
         writeSavedFamilies(remote);
       } catch {
