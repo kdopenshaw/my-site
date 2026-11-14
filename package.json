@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "3.1139.0",
+    "@gitgraph/react": "^1.6.0",
     "@neon/config": "^1.7.3",
     "@neon/env": "^1.4.4",
     "@radix-ui/react-radio-group": "^1.4.7",
