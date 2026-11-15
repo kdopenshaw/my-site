@@ -1,5 +1,6 @@
 .list {
-  --reach: 1.15rem;
+  --reach: var(--spacing-md);
+  --title-center: calc(var(--spacing-sm) + var(--fs-body) * var(--leading-body) / 2);
   position: relative;
   margin: 0;
   padding: 0;
@@ -16,34 +17,32 @@
   margin-bottom: 0;
 }
 
-.item:first-child::before,
-.item:not(:first-child)::before,
-.item:not(:last-child)::after {
+.item::before {
   content: "";
   position: absolute;
+  top: 0;
+  bottom: calc(-1 * var(--spacing-md));
   left: 0;
   width: 1px;
   background: var(--color-border);
 }
 
 .item:first-child::before {
-  top: calc(-1 * var(--spacing-sm));
-  height: calc(var(--spacing-sm) + 50% + var(--reach));
+  top: calc(var(--title-center) - var(--spacing-sm));
 }
 
-.item:not(:first-child)::before {
-  top: 0;
-  height: calc(50% + var(--reach));
+.item:last-child::before {
+  bottom: auto;
+  height: calc(var(--title-center) + var(--reach));
 }
 
-.item:not(:last-child)::after {
-  top: calc(50% + var(--reach));
-  bottom: calc(-1 * var(--spacing-md));
+.item:only-child::before {
+  height: calc(var(--spacing-sm) + var(--reach));
 }
 
 .elbow {
   position: absolute;
-  top: 50%;
+  top: var(--title-center);
   left: 0;
   width: var(--reach);
   height: var(--reach);
@@ -55,7 +54,7 @@
 .node {
   position: absolute;
   z-index: 1;
-  top: 50%;
+  top: var(--title-center);
   left: var(--reach);
   width: 0.4rem;
   height: 0.4rem;

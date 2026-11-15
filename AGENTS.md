@@ -56,7 +56,7 @@
 ## Components and interaction
 
 - Align the header with the 36rem reading column. Place the site name on the left and navigation and theme controls on the right. Below 48rem, use the mobile menu. Mark the current page with `aria-current`.
-- On the Projects index, each project is one linked row with its full description. The vertical line and curved branches use `--color-border`. Center the node vertically on the row. The node and title use `--color-heading` at rest and `--color-primary` on hover or keyboard focus. Optional imagery sits at the right edge and fades toward the copy.
+- On the Projects index, each project is one linked row with its full description. The vertical line and curved branches use `--color-border`. Align the node with the center of the first title line. Start the rail 1rem above the first node and end it at the base of the final elbow. The node and title use `--color-heading` at rest and `--color-primary` on hover or keyboard focus. Optional imagery sits at the right edge and fades toward the copy.
 - Links and controls must have a visible `:focus-visible` state and a clear hover state.
 - Preserve reduced-motion behavior. Any new animation should be subtle, purposeful, and disabled when `prefers-reduced-motion` is active.
 - Use real text and semantic controls instead of decorative substitutes. Add accessible labels when the visible content does not describe an element's purpose.
