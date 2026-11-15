@@ -1,6 +1,6 @@
 .list {
   --reach: var(--spacing-md);
-  --title-center: calc(var(--spacing-sm) + var(--fs-body) * var(--leading-body) / 2);
+  --title-center: var(--graph-title-center, calc(var(--spacing-sm) + var(--fs-body) * var(--leading-body) / 2));
   position: relative;
   margin: 0;
   padding: 0;
@@ -9,7 +9,7 @@
 
 .item {
   position: relative;
-  margin: 0 0 var(--spacing-md);
+  margin: 0 0 var(--graph-gap, var(--spacing-md));
   padding-left: var(--reach);
 }
 
@@ -17,55 +17,44 @@
   margin-bottom: 0;
 }
 
-.item::before {
+.item:not(:last-child)::before {
   content: "";
   position: absolute;
-  top: 0;
-  bottom: calc(-1 * var(--spacing-md));
-  left: 0;
+  top: var(--title-center);
+  bottom: calc(0px - var(--graph-gap, var(--spacing-md)) - var(--title-center));
+  left: calc(var(--reach) / 2);
   width: 1px;
-  background: var(--color-border);
-}
-
-.item:first-child::before {
-  top: calc(var(--title-center) - var(--spacing-sm));
-}
-
-.item:last-child::before {
-  bottom: auto;
-  height: calc(var(--title-center) + var(--reach));
-}
-
-.item:only-child::before {
-  height: calc(var(--spacing-sm) + var(--reach));
+  background: var(--color-accent);
+  transform: translateX(-50%);
 }
 
 .elbow {
-  position: absolute;
-  top: var(--title-center);
-  left: 0;
-  width: var(--reach);
-  height: var(--reach);
-  border-right: 1px solid var(--color-border);
-  border-bottom: 1px solid var(--color-border);
-  border-bottom-right-radius: var(--reach);
+  display: none;
 }
 
 .node {
   position: absolute;
   z-index: 1;
   top: var(--title-center);
-  left: var(--reach);
-  width: 0.4rem;
-  height: 0.4rem;
-  background: var(--color-heading);
+  left: calc(var(--reach) / 2);
+  width: 0.65rem;
+  height: 0.65rem;
+  background: var(--color-accent);
   border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--color-background);
   transform: translate(-50%, -50%);
+}
+
+.item:first-child .node {
+  width: 0.9rem;
+  height: 0.9rem;
+  border: 2px solid var(--color-accent);
+  background: var(--color-background);
 }
 
 .item:hover .node,
 .item:focus-within .node {
-  background: var(--color-primary);
+  transform: translate(-50%, -50%) scale(1.15);
 }
 
 .panel {
@@ -100,7 +89,7 @@
 .description {
   color: var(--color-text-muted);
   font-family: var(--font-primary);
-  font-size: var(--fs-body);
+  font-size: var(--fs-small);
   line-height: var(--leading-body);
 }
 

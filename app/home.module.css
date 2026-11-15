@@ -73,7 +73,16 @@
   list-style: none;
 }
 
-.pieceList li + li {
+.projectList {
+  --graph-title-center: calc(var(--fs-body) * 0.75);
+  --graph-gap: var(--spacing-sm);
+}
+
+.projectList a {
+  display: block;
+}
+
+.pieceList:not(.projectList) li + li {
   margin-top: var(--spacing-sm);
 }
 

@@ -7,6 +7,7 @@ import Link from "next/link";
 import { getPosts } from "./writing/posts";
 import HomeFractal from "./home-fractal";
 import styles from "./home.module.css";
+import graph from "./projects/projects.module.css";
 import { projects } from "./projects/projects";
 
 export default function Home() {
@@ -45,9 +46,10 @@ export default function Home() {
               <h2 className={`${styles.sectionHeading} mono-label`} id="home-projects">
                 <Link href="/projects">Projects</Link>
               </h2>
-              <ul className={styles.pieceList}>
+              <ul className={`${styles.pieceList} ${styles.projectList} ${graph.list}`}>
                 {featuredProjects.map((project) => (
-                  <li key={project.href}>
+                  <li key={project.href} className={graph.item}>
+                    <span className={graph.node} aria-hidden="true" />
                     {"external" in project && project.external ? (
                       <a href={project.href} target="_blank" rel="noopener noreferrer">
                         {project.title}
