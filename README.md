@@ -52,8 +52,8 @@ python3 -m unittest tests/test_fractal.py
 
 ## DataBook demo
 
-The portfolio embeds a static build of [DataBook](https://github.com/kdopenshaw/databook).
-The current snapshot comes from [DataBook commit `fc70f7d`](https://github.com/kdopenshaw/databook/commit/fc70f7d).
+The portfolio project link opens a static build of [DataBook](https://github.com/kdopenshaw/databook).
+The current snapshot comes from [DataBook commit `e0c3f81`](https://github.com/kdopenshaw/databook/commit/e0c3f81).
 To refresh it, run `npm ci` and `npm run build -- --base=/demos/databook/`
 in the DataBook checkout. Replace the contents of `public/demos/databook/`
 here with the new `dist/` output, removing assets from the previous build.

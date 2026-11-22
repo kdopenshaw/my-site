@@ -7,6 +7,11 @@ const nextConfig = (phase: string): NextConfig => ({
   async redirects() {
     return [
       {
+        source: "/projects/databook",
+        destination: "/demos/databook/index.html",
+        permanent: false,
+      },
+      {
         source: "/content",
         destination: "/writing",
         permanent: true,
