@@ -12,6 +12,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "3.1139.0",
     "@gitgraph/react": "^1.6.0",
+    "@lexical/react": "0.48.0",
     "@mdxeditor/editor": "^4.5.0",
     "@mdxeditor/floating-selection-ui-plugin": "^1.0.0",
     "@neon/config": "^1.7.3",
@@ -21,6 +22,7 @@
     "@shadcn/react": "^0.3.1",
     "@vercel/analytics": "^2.0.1",
     "@vercel/functions": "3.9.9",
+    "lexical": "0.48.0",
     "next": "^15.5.21",
     "next-mdx-remote": "^6.0.0",
     "pg": "8.23.0",
