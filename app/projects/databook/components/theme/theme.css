@@ -1,4 +1,18 @@
-html:has(.databook-project) {
+@font-face {
+  font-family: Geist;
+  src: url("/fonts/databook/Geist-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Geist Mono";
+  src: url("/fonts/databook/GeistMono-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+:root {
   /* Geist-aligned spacing scale */
   --dbk-space-1: 4px;
   --dbk-space-2: 8px;
@@ -37,7 +51,7 @@ html:has(.databook-project) {
   --dbk-series-8: #7a7a7a;
 }
 
-html.dark:has(.databook-project) {
+html.dark {
   color-scheme: dark;
   --dbk-bg: #0a0a0a;
   --dbk-surface: #111111;
@@ -59,16 +73,18 @@ html.dark:has(.databook-project) {
   --dbk-series-8: #9a9a9a;
 }
 
-.databook-project * {
+* {
   box-sizing: border-box;
 }
 
-.databook-project {
+html,
+body,
+#root {
   margin: 0;
   min-height: 100%;
 }
 
-.databook-project {
+body {
   background: var(--dbk-bg);
   color: var(--dbk-fg);
   font-family: var(--dbk-font-sans);
@@ -77,11 +93,11 @@ html.dark:has(.databook-project) {
   -webkit-font-smoothing: antialiased;
 }
 
-.databook-project button {
+button {
   font-family: inherit;
 }
 
-.databook-project ::selection {
+::selection {
   background: color-mix(in srgb, var(--dbk-accent) 28%, transparent);
   color: var(--dbk-fg);
 }
@@ -265,31 +281,33 @@ input.dbk-title {
 }
 
 .dbk-return-link {
-  /* Portfolio button palette from my-site/app/globals.css. */
-  --return-bg: #287a9e;
-  --return-hover: #1e6180;
-  --return-fg: #ffffff;
+  --return-accent: #287a9e;
   display: inline-flex;
   flex: none;
   align-items: center;
-  min-height: 36px;
-  padding-inline: var(--dbk-space-3);
+  min-height: var(--dbk-space-6);
+  padding-inline: var(--dbk-space-2);
   border-radius: var(--dbk-radius);
-  background: var(--return-bg);
-  color: var(--return-fg);
-  font-size: 14px;
+  color: var(--return-accent);
+  font-family: var(--dbk-font-sans);
+  font-size: 13px;
   font-weight: 500;
   text-decoration: none;
 }
 
 .dbk-return-link:hover {
-  background: var(--return-hover);
+  background: var(--dbk-hover);
+  color: var(--return-accent);
+  text-decoration: none;
+}
+
+.dbk-return-link:focus-visible {
+  outline: 2px solid var(--return-accent);
+  outline-offset: 2px;
 }
 
 html.dark .dbk-return-link {
-  --return-bg: #4cbba5;
-  --return-hover: #6fcfbc;
-  --return-fg: #1f1c1a;
+  --return-accent: #4cbba5;
 }
 
 .dbk-sidebar-head .dbk-return-link {

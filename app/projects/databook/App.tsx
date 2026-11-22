@@ -112,7 +112,7 @@ export default function App() {
   });
 
   const themeKey = useThemeKey();
-  const previewMode = !supportsLocalAgent;
+  const previewMode = bookEditsAreTemporary;
 
   const applyBook = useCallback((next: BookDocument, opts?: { persist?: boolean; record?: boolean }) => {
     const current = bookRef.current;

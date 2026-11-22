@@ -14,7 +14,7 @@ const LINKS = [
 ];
 
 export default function Navigation() {
-  const pathname = usePathname();
+  const pathname = usePathname() ?? "";
   const [open, setOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
 

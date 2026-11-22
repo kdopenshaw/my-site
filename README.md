@@ -53,3 +53,6 @@ python3 -m unittest tests/test_fractal.py
 ## DataBook demo
 
 The full sample DataBook lives in `app/projects/databook/` and ships with the site at `/projects/databook`.
+
+Run `npm run dev` and open `/projects/databook` on localhost to edit the book in your browser.
+Local edits save to `app/projects/databook/data/rows.json`. Review the diff and commit it to publish your changes through the usual site deployment. On the deployed site, edits last until the viewer refreshes.

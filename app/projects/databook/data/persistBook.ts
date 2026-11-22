@@ -1,11 +1,10 @@
-const supportsLocalAgent = false;
 import type { BookDocument } from './types';
 import { clearFullBookOverlay, saveFullBookOverlay } from './bookOverlay';
 import { clearUserRowsOverlay } from './userBookStore';
 
-export const bookEditsAreTemporary = true;
+export const bookEditsAreTemporary = process.env.NODE_ENV !== 'development';
 
-const PERSIST_PATH = '/api/book';
+const PERSIST_PATH = '/api/projects/databook';
 
 export type PersistResult = {
   ok: boolean;
@@ -14,7 +13,6 @@ export type PersistResult = {
 };
 
 async function persistToDisk(book: BookDocument): Promise<PersistResult> {
-  if (!supportsLocalAgent) return { ok: false, via: 'none' };
   try {
     const res = await fetch(PERSIST_PATH, {
       method: 'PUT',

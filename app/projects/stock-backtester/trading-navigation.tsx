@@ -14,7 +14,7 @@ const labels: Record<string, string> = {
 
 export default function TradingNavigation({ strategy }: { strategy?: "rsi" | "sma" }) {
   const path = usePathname();
-  if (path === root) return null;
+  if (!path || path === root) return null;
 
   const segments = path.slice(root.length).split("/").filter(Boolean);
   if (path.endsWith("/results") && strategy && segments[0] !== strategy) {

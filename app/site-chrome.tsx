@@ -7,7 +7,7 @@ import type { ReactNode } from "react";
  * Pages that render without the site navigation and footer.
  * A path matches itself and any route nested under it.
  */
-const CHROMELESS_PATHS = ["/dilemmas/questionnaire", "/projects/databook"];
+const CHROMELESS_PATHS = ["/dilemmas/questionnaire"];
 
 function isChromeless(pathname: string) {
   return CHROMELESS_PATHS.some(
@@ -24,7 +24,7 @@ export default function SiteChrome({
   footer: ReactNode;
   children: ReactNode;
 }) {
-  const pathname = usePathname();
+  const pathname = usePathname() ?? "";
   const chromeless = isChromeless(pathname);
 
   return (

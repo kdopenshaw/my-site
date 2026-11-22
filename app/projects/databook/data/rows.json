@@ -6,7 +6,7 @@
   "pages": [
     {
       "id": "about",
-      "label": "DataBook?",
+      "label": "DataBook",
       "order": 0,
       "tabIds": [
         "what-is-databook"
@@ -35,7 +35,7 @@
   "tabs": [
     {
       "id": "what-is-databook",
-      "label": "What is DataBook?",
+      "label": "Databook",
       "order": 0,
       "rows": [
         {
@@ -43,7 +43,7 @@
           "type": "markdown",
           "order": 0,
           "createdBy": "skill",
-          "body": "## Why I made it\n\nI wanted a way to share a data analysis that people could explore for themselves. In DataBook, I can write up a finding, put an interactive chart beside it, and give readers a way to trace the chart back to its data.\n\n## How it works\n\nA DataBook organizes Markdown and charts into pages and tabs. Each chart declares a query against one shared table. DataBook runs the query in the browser and passes the result to a React chart. The repo includes a starter and a skill that guides coding agents through building and extending a book.\n\nOpen **Sample DataBook** to compare Pokémon, explore stat distributions, and see how the charts are built from one dataset.\n\n[View DataBook on GitHub](https://github.com/kdopenshaw/databook)"
+          "body": "# What is databook\n\nDatabook is a React starter and coding-agent skill to create and iterate on \"databooks\" which are structued react apps you init in a repo to analyze data.  You're looking at one right now.\n\nNow that AI is good enough at writing code, aggregating data, and creating visualizations, I realized the most efficient way for me to analyze data was just ask questions and tell ai to visualize the answers with the data. I found ChatGpt Canvases and Claude artifacts worked well for this pattern, but they got slow to iterate on as they got bigger, and often overcomplicated charting and visual elements.\n\n## How it works\n\nA databook organizes Markdown and charts into pages and tabs. Each chart declares a query against one shared table. DataBook runs the query in the browser and passes the result to a React chart. The repo includes a starter and a skill that guides coding agents through building and extending a book.\n\nCheck out the sample databook page which analyzes the Pokémon dataset, or the source code to use yourself:\n\n[View DataBook on GitHub](https://github.com/kdopenshaw/databook)"
         }
       ]
     },

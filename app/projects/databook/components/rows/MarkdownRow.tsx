@@ -12,7 +12,6 @@ import {
   type MDXEditorMethods,
 } from '@mdxeditor/editor';
 import { floatingSelectionUIPlugin } from '@mdxeditor/floating-selection-ui-plugin';
-import '@mdxeditor/editor/style.css';
 import type { MarkdownRow as MarkdownRowModel } from '../../data/types';
 import { MarkdownSelectionToolbar } from './MarkdownSelectionToolbar';
 
