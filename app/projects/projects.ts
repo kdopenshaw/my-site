@@ -22,6 +22,13 @@ export const projects = [
     imageAlt: "GitHub",
   },
   {
+    href: "/projects/databook",
+    title: "DataBook",
+    kind: "tool",
+    description:
+      "An interactive example of how DataBook turns one shared table into charts and a report you can share.",
+  },
+  {
     href: "/projects/impakt-beanies",
     title: "Impakt Beanies",
     kind: "product",
