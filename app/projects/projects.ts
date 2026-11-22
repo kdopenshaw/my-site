@@ -26,7 +26,7 @@ export const projects = [
     title: "DataBook",
     kind: "tool",
     description:
-      "An interactive example of how DataBook turns one shared table into charts and a report you can share.",
+      "Compare Pokémon base stats and explore the first six generations in an interactive DataBook.",
   },
   {
     href: "/projects/impakt-beanies",

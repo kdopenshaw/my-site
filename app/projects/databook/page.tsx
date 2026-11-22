@@ -1,37 +1,30 @@
 import type { Metadata } from "next";
 
+import { BookEmbed } from "./book-embed";
 import styles from "./databook.module.css";
 
 const demo = "/demos/databook/index.html";
 
 export const metadata: Metadata = {
-  title: "DataBook | Keith Openshaw",
-  description: "An interactive example of a data report built with DataBook.",
+  title: "Pokémon by the numbers | Keith Openshaw",
+  description: "Explore the base stats of 721 Pokémon in an interactive DataBook.",
 };
 
 export default function DataBookPage() {
   return (
     <article className="page-shell">
-      <h1>DataBook</h1>
+      <h1>Pokémon by the numbers</h1>
       <p>
-        I built DataBook to make it easier to share an analysis with the data
-        and queries that produced it. A book combines Markdown, interactive
-        React charts, and one shared table. Each chart declares which rows it
-        needs, and the book can be published as a static site.
+        Explore the base stats of 721 Pokémon from Generations I–VI. I built
+        DataBook to put interactive charts, their queries, and the data behind
+        them in one report.
       </p>
-      <p>
-        The sample follows nine synthetic points through a doubling experiment.
-        Compare the full curve with its first five steps, then open
-        <strong> How it works</strong> to trace the charts back to their queries
-        and try editing the book.
-      </p>
-      <p>
-        <a href={demo}>Open full-screen demo</a>
-        {" · "}
+      <p className={styles.links}>
+        <a href={demo}>Open editable DataBook</a>
         <a href="https://github.com/kdopenshaw/databook">View source on GitHub</a>
       </p>
-      <section className={`wide ${styles.demo}`} aria-label="Live DataBook demo">
-        <iframe src={demo} title="DataBook demo: What does doubling look like?" />
+      <section className={`wide ${styles.demo}`} aria-label="Pokémon analysis">
+        <BookEmbed src={`${demo}?embed=1`} />
       </section>
     </article>
   );
