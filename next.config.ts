@@ -18,14 +18,6 @@ const nextConfig = (phase: string): NextConfig => ({
       },
     ];
   },
-  async rewrites() {
-    return [
-      {
-        source: "/projects/databook",
-        destination: "/demos/databook/index.html",
-      },
-    ];
-  },
   async headers() {
     return [
       {

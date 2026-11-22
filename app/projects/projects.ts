@@ -1,10 +1,19 @@
 export const projects = [
   {
+    href: "/projects/databook",
+    title: "DataBook",
+    kind: "tool",
+    description:
+      "Compare Pokémon base stats and explore the first six generations in an interactive DataBook.",
+    image: "/projects/databook.png",
+    imageAlt: "Scatter plot of Pokémon Speed against base stat total, with legendary Pokémon highlighted in gold",
+  },
+  {
     href: "/projects/fractal-generator",
     title: "Fractal Generator",
     kind: "tool",
     description:
-      "Explore and render fractals by adjusting their mathematical parameters. (The tool I used to make the designs on this website)",
+      "(The tool I used to make the designs on this website)",
     image: "/fractals/julia-minus-0.8-0.156 copy.png",
     imageDark: "/fractals/julia-dark.png",
     imageAlt:
@@ -22,13 +31,6 @@ export const projects = [
     imageAlt: "GitHub",
   },
   {
-    href: "/projects/databook",
-    title: "DataBook",
-    kind: "tool",
-    description:
-      "Compare Pokémon base stats and explore the first six generations in an interactive DataBook.",
-  },
-  {
     href: "/projects/impakt-beanies",
     title: "Impakt Beanies",
     kind: "product",
@@ -42,7 +44,7 @@ export const projects = [
     title: "Technical Trade Backtesting Simulator",
     kind: "tool",
     description:
-      "Test RSI and moving average strategies against historical stock prices. A new home for my original Python and Flask project.",
+      "Test RSI and moving average strategies against historical stock prices.",
     image: "/projects/stock-backtester.png",
     imageDark: "/projects/stock-backtester-dark.png",
     imageAlt:

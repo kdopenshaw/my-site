@@ -1,0 +1,264 @@
+{
+  "title": "DataBook",
+  "experimentId": "databook-showcase",
+  "description": "Why I built DataBook and a worked example using Pokémon base stats.",
+  "defaultTabId": "what-is-databook",
+  "pages": [
+    {
+      "id": "about",
+      "label": "DataBook?",
+      "order": 0,
+      "tabIds": [
+        "what-is-databook"
+      ]
+    },
+    {
+      "id": "analysis",
+      "label": "Sample DataBook",
+      "order": 1,
+      "tabIds": [
+        "compare",
+        "landscape",
+        "base-stats",
+        "speed",
+        "method"
+      ]
+    }
+  ],
+  "conventions": {
+    "population": "721 Pokémon, one per National Dex number, from Generations I–VI.",
+    "notes": [
+      "Keep the first source row for each National Dex number.",
+      "Legendary follows the source flag."
+    ]
+  },
+  "tabs": [
+    {
+      "id": "what-is-databook",
+      "label": "What is DataBook?",
+      "order": 0,
+      "rows": [
+        {
+          "id": "md-about",
+          "type": "markdown",
+          "order": 0,
+          "createdBy": "skill",
+          "body": "## Why I made it\n\nI wanted a way to share a data analysis that people could explore for themselves. In DataBook, I can write up a finding, put an interactive chart beside it, and give readers a way to trace the chart back to its data.\n\n## How it works\n\nA DataBook organizes Markdown and charts into pages and tabs. Each chart declares a query against one shared table. DataBook runs the query in the browser and passes the result to a React chart. The repo includes a starter and a skill that guides coding agents through building and extending a book.\n\nOpen **Sample DataBook** to compare Pokémon, explore stat distributions, and see how the charts are built from one dataset.\n\n[View DataBook on GitHub](https://github.com/kdopenshaw/databook)"
+        }
+      ]
+    },
+    {
+      "id": "compare",
+      "label": "Matchups",
+      "order": 1,
+      "rows": [
+        {
+          "id": "md-profile",
+          "type": "markdown",
+          "order": 0,
+          "createdBy": "skill",
+          "body": "## Similar totals can hide very different strengths\n\nAlakazam and Shuckle both total about 500. Alakazam puts 135 points into Special Attack and 120 into Speed. Shuckle has 230 in each defense and just 5 in Speed. Pick two Pokémon to see where their points go."
+        },
+        {
+          "id": "row-profile",
+          "type": "component",
+          "order": 1,
+          "createdBy": "skill",
+          "components": [
+            {
+              "id": "stat-profiles",
+              "title": "Compare Pokémon base stats",
+              "component": "StatProfiles",
+              "query": {
+                "filter": [
+                  {
+                    "column": "name",
+                    "op": "in",
+                    "value": [
+                      "Alakazam",
+                      "Blastoise",
+                      "Bulbasaur",
+                      "Charizard",
+                      "Dragonite",
+                      "Gengar",
+                      "Mewtwo",
+                      "Ninjask",
+                      "Pikachu",
+                      "Shuckle",
+                      "Skarmory",
+                      "Snorlax"
+                    ]
+                  }
+                ],
+                "orderBy": [
+                  {
+                    "column": "name",
+                    "direction": "asc"
+                  }
+                ]
+              },
+              "notes": "The six axes share a 0–250 point scale. The dashed line represents Pokémon B."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "landscape",
+      "label": "Stat map",
+      "order": 2,
+      "rows": [
+        {
+          "id": "md-landscape",
+          "type": "markdown",
+          "createdBy": "skill",
+          "body": "## Speed is only one way to spend a stat budget\n\nEach point represents a Pokémon. Filter by primary type to see how much Speed varies among Pokémon with similar totals.",
+          "order": 0
+        },
+        {
+          "id": "row-landscape",
+          "type": "component",
+          "createdBy": "skill",
+          "components": [
+            {
+              "id": "stat-landscape",
+              "title": "Base stat total vs. Speed",
+              "subtitle": "721 species across Generations I–VI",
+              "component": "StatLandscape",
+              "query": {}
+            }
+          ],
+          "order": 1
+        }
+      ]
+    },
+    {
+      "id": "base-stats",
+      "label": "Base stats",
+      "order": 3,
+      "rows": [
+        {
+          "id": "md-base",
+          "type": "markdown",
+          "order": 0,
+          "createdBy": "skill",
+          "body": "## Legendary Pokémon have higher totals, with some overlap\n\nThe median base stat total is **600** for the 46 Pokémon flagged as legendary and **410** for the other 675. The groups overlap from 580 to 670 points."
+        },
+        {
+          "id": "row-distribution",
+          "type": "component",
+          "order": 1,
+          "createdBy": "skill",
+          "components": [
+            {
+              "id": "stat-distribution",
+              "title": "Distribution of base stat totals",
+              "subtitle": "Share of each group per 50-point band",
+              "component": "StatDistribution",
+              "query": {
+                "bin": [
+                  {
+                    "column": "total",
+                    "step": 50
+                  }
+                ],
+                "aggregate": [
+                  {
+                    "fn": "count_if",
+                    "where": {
+                      "column": "legendary",
+                      "op": "eq",
+                      "value": false
+                    },
+                    "as": "other_count"
+                  },
+                  {
+                    "fn": "count_if",
+                    "where": {
+                      "column": "legendary",
+                      "op": "eq",
+                      "value": true
+                    },
+                    "as": "legendary_count"
+                  }
+                ],
+                "orderBy": [
+                  {
+                    "column": "total_bin",
+                    "direction": "asc"
+                  }
+                ]
+              },
+              "notes": "Each group sums to 100%. Hover or use the arrow keys on the focused chart for exact counts."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "speed",
+      "label": "Speed",
+      "order": 4,
+      "rows": [
+        {
+          "id": "md-speed",
+          "type": "markdown",
+          "order": 0,
+          "createdBy": "skill",
+          "body": "## Electric averages 83.5 Speed across 36 species\n\nFlying ranks first at **96.3**, based on just three primary-Flying Pokémon. Electric leads among types with at least ten species. Fairy averages **48.6** across 17."
+        },
+        {
+          "id": "row-speed",
+          "type": "component",
+          "order": 1,
+          "createdBy": "skill",
+          "components": [
+            {
+              "id": "speed-by-type",
+              "title": "Average base Speed by primary type",
+              "subtitle": "All 18 primary types · includes source-flagged legendary species",
+              "component": "SpeedByType",
+              "query": {
+                "groupBy": [
+                  "type"
+                ],
+                "aggregate": [
+                  {
+                    "fn": "mean",
+                    "column": "speed",
+                    "as": "mean_speed"
+                  },
+                  {
+                    "fn": "count",
+                    "as": "count"
+                  }
+                ],
+                "orderBy": [
+                  {
+                    "column": "mean_speed",
+                    "direction": "desc"
+                  }
+                ]
+              },
+              "notes": "A dual-type Pokémon counts once, under its first listed type. Point to a bar for its sample size."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "method",
+      "label": "Method",
+      "order": 5,
+      "rows": [
+        {
+          "id": "md-method",
+          "type": "markdown",
+          "order": 0,
+          "createdBy": "skill",
+          "body": "## From Pokédex to chart\n\n[Pokémon with stats](https://www.kaggle.com/datasets/abcsds/pokemon) contains 800 rows for 721 National Dex numbers across Generations I–VI. This analysis keeps the first row for each number to avoid counting alternate forms as extra species. Legendary status comes from the dataset. Base stats are game parameters and do not measure battle outcomes.\n\nAll four charts use a single [canonical table](https://github.com/kdopenshaw/databook/blob/main/src/data/canonical.json). In [the book definition](https://github.com/kdopenshaw/databook/blob/main/src/data/rows.json), the distribution query bins stat totals and counts each group per bin. The Speed query groups by primary type and returns the mean Speed and species count. The radar query selects twelve species. The scatter plot shows all species and lets you filter by primary type. DataBook passes those results to React chart components."
+        }
+      ]
+    }
+  ]
+}
