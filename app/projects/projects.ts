@@ -4,7 +4,7 @@ export const projects = [
     title: "DataBook",
     kind: "tool",
     description:
-      "Compare Pokémon base stats and explore the first six generations in an interactive DataBook.",
+      "Databook is a React starter and coding-agent skill to create and iterate on 'databooks' to analyze data.  ",
     image: "/projects/databook.png",
     imageAlt: "Scatter plot of Pokémon Speed against base stat total, with legendary Pokémon highlighted in gold",
   },
@@ -13,7 +13,7 @@ export const projects = [
     title: "Fractal Generator",
     kind: "tool",
     description:
-      "(The tool I used to make the designs on this website)",
+      "The tool I used to make the designs on this website",
     image: "/fractals/julia-minus-0.8-0.156 copy.png",
     imageDark: "/fractals/julia-dark.png",
     imageAlt:
